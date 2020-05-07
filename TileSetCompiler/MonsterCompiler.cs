@@ -7,68 +7,24 @@ using System.Threading;
 
 namespace TileSetCompiler
 {
-    class MonsterCompiler
+    class MonsterCompiler : BitmapCompiler
     {
+        const string _subDirName = "Monsters";
         const string _manifestFile = "monsters.csv";
         const string _maleSuffix = "_male";
         const string _femaleSuffix = "_female";
         const string _unknownMonsterFileName = "UnknownMonster.png";
-        const string _outputFileName = "monsters.bmp";
 
-        public MonsterCompiler()
+        public MonsterCompiler() : base(_subDirName, _manifestFile, _unknownMonsterFileName)
         {
-            var dirs = Program.WorkingDirectory.GetDirectories("Monsters");
-            if(dirs.Length == 0)
-            {
-                Console.WriteLine("Monsters directory '{0}' not found.", Program.WorkingDirectory.FullName + "\\" + "Monsters");
-            }
-            else 
-            {
-                BaseDirectory = dirs[0];
-                var files = BaseDirectory.GetFiles(_manifestFile);
-                if (files.Length == 0)
-                {
-                    Console.WriteLine("Manifest file '{0}' not found in directory '{1}'.", _manifestFile, BaseDirectory.FullName);
-                }
-                else
-                {
-                    Manifest = files[0];
-                }
-
-                UnknownMonsterFile = new FileInfo(Path.Combine(BaseDirectory.FullName, _unknownMonsterFileName));
-                if(!UnknownMonsterFile.Exists)
-                {
-                    Console.WriteLine("Unknown monster file '{0}' not found in directory '{1}'.", _unknownMonsterFileName, BaseDirectory.FullName);
-                }
-
-                OutputFile = new FileInfo(Path.Combine(Program.OutputDirectory.FullName, _outputFileName));
-            }
 
         }
 
-        public DirectoryInfo BaseDirectory { get; set; }
-        public Bitmap TileSet { get; set; }
-        public FileInfo Manifest { get; set; }
-        public FileInfo UnknownMonsterFile { get; set; }
-
-        public FileInfo OutputFile { get; set; }
-
-        public void Compile()
+        public override int GetTileNumber()
         {
-            if(BaseDirectory == null || !BaseDirectory.Exists)
+            if (Manifest == null || !Manifest.Exists)
             {
-                Console.WriteLine("Monsters Base Directory not found. Cannot compile monsters.");
-                return;
-            }
-            if(Manifest == null || !Manifest.Exists)
-            {
-                Console.WriteLine("Monsters Manifest File not found. Cannot compile monsters.");
-                return;
-            }
-            if(UnknownMonsterFile == null || !UnknownMonsterFile.Exists)
-            {
-                Console.WriteLine("Unknown Monsters File not found. Cannot compile monsters.");
-                return;
+                throw new Exception("Monsters Manifest File not found. Cannot compile monsters.");
             }
 
             int monsterNumber = 0;
@@ -90,13 +46,24 @@ namespace TileSetCompiler
 
             int monsterNumberWithGenders = monsterNumber * 2;
 
-            int bitmapSideNumber = (int)Math.Ceiling(Math.Sqrt(monsterNumberWithGenders));
-            int bitMapWidth = Program.TileSize.Width * bitmapSideNumber;
-            int bitMapHeight = Program.TileSize.Height * bitmapSideNumber;
+            return monsterNumberWithGenders;
+        }
 
-            TileSet = new Bitmap(bitMapWidth, bitMapHeight);
-            int curX = 0, maxX = bitmapSideNumber - 1;
-            int curY = 0, maxY = bitmapSideNumber - 1;
+
+        public override void Compile()
+        {
+            if(BaseDirectory == null || !BaseDirectory.Exists)
+            {
+                throw new Exception("Monsters Manifest File not found. Cannot compile monsters.");
+            }
+            if(Manifest == null || !Manifest.Exists)
+            {
+                throw new Exception("Monsters Manifest File not found. Cannot compile monsters.");
+            }
+            if(UnknownFile == null || !UnknownFile.Exists)
+            {
+                throw new Exception("Unknown Monsters File not found. Cannot compile monsters.");
+            }
 
             using (var stream = Manifest.OpenText())
             {
@@ -114,13 +81,13 @@ namespace TileSetCompiler
                         if (!Directory.Exists(monsterDirPath))
                         {
                             Console.WriteLine("Monster directory '{0}' not found. Using Unknown Monster icon for both male and female.", monsterDirPath);
-                            usedMaleMonsterFile = UnknownMonsterFile;
-                            usedFemaleMonsterFile = UnknownMonsterFile;
+                            usedMaleMonsterFile = UnknownFile;
+                            usedFemaleMonsterFile = UnknownFile;
                         }
                         else
                         {
                             var maleFileName = name + _maleSuffix + Program.ImageFileExtension;
-                            var femaleFileName = name + _maleSuffix + Program.ImageFileExtension;
+                            var femaleFileName = name + _femaleSuffix + Program.ImageFileExtension;
                             var commonFileName = name + Program.ImageFileExtension;
                             var maleFilePath = Path.Combine(monsterDirPath, maleFileName);
                             var femaleFilePath = Path.Combine(monsterDirPath, femaleFileName);
@@ -139,7 +106,7 @@ namespace TileSetCompiler
                             }
                             else
                             {
-                                usedMaleMonsterFile = UnknownMonsterFile;
+                                usedMaleMonsterFile = UnknownFile;
                             }
 
                             if (femaleFile.Exists)
@@ -152,23 +119,20 @@ namespace TileSetCompiler
                             }
                             else
                             {
-                                usedFemaleMonsterFile = UnknownMonsterFile;
+                                usedFemaleMonsterFile = UnknownFile;
                             }
                         }
 
                         using (var maleImage = new Bitmap(Image.FromFile(usedMaleMonsterFile.FullName)))
                         {
-                            DrawImageToTileSet(maleImage, curX, curY);
-
-                            IncreaseCurXY(ref curX, ref curY, maxX, maxY);
+                            DrawImageToTileSet(maleImage);
+                            IncreaseCurXY();
                         }
 
                         using (var femaleImage = new Bitmap(Image.FromFile(usedFemaleMonsterFile.FullName)))
                         {
-
-                            DrawImageToTileSet(femaleImage, curX, curY);
-
-                            IncreaseCurXY(ref curX, ref curY, maxX, maxY);
+                            DrawImageToTileSet(femaleImage);
+                            IncreaseCurXY();
                         }
                     }
 
@@ -176,44 +140,6 @@ namespace TileSetCompiler
 
                 stream.Close();
             }
-
-            if(OutputFile.Exists)
-            {
-                OutputFile.Delete();
-            }
-
-            TileSet.Save(OutputFile.FullName);
-
-        }
-
-        private void IncreaseCurXY(ref int curX, ref int curY, int maxX, int maxY)
-        {
-            curX++;
-            if (curX > maxX)
-            {
-                curX = 0;
-                curY++;
-            }
-            if (curY > maxY)
-            {
-                Console.WriteLine("curY '{0}' is greater than maxY '{1}'.", curY, maxY);
-                throw new Exception("Aborting.");
-            }
-        }
-
-        private void DrawImageToTileSet(Bitmap bmp, int tileX, int tileY)
-        {
-            int tileSetX = 0, tileSetY = 0;
-            for(int x = 0; x < bmp.Width; x++)
-            {
-                for(int y = 0; y < bmp.Height; y++)
-                {
-                    tileSetX = tileX * Program.TileSize.Width + x;
-                    tileSetY = tileY * Program.TileSize.Height + y;
-                    Color c = bmp.GetPixel(x, y);
-                    TileSet.SetPixel(tileSetX, tileSetY, c);
-                }
-            }
-        }
+        }        
     }
 }

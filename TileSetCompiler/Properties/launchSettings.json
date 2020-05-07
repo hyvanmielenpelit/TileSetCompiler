@@ -2,7 +2,7 @@
   "profiles": {
     "TileSetCompiler": {
       "commandName": "Project",
-      "commandLineArgs": "../../../GnollHackTileSet ../../../../../GnollHackTileSetOutput"
+      "commandLineArgs": "../../../GnollHackTileSet ../../../../../GnollHackTileSetOutput gnollhack"
     }
   }
 }
