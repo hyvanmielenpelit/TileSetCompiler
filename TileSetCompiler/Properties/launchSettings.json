@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TileSetCompiler": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../GnollHackTileSet ../../../../../GnollHackTileSetOutput"
+    }
+  }
+}

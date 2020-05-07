@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileSetCompiler", "TileSetCompiler\TileSetCompiler.csproj", "{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB1E5158-48E6-4933-8D29-3F0FF8D7CF77}
+	EndGlobalSection
+EndGlobal
