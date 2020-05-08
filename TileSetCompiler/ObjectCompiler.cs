@@ -25,9 +25,10 @@ namespace TileSetCompiler
             }
 
             var type = splitLine[1];
-            var name = splitLine[2];
+            var objectType = splitLine[2];
+            var name = splitLine[3];
 
-            var dirPath = Path.Combine(BaseDirectory.FullName);
+            var dirPath = Path.Combine(BaseDirectory.FullName, objectType);
             FileInfo usedFile = null;
             if (!Directory.Exists(dirPath))
             {
@@ -36,7 +37,7 @@ namespace TileSetCompiler
             }
             else
             {
-                var fileName = name.ToLower() + Program.ImageFileExtension;
+                var fileName = objectType.ToLower() + "_" + name.ToLower() + Program.ImageFileExtension;
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
