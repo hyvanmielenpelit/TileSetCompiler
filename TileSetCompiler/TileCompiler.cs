@@ -12,17 +12,24 @@ namespace TileSetCompiler
         const string _manifestFile = "tile_definition.csv";
         const string _objectType_monster = "monsters";
         const string _objectType_object = "objects";
+        const string _objectType_artifact = "artifacts";
+        const string _objectType_cmap = "cmap";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.WorkingDirectory; } }
 
         protected MonsterCompiler MonsterCompiler { get; private set; }
         protected ObjectCompiler ObjectCompiler { get; private set; }
+        protected ArtifactCompiler ArtifactCompiler { get; private set; }
+        protected CmapCompiler CmapCompiler { get; private set; }
 
         public TileCompiler()
         {
             MonsterCompiler = new MonsterCompiler();
             ObjectCompiler = new ObjectCompiler();
+            ArtifactCompiler = new ArtifactCompiler();
+            CmapCompiler = new CmapCompiler();
+
             Manifest = new FileInfo(_manifestFile);
 
             if (!BaseDirectory.Exists)
@@ -71,6 +78,14 @@ namespace TileSetCompiler
                     else if (objectType == _objectType_object)
                     {
                         ObjectCompiler.CompileOne(splitLine);
+                    }
+                    else if (objectType == _objectType_artifact)
+                    {
+                        ArtifactCompiler.CompileOne(splitLine);
+                    }
+                    else if (objectType == _objectType_cmap)
+                    {
+                        CmapCompiler.CompileOne(splitLine);
                     }
                 }
 
