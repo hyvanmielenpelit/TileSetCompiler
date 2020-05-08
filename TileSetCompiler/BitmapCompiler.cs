@@ -11,34 +11,25 @@ namespace TileSetCompiler
     abstract class BitmapCompiler
     {
         protected DirectoryInfo BaseDirectory { get; set; }
-        protected FileInfo Manifest { get; set; }
         protected FileInfo UnknownFile { get; set; }
 
-        protected BitmapCompiler(string subDirectoryName, string manifestFileName, string unknownFileName)
+        protected BitmapCompiler(string subDirectoryName, string unknownFileName)
         {
             BaseDirectory = new DirectoryInfo(Path.Combine(Program.WorkingDirectory.FullName, subDirectoryName));
-            Manifest = new FileInfo(Path.Combine(BaseDirectory.FullName, manifestFileName));
             UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
 
             if (!BaseDirectory.Exists)
             {
-                throw new Exception(string.Format("Monsters directory '{0}' not found.", Program.WorkingDirectory.FullName + "\\" + "Monsters"));
+                throw new Exception(string.Format("Base directory '{0}' not found.", BaseDirectory.FullName));
             }
                 
-            if (!Manifest.Exists)
-            {
-                throw new Exception(string.Format("Manifest file '{0}' not found in directory '{1}'.", Manifest, BaseDirectory.FullName));
-            }
-
             if (!UnknownFile.Exists)
             {
-                throw new Exception(string.Format("Unknown monster file '{0}' not found in directory '{1}'.", UnknownFile, BaseDirectory.FullName));
+                throw new Exception(string.Format("Unknown file '{0}' not found in directory '{1}'.", UnknownFile, BaseDirectory.FullName));
             }
         }
 
-        public abstract void Compile();
-
-        public abstract int GetTileNumber();
+        public abstract void CompileOne(string[] splitLine);
 
         protected void DrawImageToTileSet(Bitmap image)
         {

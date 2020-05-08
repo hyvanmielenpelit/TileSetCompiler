@@ -34,7 +34,7 @@ namespace TileSetCompiler
         public static int CurY { get; set; }
         public static int MaxX { get; set; }
         public static int MaxY { get; set; }
-        protected static MonsterCompiler MonsterCompiler { get; set; }
+        protected static TileCompiler TileCompiler { get; set; }
 
         static void Main(string[] args)
         {
@@ -100,13 +100,13 @@ namespace TileSetCompiler
 
             InitializeOutputFiles();
 
-            MonsterCompiler = new MonsterCompiler();
+            TileCompiler = new TileCompiler();
 
             try
             {
                 InitializeTileSets();
 
-                MonsterCompiler.Compile();
+                TileCompiler.Compile();
 
                 SaveFiles();
 
@@ -149,7 +149,7 @@ namespace TileSetCompiler
 
         protected static void InitializeTileSets()
         {
-            TileNumber += MonsterCompiler.GetTileNumber();
+            TileNumber += TileCompiler.GetTileNumber();
 
             int bitmapSideNumber = (int)Math.Ceiling(Math.Sqrt(TileNumber));
             CurX = 0;
