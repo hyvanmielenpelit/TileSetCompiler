@@ -10,7 +10,7 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Objects";
         const string _unknownFileName = "UnknownObject.png";
-        const int _lineLength = 3;
+        const int _lineLength = 4;
 
         public ObjectCompiler() : base(_subDirName, _unknownFileName)
         {
