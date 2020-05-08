@@ -30,7 +30,8 @@ namespace TileSetCompiler
             ArtifactCompiler = new ArtifactCompiler();
             CmapCompiler = new CmapCompiler();
 
-            Manifest = new FileInfo(_manifestFile);
+            string manifestPath = Path.Combine(BaseDirectory.FullName, _manifestFile);
+            Manifest = new FileInfo(manifestPath);
 
             if (!BaseDirectory.Exists)
             {
