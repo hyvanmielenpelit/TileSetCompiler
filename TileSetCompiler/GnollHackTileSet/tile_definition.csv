@@ -486,6 +486,494 @@ monsters,base,normal,roshi
 monsters,base,normal,guide
 monsters,base,normal,warrior
 monsters,base,normal,apprentice
+monsters,base,statue,giant ant
+monsters,base,statue,giant beetle
+monsters,base,statue,fire ant
+monsters,base,statue,killer bee
+monsters,base,statue,queen bee
+monsters,base,statue,soldier ant
+monsters,base,statue,quivering blob
+monsters,base,statue,acid blob
+monsters,base,statue,gelatinous cube
+monsters,base,statue,mucilaginous cube
+monsters,base,statue,pyrolisk
+monsters,base,statue,chickatrice
+monsters,base,statue,cockatrice
+monsters,base,statue,giant cockatrice
+monsters,base,statue,gargantuan cockatrice
+monsters,base,statue,jackal
+monsters,base,statue,fox
+monsters,base,statue,coyote
+monsters,base,statue,winter wolf cub
+monsters,base,statue,dingo
+monsters,base,statue,little dog
+monsters,base,statue,werejackal
+monsters,base,statue,direwolf cub
+monsters,base,statue,hell hound pup
+monsters,base,statue,dog
+monsters,base,statue,hyena
+monsters,base,statue,wolf
+monsters,base,statue,large dog
+monsters,base,statue,direwolf
+monsters,base,statue,winter wolf
+monsters,base,statue,werewolf
+monsters,base,statue,warg
+monsters,base,statue,large direwolf
+monsters,base,statue,hell hound
+monsters,base,statue,shoosuva
+monsters,base,statue,gas spore
+monsters,base,statue,floating eye
+monsters,base,statue,freezing sphere
+monsters,base,statue,flaming sphere
+monsters,base,statue,shocking sphere
+monsters,base,statue,beholder
+monsters,base,statue,elder orb
+monsters,base,statue,death tyrant
+monsters,base,statue,kitten
+monsters,base,statue,housecat
+monsters,base,statue,large cat
+monsters,base,statue,lynx
+monsters,base,statue,jaguar
+monsters,base,statue,panther
+monsters,base,statue,tiger
+monsters,base,statue,gnoll
+monsters,base,statue,gnoll warden
+monsters,base,statue,gnoll lord
+monsters,base,statue,gnoll king
+monsters,base,statue,flind
+monsters,base,statue,flind lord
+monsters,base,statue,gnome
+monsters,base,statue,gnome lord
+monsters,base,statue,gnomish wizard
+monsters,base,statue,gnome king
+monsters,base,statue,gremlin
+monsters,base,statue,gargoyle
+monsters,base,statue,winged gargoyle
+monsters,base,statue,hobbit
+monsters,base,statue,dwarf
+monsters,base,statue,bugbear
+monsters,base,statue,dwarf lord
+monsters,base,statue,dwarf king
+monsters,base,statue,mind flayer
+monsters,base,statue,master mind flayer
+monsters,base,statue,illithilich
+monsters,base,statue,manes
+monsters,base,statue,lemure
+monsters,base,statue,homunculus
+monsters,base,statue,imp
+monsters,base,statue,quasit
+monsters,base,statue,tengu
+monsters,base,statue,blue jelly
+monsters,base,statue,spotted jelly
+monsters,base,statue,ochre jelly
+monsters,base,statue,kobold
+monsters,base,statue,large kobold
+monsters,base,statue,kobold lord
+monsters,base,statue,kobold shaman
+monsters,base,statue,leprechaun
+monsters,base,statue,small mimic
+monsters,base,statue,small luggage
+monsters,base,statue,medium luggage
+monsters,base,statue,large luggage
+monsters,base,statue,large mimic
+monsters,base,statue,giant mimic
+monsters,base,statue,Gargantuan Mimic
+monsters,base,statue,giant luggage
+monsters,base,statue,chaos mimic
+monsters,base,statue,wood nymph
+monsters,base,statue,water nymph
+monsters,base,statue,mountain nymph
+monsters,base,statue,harpy
+monsters,base,statue,goblin
+monsters,base,statue,hobgoblin
+monsters,base,statue,orc
+monsters,base,statue,hill orc
+monsters,base,statue,Mordor orc
+monsters,base,statue,orc shaman
+monsters,base,statue,Uruk-hai
+monsters,base,statue,orc-captain
+monsters,base,statue,goblin king
+monsters,base,statue,rock piercer
+monsters,base,statue,iron piercer
+monsters,base,statue,glass piercer
+monsters,base,statue,rothe
+monsters,base,statue,wumpus
+monsters,base,statue,bison
+monsters,base,statue,titanothere
+monsters,base,statue,mumak
+monsters,base,statue,leucrotta
+monsters,base,statue,baluchitherium
+monsters,base,statue,gorgon
+monsters,base,statue,mastodon
+monsters,base,statue,sewer rat
+monsters,base,statue,giant rat
+monsters,base,statue,woodchuck
+monsters,base,statue,rabid rat
+monsters,base,statue,rock mole
+monsters,base,statue,wererat
+monsters,base,statue,centipede
+monsters,base,statue,cave spider
+monsters,base,statue,scorpion
+monsters,base,statue,giant spider
+monsters,base,statue,phase spider
+monsters,base,statue,lurker above
+monsters,base,statue,trapper
+monsters,base,statue,ram
+monsters,base,statue,pony
+monsters,base,statue,pegasus
+monsters,base,statue,horse
+monsters,base,statue,large ram
+monsters,base,statue,white unicorn
+monsters,base,statue,gray unicorn
+monsters,base,statue,black unicorn
+monsters,base,statue,warhorse
+monsters,base,statue,warram
+monsters,base,statue,dust vortex
+monsters,base,statue,fog cloud
+monsters,base,statue,ice vortex
+monsters,base,statue,steam vortex
+monsters,base,statue,fire vortex
+monsters,base,statue,energy vortex
+monsters,base,statue,baby long worm
+monsters,base,statue,baby purple worm
+monsters,base,statue,long worm
+monsters,base,statue,purple worm
+monsters,base,statue,grid bug
+monsters,base,statue,xan
+monsters,base,statue,yellow light
+monsters,base,statue,black light
+monsters,base,statue,kobold zombie
+monsters,base,statue,gnome zombie
+monsters,base,statue,orc zombie
+monsters,base,statue,dwarf zombie
+monsters,base,statue,elf zombie
+monsters,base,statue,gnoll zombie
+monsters,base,statue,human zombie
+monsters,base,statue,skeleton
+monsters,base,statue,ghoul
+monsters,base,statue,ettin zombie
+monsters,base,statue,ettin skeleton
+monsters,base,statue,giant zombie
+monsters,base,statue,giant skeleton
+monsters,base,statue,ghast
+monsters,base,statue,skeleton warrior
+monsters,base,statue,skeleton lord
+monsters,base,statue,skeleton king
+monsters,base,statue,couatl
+monsters,base,statue,Aleax
+monsters,base,statue,Angel
+monsters,base,statue,ki-rin
+monsters,base,statue,Archon
+monsters,base,statue,bat
+monsters,base,statue,giant bat
+monsters,base,statue,raven
+monsters,base,statue,vampire bat
+monsters,base,statue,celestial dove
+monsters,base,statue,celestial eagle
+monsters,base,statue,phoenix
+monsters,base,statue,roc
+monsters,base,statue,hell bat
+monsters,base,statue,plains centaur
+monsters,base,statue,forest centaur
+monsters,base,statue,mountain centaur
+monsters,base,statue,gray dragon hatchling
+monsters,base,statue,silver dragon hatchling
+monsters,base,statue,red dragon hatchling
+monsters,base,statue,white dragon hatchling
+monsters,base,statue,orange dragon hatchling
+monsters,base,statue,black dragon hatchling
+monsters,base,statue,blue dragon hatchling
+monsters,base,statue,green dragon hatchling
+monsters,base,statue,yellow dragon hatchling
+monsters,base,statue,gray dragon
+monsters,base,statue,silver dragon
+monsters,base,statue,red dragon
+monsters,base,statue,white dragon
+monsters,base,statue,orange dragon
+monsters,base,statue,black dragon
+monsters,base,statue,blue dragon
+monsters,base,statue,green dragon
+monsters,base,statue,yellow dragon
+monsters,base,statue,ancient gray dragon
+monsters,base,statue,ancient silver dragon
+monsters,base,statue,ancient red dragon
+monsters,base,statue,ancient white dragon
+monsters,base,statue,ancient orange dragon
+monsters,base,statue,ancient black dragon
+monsters,base,statue,ancient blue dragon
+monsters,base,statue,ancient green dragon
+monsters,base,statue,ancient yellow dragon
+monsters,base,statue,dracolich
+monsters,base,statue,elder dracolich
+monsters,base,statue,gold dragon
+monsters,base,statue,ancient gold dragon
+monsters,base,statue,Bahamut
+monsters,base,statue,water elemental
+monsters,base,statue,earth elemental
+monsters,base,statue,stalker
+monsters,base,statue,fire elemental
+monsters,base,statue,air elemental
+monsters,base,statue,elder water elemental
+monsters,base,statue,elder earth elemental
+monsters,base,statue,elder fire elemental
+monsters,base,statue,elder air elemental
+monsters,base,statue,lichen
+monsters,base,statue,brown mold
+monsters,base,statue,yellow mold
+monsters,base,statue,green mold
+monsters,base,statue,red mold
+monsters,base,statue,white lichen
+monsters,base,statue,violet fungus
+monsters,base,statue,shrieker
+monsters,base,statue,black lichen
+monsters,base,statue,giant
+monsters,base,statue,stone giant
+monsters,base,statue,hill giant
+monsters,base,statue,hell bovine
+monsters,base,statue,fire giant
+monsters,base,statue,frost giant
+monsters,base,statue,ettin
+monsters,base,statue,storm giant
+monsters,base,statue,minotaur
+monsters,base,statue,titan
+monsters,base,statue,jabberwock
+monsters,base,statue,juggernaut
+monsters,base,statue,Keystone Kop
+monsters,base,statue,Kop Sergeant
+monsters,base,statue,Kop Lieutenant
+monsters,base,statue,Kop Kaptain
+monsters,base,statue,lich
+monsters,base,statue,demilich
+monsters,base,statue,master lich
+monsters,base,statue,arch-lich
+monsters,base,statue,modron monodrone
+monsters,base,statue,modron duodrone
+monsters,base,statue,modron tridrone
+monsters,base,statue,modron quadrone
+monsters,base,statue,modron pentadrone
+monsters,base,statue,modron quinton
+monsters,base,statue,modron quarton
+monsters,base,statue,modron tertian
+monsters,base,statue,modron secundus
+monsters,base,statue,Modron Primus
+monsters,base,statue,red naga hatchling
+monsters,base,statue,black naga hatchling
+monsters,base,statue,golden naga hatchling
+monsters,base,statue,guardian naga hatchling
+monsters,base,statue,red naga
+monsters,base,statue,black naga
+monsters,base,statue,golden naga
+monsters,base,statue,guardian naga
+monsters,base,statue,ogre
+monsters,base,statue,ogre lord
+monsters,base,statue,ogre overlord
+monsters,base,statue,ogre mage
+monsters,base,statue,ogre king
+monsters,base,statue,ogre archmage
+monsters,base,statue,gray ooze
+monsters,base,statue,brown pudding
+monsters,base,statue,green slime
+monsters,base,statue,black pudding
+monsters,base,statue,quantum mechanic
+monsters,base,statue,rust monster
+monsters,base,statue,disenchanter
+monsters,base,statue,garter snake
+monsters,base,statue,snake
+monsters,base,statue,water moccasin
+monsters,base,statue,pit viper
+monsters,base,statue,cobra
+monsters,base,statue,python
+monsters,base,statue,boa constrictor
+monsters,base,statue,giant python
+monsters,base,statue,giant anaconda
+monsters,base,statue,troll
+monsters,base,statue,ice troll
+monsters,base,statue,rock troll
+monsters,base,statue,water troll
+monsters,base,statue,Olog-hai
+monsters,base,statue,thoul
+monsters,base,statue,umber hulk
+monsters,base,statue,otyugh
+monsters,base,statue,neo-otyugh
+monsters,base,statue,chimera
+monsters,base,statue,vampire
+monsters,base,statue,vampire lord
+monsters,base,statue,vampire mage
+monsters,base,statue,Vlad the Impaler
+monsters,base,statue,wraith
+monsters,base,statue,barrow wight
+monsters,base,statue,spectre
+monsters,base,statue,king wraith
+monsters,base,statue,Nazgul
+monsters,base,statue,xorn
+monsters,base,statue,monkey
+monsters,base,statue,ape
+monsters,base,statue,yeti
+monsters,base,statue,carnivorous ape
+monsters,base,statue,zruty
+monsters,base,statue,sasquatch
+monsters,base,statue,owlbear
+monsters,base,statue,grizzly bear
+monsters,base,statue,owlbear shaman
+monsters,base,statue,werebear
+monsters,base,statue,owlbear matriarch
+monsters,base,statue,owlbear patriarch
+monsters,base,statue,kobold mummy
+monsters,base,statue,gnome mummy
+monsters,base,statue,dwarf mummy
+monsters,base,statue,orc mummy
+monsters,base,statue,gnoll mummy
+monsters,base,statue,elf mummy
+monsters,base,statue,human mummy
+monsters,base,statue,ettin mummy
+monsters,base,statue,giant mummy
+monsters,base,statue,paper golem
+monsters,base,statue,straw golem
+monsters,base,statue,wood golem
+monsters,base,statue,leather golem
+monsters,base,statue,gold golem
+monsters,base,statue,rope golem
+monsters,base,statue,flesh golem
+monsters,base,statue,clay golem
+monsters,base,statue,glass golem
+monsters,base,statue,stone golem
+monsters,base,statue,bone golem
+monsters,base,statue,gemstone golem
+monsters,base,statue,iron golem
+monsters,base,statue,silver golem
+monsters,base,statue,treant
+monsters,base,statue,elder treant
+monsters,base,statue,human
+monsters,base,statue,wererat
+monsters,base,statue,werejackal
+monsters,base,statue,elf
+monsters,base,statue,Green-elf
+monsters,base,statue,Woodland-elf
+monsters,base,statue,prisoner
+monsters,base,statue,nurse
+monsters,base,statue,Grey-elf
+monsters,base,statue,werewolf
+monsters,base,statue,elf-lord
+monsters,base,statue,doppelganger
+monsters,base,statue,Elvenking
+monsters,base,statue,Oracle
+monsters,base,statue,shopkeeper
+monsters,base,statue,guard
+monsters,base,statue,aligned priest
+monsters,base,statue,werebear
+monsters,base,statue,high priest
+monsters,base,statue,soldier
+monsters,base,statue,sergeant
+monsters,base,statue,lieutenant
+monsters,base,statue,captain
+monsters,base,statue,watchman
+monsters,base,statue,watch captain
+monsters,base,statue,Medusa
+monsters,base,statue,Wizard of Yendor
+monsters,base,statue,Croesus
+monsters,base,statue,ghost
+monsters,base,statue,shade
+monsters,base,statue,succubus
+monsters,base,statue,incubus
+monsters,base,statue,water demon
+monsters,base,statue,horned devil
+monsters,base,statue,hezrou
+monsters,base,statue,vrock
+monsters,base,statue,erinys
+monsters,base,statue,ice devil
+monsters,base,statue,barbed devil
+monsters,base,statue,nalfeshnee
+monsters,base,statue,glabrezu
+monsters,base,statue,bone devil
+monsters,base,statue,sandestin
+monsters,base,statue,pit fiend
+monsters,base,statue,marilith
+monsters,base,statue,balrog
+monsters,base,statue,Juiblex
+monsters,base,statue,Yeenoghu
+monsters,base,statue,Yacc
+monsters,base,statue,Baphomet
+monsters,base,statue,Baalzebub
+monsters,base,statue,Geryon
+monsters,base,statue,Dispater
+monsters,base,statue,Asmodeus
+monsters,base,statue,Orcus
+monsters,base,statue,Demogorgon
+monsters,base,statue,Death
+monsters,base,statue,Pestilence
+monsters,base,statue,Famine
+monsters,base,statue,djinni
+monsters,base,statue,Tarrasque
+monsters,base,statue,jellyfish
+monsters,base,statue,piranha
+monsters,base,statue,shark
+monsters,base,statue,giant eel
+monsters,base,statue,electric eel
+monsters,base,statue,kraken
+monsters,base,statue,newt
+monsters,base,statue,gecko
+monsters,base,statue,iguana
+monsters,base,statue,baby crocodile
+monsters,base,statue,lizard
+monsters,base,statue,chameleon
+monsters,base,statue,crocodile
+monsters,base,statue,salamander
+monsters,base,statue,hydra
+monsters,base,statue,pyrohydra
+monsters,base,statue,lernaean hydra
+monsters,base,statue,long worm tail
+monsters,base,statue,archeologist
+monsters,base,statue,barbarian
+monsters,base,statue,caveman
+monsters,base,statue,healer
+monsters,base,statue,knight
+monsters,base,statue,monk
+monsters,base,statue,priest
+monsters,base,statue,ranger
+monsters,base,statue,rogue
+monsters,base,statue,samurai
+monsters,base,statue,tourist
+monsters,base,statue,valkyrie
+monsters,base,statue,wizard
+monsters,base,statue,Lord Carnarvon
+monsters,base,statue,Pelias
+monsters,base,statue,Shaman Karnov
+monsters,base,statue,Hippocrates
+monsters,base,statue,King Arthur
+monsters,base,statue,Grand Master
+monsters,base,statue,Arch Priest
+monsters,base,statue,Orion
+monsters,base,statue,Master of Thieves
+monsters,base,statue,Lord Sato
+monsters,base,statue,Twoflower
+monsters,base,statue,Norn
+monsters,base,statue,Neferet the Green
+monsters,base,statue,Minion of Huhetotl
+monsters,base,statue,Thoth Amon
+monsters,base,statue,Tiamat
+monsters,base,statue,Cyclops
+monsters,base,statue,Ixoth
+monsters,base,statue,Master Kaen
+monsters,base,statue,Nalzok
+monsters,base,statue,Scorpius
+monsters,base,statue,Master Assassin
+monsters,base,statue,Ashikaga Takauji
+monsters,base,statue,Lord Surtur
+monsters,base,statue,Dark One
+monsters,base,statue,student
+monsters,base,statue,chieftain
+monsters,base,statue,neanderthal
+monsters,base,statue,attendant
+monsters,base,statue,page
+monsters,base,statue,abbot
+monsters,base,statue,acolyte
+monsters,base,statue,hunter
+monsters,base,statue,thug
+monsters,base,statue,ninja
+monsters,base,statue,roshi
+monsters,base,statue,guide
+monsters,base,statue,warrior
+monsters,base,statue,apprentice
 monsters,female,normal,gnoll king
 monsters,female,normal,gnome king
 monsters,female,normal,dwarf king
@@ -494,6 +982,14 @@ monsters,female,normal,ogre king
 monsters,female,normal,king wraith
 monsters,female,normal,nurse
 monsters,female,normal,elf-lord
+monsters,female,statue,gnoll king
+monsters,female,statue,gnome king
+monsters,female,statue,dwarf king
+monsters,female,statue,skeleton king
+monsters,female,statue,ogre king
+monsters,female,statue,king wraith
+monsters,female,statue,nurse
+monsters,female,statue,elf-lord
 objects,normal,illegal objects,strange object,no description
 objects,normal,weapons,arrow,no description
 objects,normal,weapons,elven arrow,runed arrow

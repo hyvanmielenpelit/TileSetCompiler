@@ -33,6 +33,9 @@ namespace TileSetCompiler
         public static string OutputFileName { get; set; }
         public static string OutputFileExtension { get { return ".bmp"; } }
         public static string TileNameOutputFileName { get; set; }
+        public static DirectoryInfo StatueOutputDirectory { get; set; }
+        public static bool CreateStatuesOnDisk { get; set; }
+        public static bool ReadStatuesFromDisk { get; set; }
         public static int TileNumber { get; set; }
         public static int CurX { get; set; }
         public static int CurY { get; set; }
@@ -104,6 +107,45 @@ namespace TileSetCompiler
             TileNameOutputFileName = OutputFileName + _tileNameSuffix + _tileNameExtension;
 
             InitializeOutputFiles();
+
+            if(args.Length >= 4)
+            {
+                var statueArg = args[3];
+                if (statueArg == "-teststatues")
+                {
+                    CreateStatuesOnDisk = true;
+                    StatueOutputDirectory = new DirectoryInfo(OutputDirectory.FullName);
+                    if(!StatueOutputDirectory.Exists)
+                    {
+                        try
+                        {
+                            StatueOutputDirectory.Create();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(string.Format("Could not create Statue Output Directory '{0}'.", StatueOutputDirectory.FullName), ex);
+                        }
+                    }
+                }
+                if(statueArg == "-createstatues" || statueArg == "-createandreadstatues")
+                {
+                    CreateStatuesOnDisk = true;
+                    StatueOutputDirectory = new DirectoryInfo(Path.Combine(WorkingDirectory.FullName, MonsterCompiler.MonsterDirectoryName, MonsterCompiler.StatueDirectoryName));
+                }
+                if(statueArg == "-readstatues" || statueArg == "-createandreadstatues")
+                {
+                    ReadStatuesFromDisk = true;
+                    if (args.Length >= 5)
+                    {
+                        var statueDir = args[4];
+                        StatueOutputDirectory = new DirectoryInfo(Path.Combine(WorkingDirectory.FullName, statueDir));
+                    }
+                    else
+                    {
+                        StatueOutputDirectory = new DirectoryInfo(Path.Combine(WorkingDirectory.FullName, MonsterCompiler.MonsterDirectoryName, MonsterCompiler.StatueDirectoryName));
+                    }
+                }
+            }
 
             using (TileCompiler = new TileCompiler())
             {

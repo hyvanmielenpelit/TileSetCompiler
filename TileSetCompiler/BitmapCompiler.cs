@@ -128,6 +128,16 @@ namespace TileSetCompiler
             WriteTileNameLine(relativePath, "OK", "OK");
         }
 
+        protected void WriteTileNameStatueSuccessMemory(string relativePathSource, string relativePathDest)
+        {
+            WriteTileNameLine(relativePathDest, "Read statue from memory", "Source: " + relativePathSource);
+        }
+
+        protected void WriteTileNameStatueSuccessDisk(string relativePathSource, string relativePathDest)
+        {
+            WriteTileNameLine(relativePathDest, "Read statue from disk", "Source: " + relativePathSource);
+        }
+
         protected void WriteTileNameErrorFileNotFound(string relativePath, string infoText)
         {
             WriteTileNameLine(relativePath, "File not found", infoText);
