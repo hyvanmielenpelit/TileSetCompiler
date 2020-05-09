@@ -12,8 +12,9 @@ namespace TileSetCompiler
     {
         protected DirectoryInfo BaseDirectory { get; set; }
         protected FileInfo UnknownFile { get; set; }
+        protected StreamWriter TileNameWriter { get; private set; }
 
-        protected BitmapCompiler(string subDirectoryName, string unknownFileName)
+        protected BitmapCompiler(string subDirectoryName, string unknownFileName, StreamWriter tileNameWriter)
         {
             BaseDirectory = new DirectoryInfo(Path.Combine(Program.WorkingDirectory.FullName, subDirectoryName));
             UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
@@ -27,6 +28,8 @@ namespace TileSetCompiler
             {
                 throw new Exception(string.Format("Unknown file '{0}' not found in directory '{1}'.", UnknownFile, BaseDirectory.FullName));
             }
+
+            TileNameWriter = tileNameWriter;
         }
 
         public abstract void CompileOne(string[] splitLine);
@@ -110,6 +113,29 @@ namespace TileSetCompiler
             }
 
             return destImage;
+        }
+
+        protected void WriteTileNameLine(string relativePath, string successText, string infoText)
+        {
+            TileNameWriter.WriteLine(string.Format("{0}\t{1}\t{2}",
+                (relativePath ?? "").Replace("\t","_"),
+                (successText ?? "").Replace("\t", "_"),
+                (infoText ?? "").Replace("\t", "_")));
+        }
+
+        protected void WriteTileNameSuccess(string relativePath)
+        {
+            WriteTileNameLine(relativePath, "OK", "OK");
+        }
+
+        protected void WriteTileNameErrorFileNotFound(string relativePath, string infoText)
+        {
+            WriteTileNameLine(relativePath, "File not found", infoText);
+        }
+
+        protected void WriteTileNameErrorDirectoryNotFound(string relativePath, string infoText)
+        {
+            WriteTileNameLine(relativePath, "Directory not found", infoText);
         }
     }
 }

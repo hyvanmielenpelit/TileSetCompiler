@@ -12,7 +12,7 @@ namespace TileSetCompiler
         const string _unknownFileName = "UnknownArtifact.png";
         const int _lineLength = 3;
 
-        public ArtifactCompiler() : base(_subDirName, _unknownFileName)
+        public ArtifactCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
         {
 
         }
@@ -29,25 +29,30 @@ namespace TileSetCompiler
 
             var dirPath = BaseDirectory.FullName;
             FileInfo usedFile = null;
+            var fileName = name + Program.ImageFileExtension;
+            var relativePath = Path.Combine(_subDirName, fileName);
+
             if (!Directory.Exists(dirPath))
             {
                 Console.WriteLine("Artifact directory '{0}' not found. Using Unknown Artifact icon.", dirPath);
                 usedFile = UnknownFile;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Artifact icon.");
             }
             else
             {
-                var fileName = name + Program.ImageFileExtension;
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
                 if (file.Exists)
                 {
                     usedFile = file;
+                    WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
                     Console.WriteLine("File '{0}' not found. Using Unknown Artifact icon.", file.FullName);
                     usedFile = UnknownFile;
+                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Artifact icon.");
                 }
             }
 

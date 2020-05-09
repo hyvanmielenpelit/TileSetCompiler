@@ -10,6 +10,9 @@ namespace TileSetCompiler
         private static Size _tileSize = new Size(64, 96);
         private static List<int> _tileHeights = new List<int>( new int[] { 96, 72, 48, 36, 24, 18 } );
         private static string _defaultOutputFileName = "gnollhack";
+        private static string _tileNameSuffix = "_tilenames";
+        private static string _tileNameExtension = ".txt";
+
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()
         {
             { 96, new Size (64, 96) },
@@ -29,6 +32,7 @@ namespace TileSetCompiler
         public static Dictionary<int, FileInfo> OutputFiles { get; set; }
         public static string OutputFileName { get; set; }
         public static string OutputFileExtension { get { return ".bmp"; } }
+        public static string TileNameOutputFileName { get; set; }
         public static int TileNumber { get; set; }
         public static int CurX { get; set; }
         public static int CurY { get; set; }
@@ -97,29 +101,37 @@ namespace TileSetCompiler
             {
                 OutputFileName = _defaultOutputFileName;
             }
+            TileNameOutputFileName = OutputFileName + _tileNameSuffix + _tileNameExtension;
 
             InitializeOutputFiles();
 
-            TileCompiler = new TileCompiler();
-
-            try
+            using (TileCompiler = new TileCompiler())
             {
-                InitializeTileSets();
+                try
+                {
+                    InitializeTileSets();
 
-                TileCompiler.Compile();
+                    TileCompiler.Compile();
+                    TileCompiler.Close();
 
-                SaveFiles();
+                    SaveFiles();
 
-                Console.WriteLine("Finished.");
-            }
-            catch
-            {
-                //Error occurred
-                Console.WriteLine("Exiting.");
-            }
-            finally
-            {
-                Console.ReadKey();
+                    Console.WriteLine("Finished.");
+                }
+                catch(Exception ex)
+                {
+                    //Error occurred
+                    Console.WriteLine(string.Format("Exception occurred: {0}", ex.Message));
+                    if(ex.InnerException != null)
+                    {
+                        Console.WriteLine(string.Format("Inner Exception: {0}", ex.InnerException.Message));
+                    }
+                    Console.WriteLine("Exiting.");
+                }
+                finally
+                {
+                    Console.ReadKey();
+                }
             }
         }
 

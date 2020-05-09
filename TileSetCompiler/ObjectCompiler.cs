@@ -10,9 +10,10 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Objects";
         const string _unknownFileName = "UnknownObject.png";
-        const int _lineLength = 4;
+        const int _lineLength = 5;
+        const string _noDescription = "no description";
 
-        public ObjectCompiler() : base(_subDirName, _unknownFileName)
+        public ObjectCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
         {
 
         }
@@ -27,28 +28,51 @@ namespace TileSetCompiler
             var type = splitLine[1];
             var objectType = splitLine[2];
             var name = splitLine[3];
+            var desc = splitLine[4];
 
-            var dirPath = Path.Combine(BaseDirectory.FullName, objectType);
+            var subDir2 = objectType;
+
+            var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
             FileInfo usedFile = null;
+            var objectTypeSingular = objectType.ToLower();
+            if (objectTypeSingular.EndsWith("s"))
+            {
+                objectTypeSingular = objectTypeSingular.Substring(0, objectTypeSingular.Length - 1);
+            }
+
+            string fileName = null;
+            if(string.IsNullOrWhiteSpace(desc) || desc == _noDescription)
+            {
+                fileName = objectTypeSingular + "_" + name.ToLower() + Program.ImageFileExtension;
+            }
+            else
+            {
+                fileName = objectTypeSingular + "_" + desc.ToLower() + Program.ImageFileExtension;
+            }
+            
+            var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+
             if (!Directory.Exists(dirPath))
             {
                 Console.WriteLine("Object directory '{0}' not found. Using Unknown Object icon.", dirPath);
                 usedFile = UnknownFile;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Object icon.");
             }
             else
             {
-                var fileName = objectType.ToLower() + "_" + name.ToLower() + Program.ImageFileExtension;
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
                 if (file.Exists)
                 {
                     usedFile = file;
+                    WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
                     Console.WriteLine("File '{0}' not found. Using Unknown Object icon.", file.FullName);
                     usedFile = UnknownFile;
+                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Object icon.");
                 }
             }
 
