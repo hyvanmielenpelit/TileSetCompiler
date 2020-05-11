@@ -65,15 +65,27 @@ namespace TileSetCompiler
 
             try
             {
-                var dir = new DirectoryInfo(args[0]);
-                if (!dir.Exists)
+                DirectoryInfo[] dirs = new DirectoryInfo[3];
+                dirs[0] = new DirectoryInfo(args[0]);
+                dirs[1] = new DirectoryInfo(args[0].Replace("Jaetut Drivet", "Shared drives"));
+                dirs[2] = new DirectoryInfo(args[0].Replace("Shared drives", "Jaetut Drivet"));
+                DirectoryInfo usedDir = null;
+                foreach(var dir in dirs)
                 {
-                    Console.WriteLine("Input directory '{0}' does not exist.", args[0]);
+                    usedDir = dir;
+                    if(usedDir.Exists)
+                    {
+                        break;
+                    }
+                }
+                if (!usedDir.Exists)
+                {
+                    Console.WriteLine("Input directories '{0}' does not exist.", string.Join<DirectoryInfo>(", ", dirs));
                     Console.ReadKey();
                     return;
                 }
                 Console.WriteLine("Found Directory '{0}'.", args[0]);
-                Program.InputDirectory = dir;
+                Program.InputDirectory = usedDir;
             }
             catch (Exception ex)
             {
