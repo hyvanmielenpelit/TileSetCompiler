@@ -26,11 +26,11 @@ namespace TileSetCompiler
 
             var map = splitLine[1];
             var name = splitLine[2];
-            var subDir2 = map;
+            var subDir2 = map.ToLower().Replace(" ", "_");
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
             FileInfo usedFile = null;
-            var fileName = map.ToLower() + "_" + name.Substring(2).ToLower() + Program.ImageFileExtension;
+            var fileName = map.ToLower().Replace(" ", "_") + "_" + name.Substring(2).ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
 
             if (!Directory.Exists(dirPath))

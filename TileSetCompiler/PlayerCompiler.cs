@@ -31,13 +31,13 @@ namespace TileSetCompiler
             var alignment = splitLine[4];
             var level = splitLine[5]; //Not used for now
 
-            var subDir2 = Path.Combine(race, role.ToLower());
+            var subDir2 = Path.Combine(race.ToLower().Replace(" ", "_"), role.ToLower().Replace(" ", "_"));
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
             FileInfo usedFile = null;
-            string alignmentSuffix = alignment == _alignmantAny ? "" : "_" + alignment;
-            string fileName = race + "_" + role.ToLower() + "_" + gender + alignmentSuffix + Program.ImageFileExtension;
+            string alignmentSuffix = alignment == _alignmantAny ? "" : "_" + alignment.ToLower().Replace(" ", "_");
+            string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + alignmentSuffix + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
 
             if (!Directory.Exists(dirPath))

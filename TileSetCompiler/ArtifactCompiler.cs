@@ -29,7 +29,7 @@ namespace TileSetCompiler
 
             var dirPath = BaseDirectory.FullName;
             FileInfo usedFile = null;
-            var fileName = name + Program.ImageFileExtension;
+            var fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, fileName);
 
             if (!Directory.Exists(dirPath))

@@ -57,7 +57,7 @@ namespace TileSetCompiler
             }            
         }
 
-        private void DrawImage(Bitmap image, Size tileSize, Bitmap tileSet)
+        private void DrawImage(Bitmap image, Size tileSize, Dictionary<TransparencyMode, Bitmap> tileSetDic)
         {
             for (int x = 0; x < image.Width; x++)
             {
@@ -66,14 +66,19 @@ namespace TileSetCompiler
                     int tileSetX = Program.CurX * tileSize.Width + x;
                     int tileSetY = Program.CurY * tileSize.Height + y;
                     Color c = image.GetPixel(x, y);
-                    if(Program.TransparencyMode == TransparencyMode.Color && c.A == 0)
+                    foreach(var kvp in tileSetDic)
                     {
-                        tileSet.SetPixel(tileSetX, tileSetY, TransparencyColor);
-                    }
-                    else
-                    {
-                        tileSet.SetPixel(tileSetX, tileSetY, c);
-                    }
+                        var tpMode = kvp.Key;
+                        var tileSet = kvp.Value;
+                        if (kvp.Key == TransparencyMode.Color && c.A == 0)
+                        {
+                            tileSet.SetPixel(tileSetX, tileSetY, TransparencyColor);
+                        }
+                        else
+                        {
+                            tileSet.SetPixel(tileSetX, tileSetY, c);
+                        }
+                    }                    
                 }
             }
         }

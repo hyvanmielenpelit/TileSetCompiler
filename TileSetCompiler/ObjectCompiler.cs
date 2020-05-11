@@ -30,7 +30,7 @@ namespace TileSetCompiler
             var name = splitLine[3];
             var desc = splitLine[4];
 
-            var subDir2 = objectType;
+            var subDir2 = objectType.ToLower().Replace(" ", "_");
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
             FileInfo usedFile = null;
@@ -43,11 +43,11 @@ namespace TileSetCompiler
             string fileName = null;
             if(string.IsNullOrWhiteSpace(desc) || desc == _noDescription)
             {
-                fileName = objectTypeSingular + "_" + name.ToLower() + Program.ImageFileExtension;
+                fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" + name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             else
             {
-                fileName = objectTypeSingular + "_" + desc.ToLower() + Program.ImageFileExtension;
+                fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" + desc.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);

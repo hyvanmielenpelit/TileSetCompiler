@@ -14,6 +14,11 @@ namespace TileSetCompiler
         private static List<int> _tileHeights = new List<int>( new int[] { 96, 72, 48, 36, 24, 18 } );
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
+        private static Dictionary<TransparencyMode, string> _transparencyModeSuffix = new Dictionary<TransparencyMode, string>()
+        {
+            { TransparencyMode.Color, "_colored" },
+            { TransparencyMode.Real, "_transparent" }
+        };
 
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()
         {
@@ -28,16 +33,15 @@ namespace TileSetCompiler
         //public static DirectoryInfo WorkingDirectory { get; set; }
         public static DirectoryInfo InputDirectory { get; set; }
         public static Size TileSetSize { get; set; }
-        public static Dictionary<int, Bitmap> TileSets { get; set; }
+        public static Dictionary<int, Dictionary<TransparencyMode, Bitmap>> TileSets { get; set; }
         public static string ImageFileExtension { get { return ".png"; } }
         public static Size MaxTileSize { get { return _tileSize; } }
         public static Dictionary<int, Size> TileSizes { get { return _tileSizes; } }
         public static DirectoryInfo OutputDirectory { get; set; }
-        public static Dictionary<int, FileInfo> OutputFiles { get; set; }
+        public static Dictionary<int, Dictionary<TransparencyMode, FileInfo>> OutputFiles { get; set; }
         public static string OutputFileName { get; set; }
         public static string OutputFileExtension { get; set; }
         public static string TileNameOutputFileName { get; set; }
-        public static TransparencyMode TransparencyMode { get; set; }
         public static int TileNumber { get; set; }
         public static int FoundTileNumber { get; set; }
         public static int UnknownTileNumber { get; set; }
@@ -154,35 +158,6 @@ namespace TileSetCompiler
 
             OutputFileExtension = "." + args[3].TrimStart('.').ToLower();
 
-
-            //-----------------------------------------------------------
-            // Fifth argument is the transparency mode: color or real
-            //-----------------------------------------------------------
-
-            if (args.Length < 5)
-            {
-                Console.WriteLine("Too few arguments. The fifth argument must be the transparency mode: color or real.");
-                Console.ReadKey();
-                return;
-            }
-
-            var transparencyModeString = args[4];
-            if(transparencyModeString.ToLower() == "color")
-            {
-                TransparencyMode = TransparencyMode.Color;
-            }
-            else if(transparencyModeString.ToLower() == "real")
-            {
-                TransparencyMode = TransparencyMode.Real;
-            }
-            else
-            {
-                Console.WriteLine("Unknown Transparency Mode '{0}'.", transparencyModeString);
-                Console.ReadKey();
-                return;
-            }
-
-
             InitializeOutputFiles();
 
             using (TileCompiler = new TileCompiler())
@@ -229,21 +204,24 @@ namespace TileSetCompiler
             {
                 var tileHeight = kvp.Key;
                 var tileSet = kvp.Value;
-                var outputFile = OutputFiles[tileHeight];
-
-                try
+                var tpModes = OutputFiles[tileHeight];
+                foreach (var kvp2 in tpModes)
                 {
-                    if (outputFile.Exists)
+                    var outputFile = kvp2.Value;
+                    try
                     {
-                        outputFile.Delete();
-                    }
+                        if (outputFile.Exists)
+                        {
+                            outputFile.Delete();
+                        }
 
-                    tileSet.Save(outputFile.FullName);
+                        tileSet[kvp2.Key].Save(outputFile.FullName);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Saving output file '" + outputFile.FullName + "' failed.", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception("Saving output file '" + outputFile.FullName + "' failed.", ex);
-                }   
             }            
         }
 
@@ -265,25 +243,36 @@ namespace TileSetCompiler
             MaxY = heightInTiles - 1;
             TileSetSize = new Size(widthInTiles, heightInTiles);
 
-            TileSets = new Dictionary<int, Bitmap>();
+            TileSets = new Dictionary<int, Dictionary<TransparencyMode, Bitmap>>();
             foreach (int tileheight in _tileHeights)
             {
                 int bitMapWidth = Program.TileSizes[tileheight].Width * widthInTiles;
                 int bitMapHeight = Program.TileSizes[tileheight].Height * heightInTiles;
 
-                TileSets.Add(tileheight, new Bitmap(bitMapWidth, bitMapHeight));
+                var dic = new Dictionary<TransparencyMode, Bitmap>();
+                foreach(var kvp in _transparencyModeSuffix)
+                {
+                    dic.Add(kvp.Key, new Bitmap(bitMapWidth, bitMapHeight));
+                }
+
+                TileSets.Add(tileheight, dic);
             }
         }
 
         protected static void InitializeOutputFiles()
         {
-            OutputFiles = new Dictionary<int, FileInfo>();
+            OutputFiles = new Dictionary<int, Dictionary<TransparencyMode, FileInfo>>();
 
             foreach (int height in _tileHeights)
             {
                 int width = height / 3 * 2;
-                string filename = string.Format("{0}{1}x{2}{3}", OutputFileName, width, height, OutputFileExtension);
-                OutputFiles.Add(height, new FileInfo(Path.Combine(OutputDirectory.FullName, filename)));
+                var tmModes = new Dictionary<TransparencyMode, FileInfo>();
+                foreach (var kvp in _transparencyModeSuffix)
+                {
+                    string filename = string.Format("{0}{1}x{2}{3}{4}", OutputFileName, width, height, kvp.Value, OutputFileExtension);
+                    tmModes.Add(kvp.Key, new FileInfo(Path.Combine(OutputDirectory.FullName, filename)));
+                }
+                OutputFiles.Add(height, tmModes);
             }
         }
     }

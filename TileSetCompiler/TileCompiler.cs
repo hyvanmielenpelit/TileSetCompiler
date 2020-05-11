@@ -44,12 +44,11 @@ namespace TileSetCompiler
                 {
                     throw new Exception(string.Format("Error deleting TileNameFile '{0}'.", TileNameFile.FullName), ex);
                 }
-
             }
             
             try
             {
-                TileNameWriter = new StreamWriter(TileNameFile.FullName);
+                TileNameWriter = new StreamWriter(new FileStream(TileNameFile.FullName, FileMode.CreateNew, FileAccess.Write, FileShare.None));
             }
             catch(Exception ex)
             {

@@ -54,35 +54,35 @@ namespace TileSetCompiler
             if (type == _miscInvisible)
             {
                 var type2 = splitLine[2];
-                subDir2 = type;
-                fileName = type2 + Program.ImageFileExtension;
+                subDir2 = type.ToLower().Replace(" ", "_");
+                fileName = type2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             else if (type == _miscExplode)
             {
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type, type2);
-                fileName = direction + Program.ImageFileExtension;
+                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
+                fileName = direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             else if (type == _miscZap)
             {
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type, type2);
-                fileName = type2 + "_" + direction + Program.ImageFileExtension;
+                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
+                fileName = type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             else if (type == _miscSwallow)
             {
                 var monster = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type, monster);
-                fileName = monster.ToLower() + "_" + direction + Program.ImageFileExtension;
+                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), monster.ToLower().Replace(" ", "_"));
+                fileName = monster.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
             else if (type == _miscWarning)
             {
                 var level = splitLine[2];
-                subDir2 = type;
-                fileName = level + Program.ImageFileExtension;
+                subDir2 = type.ToLower().Replace(" ", "_");
+                fileName = level.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             }
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);

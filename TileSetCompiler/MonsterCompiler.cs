@@ -63,11 +63,11 @@ namespace TileSetCompiler
             var name = splitLine[3];
             if (type == _type_normal)
             {
-                var subDir2 = Path.Combine(_normalDirName, name.ToLower());
+                var subDir2 = Path.Combine(_normalDirName, name.ToLower().Replace(" ", "_"));
 
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 FileInfo usedMonsterFile = null;
-                var fileName = name.ToLower() + genderSuffix + Program.ImageFileExtension;
+                var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
 
                 if (!Directory.Exists(monsterDirPath))
@@ -102,15 +102,15 @@ namespace TileSetCompiler
             }
             else if (type == _type_statue)
             {
-                var sourceSubDir2 = Path.Combine(_normalDirName, name.ToLower());
+                var sourceSubDir2 = Path.Combine(_normalDirName, name.ToLower().Replace(" ", "_"));
 
                 var sourceMonsterDirPath = Path.Combine(BaseDirectory.FullName, sourceSubDir2);
-                var sourceFileName = name.ToLower() + genderSuffix + Program.ImageFileExtension;
+                var sourceFileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
                 var sourceRelativePath = Path.Combine(_subDirName, sourceSubDir2, sourceFileName);
                 FileInfo sourceFile = new FileInfo(Path.Combine(sourceMonsterDirPath, sourceFileName));
 
-                var destSubDirPath = Path.Combine(_statueDirName, name.ToLower());
-                string destFileName = _type_statue + "_" + name.ToLower() + genderSuffix + Program.ImageFileExtension;
+                var destSubDirPath = Path.Combine(_statueDirName, name.ToLower().Replace(" ", "_"));
+                string destFileName = _type_statue + "_" + name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
                 var destFileRelativePath = Path.Combine(destSubDirPath, destFileName);
 
                 bool isUnknown;
