@@ -18,7 +18,7 @@ namespace TileSetCompiler
         const string _objectType_player = "player";
 
         public FileInfo Manifest { get; private set; }
-        public DirectoryInfo BaseDirectory { get { return Program.WorkingDirectory; } }
+        public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
 
         protected MonsterCompiler MonsterCompiler { get; private set; }
         protected ObjectCompiler ObjectCompiler { get; private set; }
@@ -32,7 +32,7 @@ namespace TileSetCompiler
 
         public TileCompiler()
         {
-            string tileNameFilePath = Path.Combine(Program.OutputDirectory.FullName, Program.TileNameOutputFileName);
+            string tileNameFilePath = Path.Combine(Program.InputDirectory.FullName, Program.TileNameOutputFileName);
             TileNameFile = new FileInfo(tileNameFilePath);
             if (TileNameFile.Exists)
             {

@@ -19,11 +19,11 @@ namespace TileSetCompiler
         {
             if (string.IsNullOrEmpty(subDirName))
             {
-                BaseDirectory = Program.WorkingDirectory;
+                BaseDirectory = Program.InputDirectory;
             }
             else
             {
-                BaseDirectory = new DirectoryInfo(Path.Combine(Program.WorkingDirectory.FullName, subDirName));
+                BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirName));
             }
 
             if(string.IsNullOrEmpty(unknownFileName))

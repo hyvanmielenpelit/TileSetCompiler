@@ -25,7 +25,8 @@ namespace TileSetCompiler
             { 18, new Size (12, 18) }
         };
 
-        public static DirectoryInfo WorkingDirectory { get; set; }
+        //public static DirectoryInfo WorkingDirectory { get; set; }
+        public static DirectoryInfo InputDirectory { get; set; }
         public static Size TileSetSize { get; set; }
         public static Dictionary<int, Bitmap> TileSets { get; set; }
         public static string ImageFileExtension { get { return ".png"; } }
@@ -72,7 +73,7 @@ namespace TileSetCompiler
                     return;
                 }
                 Console.WriteLine("Found Directory '{0}'.", args[0]);
-                Program.WorkingDirectory = dir;
+                Program.InputDirectory = dir;
             }
             catch (Exception ex)
             {
@@ -81,8 +82,6 @@ namespace TileSetCompiler
                 Console.ReadKey();
                 return;
             }
-
-            Directory.SetCurrentDirectory(Program.WorkingDirectory.FullName);
 
 
             //-----------------------------------------------------------
@@ -185,6 +184,7 @@ namespace TileSetCompiler
 
                     SaveFiles();
 
+                    Console.WriteLine("");
                     Console.WriteLine("Total Tiles: {0}", TileNumber);
                     Console.WriteLine("Found Tiles: {0}", FoundTileNumber);
                     Console.WriteLine("Missing Tiles: {0}", UnknownTileNumber);

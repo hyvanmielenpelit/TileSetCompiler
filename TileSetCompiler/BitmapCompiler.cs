@@ -17,7 +17,7 @@ namespace TileSetCompiler
 
         protected BitmapCompiler(string subDirectoryName, string unknownFileName, StreamWriter tileNameWriter)
         {
-            BaseDirectory = new DirectoryInfo(Path.Combine(Program.WorkingDirectory.FullName, subDirectoryName));
+            BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirectoryName));
             UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
 
             if (!BaseDirectory.Exists)

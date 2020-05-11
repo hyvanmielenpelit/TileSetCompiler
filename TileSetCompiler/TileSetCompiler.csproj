@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="GnollHackTileSet\Monsters\statue\" />
     <Folder Include="GnollHackTileSet\Objects\illegal objects\" />
     <Folder Include="GnollHackTileSet\Objects\armor\" />
     <Folder Include="GnollHackTileSet\Objects\miscellaneous items\" />
