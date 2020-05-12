@@ -28,8 +28,9 @@ namespace TileSetCompiler
 
         private static List<OutputFileFormatData> _outputFileFormats = new List<OutputFileFormatData>()
         {
-            new OutputFileFormatData() { Extension = "png", TransparencyMode= TransparencyMode.Real, BitDepth = BitDepth.BitDepth32 },
-            new OutputFileFormatData() { Extension = "bmp", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth24 }
+            new OutputFileFormatData() { Extension = ".png", TransparencyMode= TransparencyMode.Real, BitDepth = BitDepth.BitDepth32 },
+            new OutputFileFormatData() { Extension = ".png", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth32 },
+            new OutputFileFormatData() { Extension = ".bmp", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth24 }
         };
 
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()
@@ -285,10 +286,6 @@ namespace TileSetCompiler
                     var outputTransparencySuffix = _transparencyModeSuffix[outputFileFormat.TransparencyMode];
                     var bitDepthSuffix = _bitDepthSuffix[outputFileFormat.BitDepth];
                     var fileExtension = outputFileFormat.Extension;
-                    if(!fileExtension.StartsWith("."))
-                    {
-                        fileExtension = "." + fileExtension;
-                    }
                     string filename = string.Format("{0}_{1}x{2}{3}{4}{5}", OutputFileName, width, height, outputTransparencySuffix, bitDepthSuffix, fileExtension);
                     outputFormats.Add(outputFileFormat, new FileInfo(Path.Combine(OutputDirectory.FullName, filename)));
                 }
