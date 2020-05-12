@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 
-namespace TileSetCompiler
+namespace TileSetCompiler.Creators
 {
     class StatueCreator
     {

@@ -171,7 +171,10 @@ namespace TileSetCompiler
 
                     SaveFiles();
 
-                    Console.WriteLine("");
+                    Console.WriteLine();
+                    Console.WriteLine("Source Directory: {0}", InputDirectory.FullName);
+                    Console.WriteLine("Target Directory: {0}", OutputDirectory.FullName);
+                    Console.WriteLine();
                     Console.WriteLine("Total Tiles: {0}", TileNumber);
                     Console.WriteLine("Found Tiles: {0}", FoundTileNumber);
                     Console.WriteLine("Missing Tiles: {0}", UnknownTileNumber);

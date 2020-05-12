@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
@@ -118,12 +119,12 @@ namespace TileSetCompiler
                 {
                     if(!isUnknown)
                     {
-                        WriteTileNameStatueSuccess(sourceRelativePath, destFileRelativePath);
+                        WriteTileNameAutogenerationSuccess(sourceRelativePath, destFileRelativePath, type);
                     }
                     else
                     {
                         Console.WriteLine("Monster file '{0}' not found for statue creation. Using Unknown Monster Statue icon.", sourceFile.FullName);
-                        WriteTileNameStatueError(sourceRelativePath, destFileRelativePath);
+                        WriteTileNameAutogenerationError(sourceRelativePath, destFileRelativePath, type);
                     }
                     DrawImageToTileSet(image);
                     IncreaseCurXY();
