@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Data;
 
 namespace TileSetCompiler
 {
@@ -57,7 +58,7 @@ namespace TileSetCompiler
             }            
         }
 
-        private void DrawImage(Bitmap image, Size tileSize, Dictionary<TransparencyMode, Bitmap> tileSetDic)
+        private void DrawImage(Bitmap image, Size tileSize, Dictionary<OutputFileFormatData, Bitmap> tileSetDic)
         {
             for (int x = 0; x < image.Width; x++)
             {
@@ -70,7 +71,7 @@ namespace TileSetCompiler
                     {
                         var tpMode = kvp.Key;
                         var tileSet = kvp.Value;
-                        if (kvp.Key == TransparencyMode.Color && c.A == 0)
+                        if (kvp.Key.TransparencyMode == TransparencyMode.Color && c.A == 0)
                         {
                             tileSet.SetPixel(tileSetX, tileSetY, TransparencyColor);
                         }

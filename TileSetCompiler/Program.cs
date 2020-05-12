@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml.Schema;
+using TileSetCompiler.Data;
 
 namespace TileSetCompiler
 {
@@ -11,13 +12,24 @@ namespace TileSetCompiler
     class Program
     {
         private static Size _tileSize = new Size(64, 96);
-        private static List<int> _tileHeights = new List<int>( new int[] { 96, 72, 48, 36, 24, 18 } );
+        private static List<int> _tileHeights = new List<int>(new int[] { 96, 72, 48, 36, 24, 18 });
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
         private static Dictionary<TransparencyMode, string> _transparencyModeSuffix = new Dictionary<TransparencyMode, string>()
         {
             { TransparencyMode.Color, "_colored" },
             { TransparencyMode.Real, "_transparent" }
+        };
+        private static Dictionary<BitDepth, string> _bitDepthSuffix = new Dictionary<BitDepth, string>()
+        {
+            { BitDepth.BitDepth32, "_32bits" },
+            { BitDepth.BitDepth24, "_24bits" }
+        };
+
+        private static List<OutputFileFormatData> _outputFileFormats = new List<OutputFileFormatData>()
+        {
+            new OutputFileFormatData() { Extension = "png", TransparencyMode= TransparencyMode.Real, BitDepth = BitDepth.BitDepth32 },
+            new OutputFileFormatData() { Extension = "bmp", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth24 }
         };
 
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()
@@ -30,17 +42,17 @@ namespace TileSetCompiler
             { 18, new Size (12, 18) }
         };
 
-        //public static DirectoryInfo WorkingDirectory { get; set; }
+        public static List<OutputFileFormatData> OutputFileFormats { get { return _outputFileFormats; } }
         public static DirectoryInfo InputDirectory { get; set; }
         public static Size TileSetSize { get; set; }
-        public static Dictionary<int, Dictionary<TransparencyMode, Bitmap>> TileSets { get; set; }
+        public static Dictionary<int, Dictionary<OutputFileFormatData, Bitmap>> TileSets { get; set; }
         public static string ImageFileExtension { get { return ".png"; } }
         public static Size MaxTileSize { get { return _tileSize; } }
         public static Dictionary<int, Size> TileSizes { get { return _tileSizes; } }
         public static DirectoryInfo OutputDirectory { get; set; }
-        public static Dictionary<int, Dictionary<TransparencyMode, FileInfo>> OutputFiles { get; set; }
+        public static Dictionary<int, Dictionary<OutputFileFormatData, FileInfo>> OutputFiles { get; set; }
         public static string OutputFileName { get; set; }
-        public static string OutputFileExtension { get; set; }
+        public static List<string> OutputFileExtensions { get; set; }
         public static string TileNameOutputFileName { get; set; }
         public static int TileNumber { get; set; }
         public static int FoundTileNumber { get; set; }
@@ -145,19 +157,6 @@ namespace TileSetCompiler
             TileNameOutputFileName = OutputFileName + _tileNameSuffix + _tileNameExtension;
 
 
-            //-----------------------------------------------------------
-            // Fourth argument is the output file extension: bmp or png
-            //-----------------------------------------------------------
-
-            if (args.Length < 4)
-            {
-                Console.WriteLine("Too few arguments. The fourth argument must be the output file type: bmp or png.");
-                Console.ReadKey();
-                return;
-            }
-
-            OutputFileExtension = "." + args[3].TrimStart('.').ToLower();
-
             InitializeOutputFiles();
 
             using (TileCompiler = new TileCompiler())
@@ -207,9 +206,10 @@ namespace TileSetCompiler
             {
                 var tileHeight = kvp.Key;
                 var tileSet = kvp.Value;
-                var tpModes = OutputFiles[tileHeight];
-                foreach (var kvp2 in tpModes)
+                var outputFormats = OutputFiles[tileHeight];
+                foreach (var kvp2 in outputFormats)
                 {
+                    var outputFormat = kvp2.Key;
                     var outputFile = kvp2.Value;
                     try
                     {
@@ -246,16 +246,26 @@ namespace TileSetCompiler
             MaxY = heightInTiles - 1;
             TileSetSize = new Size(widthInTiles, heightInTiles);
 
-            TileSets = new Dictionary<int, Dictionary<TransparencyMode, Bitmap>>();
+            TileSets = new Dictionary<int, Dictionary<OutputFileFormatData, Bitmap>>();
             foreach (int tileheight in _tileHeights)
             {
                 int bitMapWidth = Program.TileSizes[tileheight].Width * widthInTiles;
                 int bitMapHeight = Program.TileSizes[tileheight].Height * heightInTiles;
 
-                var dic = new Dictionary<TransparencyMode, Bitmap>();
-                foreach(var kvp in _transparencyModeSuffix)
+                var dic = new Dictionary<OutputFileFormatData, Bitmap>();
+                foreach(var outputFormat in OutputFileFormats)
                 {
-                    dic.Add(kvp.Key, new Bitmap(bitMapWidth, bitMapHeight));
+                    Bitmap bmp = null;
+                    if(outputFormat.BitDepth == BitDepth.BitDepth32)
+                    {
+                        bmp = new Bitmap(bitMapWidth, bitMapHeight);
+                    }
+                    else
+                    {
+                        bmp = new Bitmap(bitMapWidth, bitMapHeight, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                    }
+                        
+                    dic.Add(outputFormat, bmp);
                 }
 
                 TileSets.Add(tileheight, dic);
@@ -264,18 +274,25 @@ namespace TileSetCompiler
 
         protected static void InitializeOutputFiles()
         {
-            OutputFiles = new Dictionary<int, Dictionary<TransparencyMode, FileInfo>>();
+            OutputFiles = new Dictionary<int, Dictionary<OutputFileFormatData, FileInfo>>();
 
             foreach (int height in _tileHeights)
             {
                 int width = height / 3 * 2;
-                var tmModes = new Dictionary<TransparencyMode, FileInfo>();
-                foreach (var kvp in _transparencyModeSuffix)
+                var outputFormats = new Dictionary<OutputFileFormatData, FileInfo>();
+                foreach (var outputFileFormat in OutputFileFormats)
                 {
-                    string filename = string.Format("{0}{1}x{2}{3}{4}", OutputFileName, width, height, kvp.Value, OutputFileExtension);
-                    tmModes.Add(kvp.Key, new FileInfo(Path.Combine(OutputDirectory.FullName, filename)));
+                    var outputTransparencySuffix = _transparencyModeSuffix[outputFileFormat.TransparencyMode];
+                    var bitDepthSuffix = _bitDepthSuffix[outputFileFormat.BitDepth];
+                    var fileExtension = outputFileFormat.Extension;
+                    if(!fileExtension.StartsWith("."))
+                    {
+                        fileExtension = "." + fileExtension;
+                    }
+                    string filename = string.Format("{0}_{1}x{2}{3}{4}{5}", OutputFileName, width, height, outputTransparencySuffix, bitDepthSuffix, fileExtension);
+                    outputFormats.Add(outputFileFormat, new FileInfo(Path.Combine(OutputDirectory.FullName, filename)));
                 }
-                OutputFiles.Add(height, tmModes);
+                OutputFiles.Add(height, outputFormats);
             }
         }
     }
