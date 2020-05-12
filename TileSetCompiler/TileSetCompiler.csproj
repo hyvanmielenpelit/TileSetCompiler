@@ -9,25 +9,4 @@
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="GnollHackTileSet\Objects\illegal objects\" />
-    <Folder Include="GnollHackTileSet\Objects\armor\" />
-    <Folder Include="GnollHackTileSet\Objects\miscellaneous items\" />
-    <Folder Include="GnollHackTileSet\Objects\food\" />
-    <Folder Include="GnollHackTileSet\Objects\coins\" />
-    <Folder Include="GnollHackTileSet\Objects\large stones\" />
-    <Folder Include="GnollHackTileSet\Objects\iron balls\" />
-    <Folder Include="GnollHackTileSet\Objects\chains\" />
-    <Folder Include="GnollHackTileSet\Objects\reagents\" />
-    <Folder Include="GnollHackTileSet\Objects\venoms\" />
-    <Folder Include="GnollHackTileSet\Objects\rocks\" />
-    <Folder Include="GnollHackTileSet\Objects\wands\" />
-    <Folder Include="GnollHackTileSet\Objects\spellbooks\" />
-    <Folder Include="GnollHackTileSet\Objects\scrolls\" />
-    <Folder Include="GnollHackTileSet\Objects\potions\" />
-    <Folder Include="GnollHackTileSet\Objects\tools\" />
-    <Folder Include="GnollHackTileSet\Objects\rings\" />
-    <Folder Include="GnollHackTileSet\Objects\weapons\" />
-  </ItemGroup>
-
 </Project>
