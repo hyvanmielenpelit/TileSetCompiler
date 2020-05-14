@@ -16,6 +16,7 @@ namespace TileSetCompiler
         const string _objectType_cmap = "cmap";
         const string _objectType_misc = "misc";
         const string _objectType_player = "player";
+        const string _objectType_cmap_variation = "cmap-variations";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
@@ -129,6 +130,10 @@ namespace TileSetCompiler
                     else if (objectType == _objectType_player)
                     {
                         PlayerCompiler.CompileOne(splitLine);
+                    }
+                    else if (objectType == _objectType_cmap_variation)
+                    {
+                        //TODO
                     }
                     else
                     {

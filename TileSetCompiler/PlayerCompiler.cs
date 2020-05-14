@@ -20,6 +20,7 @@ namespace TileSetCompiler
         {
             MissingPlayerTileCreator = new MissingTileCreator();
             MissingPlayerTileCreator.BackgroundColor = Color.White;
+            MissingPlayerTileCreator.SetTextFont(FontFamily.GenericSansSerif, 10.0f);
         }
 
         public override void CompileOne(string[] splitLine)

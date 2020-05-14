@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TileSetCompiler.Creators;
 
@@ -92,6 +93,27 @@ namespace TileSetCompiler
                 subDir2 = type.ToLower().Replace(" ", "_");
                 fileName = level.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                 name = level;
+            }
+            else
+            {
+                //Other type
+                if(splitLine.Length == 3)
+                {
+                    name = splitLine[2];
+                    subDir2 = type.ToLower().Replace(" ", "_");
+                    fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                }
+                else if (splitLine.Length >= 4)
+                {
+                    var category = splitLine[2];
+                    name = splitLine[3];
+                    subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), category.ToLower().Replace(" ", "_"));
+                    fileName = category.ToLower().Replace(" ", "_") + "_" + name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                }
+                else
+                {
+                    throw new Exception(string.Format("Misc line too short: {0} elements. Line is: '{1}'", splitLine.Length, string.Join(',', splitLine)));
+                }
             }
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);

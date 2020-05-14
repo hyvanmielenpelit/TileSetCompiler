@@ -135,6 +135,54 @@ namespace TileSetCompiler
                     IncreaseCurXY();
                 }
             }
+            else
+            {
+                //Other type
+                var subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), name.ToLower().Replace(" ", "_"));
+                var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
+                var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
+                var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+                var filePath = Path.Combine(monsterDirPath, fileName);
+                FileInfo file = new FileInfo(filePath);
+                bool isTileMissing = false;
+
+                if (!Directory.Exists(monsterDirPath))
+                {
+                    Console.WriteLine("Monster directory '{0}' not found. Creating a Missing Monster Tile.", monsterDirPath);
+                    isTileMissing = true;
+                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating a Missing Monster Tile.");
+                }
+                else
+                {
+
+                    if (file.Exists)
+                    {
+                        WriteTileNameSuccess(relativePath);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
+                        isTileMissing = true;
+                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
+                    }
+                }
+
+                if (!isTileMissing)
+                {
+                    using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                    {
+                        DrawImageToTileSet(image);
+                    }
+                }
+                else
+                {
+                    using (var image = MissingMonsterTileCreator.CreateTile(_missingMonsterTileType, type, name))
+                    {
+                        DrawImageToTileSet(image);
+                    }
+                }
+                IncreaseCurXY();
+            }
         }        
     }
 }
