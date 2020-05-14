@@ -9,36 +9,17 @@ namespace TileSetCompiler.Creators
 {
     class StatueCreator
     {
-        const string _unknownFile = "UnknownStatue.png";
+        const string _missingTileType = "Statue";
+        const string _missingTileSubType = null;
 
         public ColorMatrix GrayScaleMatrix { get; set; }
-        public DirectoryInfo BaseDirectory { get; set; }
-        public FileInfo UnknownFile { get; private set; }
+        public MissingTileCreator MissingStatueTileCreator { get; private set; }
 
-        public StatueCreator(string subDirName = null, string unknownFileName = null)
+        public StatueCreator()
         {
-            if (string.IsNullOrEmpty(subDirName))
-            {
-                BaseDirectory = Program.InputDirectory;
-            }
-            else
-            {
-                BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirName));
-            }
-
-            if(string.IsNullOrEmpty(unknownFileName))
-            {
-                UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, _unknownFile));
-            }
-            else
-            {
-                UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
-            }
-
-            if (!UnknownFile.Exists)
-            {
-                throw new Exception(string.Format("Unknown Statue File '{0}' not found.", UnknownFile.FullName));
-            }
+            MissingStatueTileCreator = new MissingTileCreator();
+            MissingStatueTileCreator.TextColor = Color.Red;
+            MissingStatueTileCreator.Capitalize = true;
 
             float red = 0.8f;
             float green = 0.8f;
@@ -65,40 +46,6 @@ namespace TileSetCompiler.Creators
             //  });
         }
 
-        public void CreateStatue(FileInfo sourceFile, FileInfo destFile, out bool isUnknown)
-        {
-            FileInfo usedSourceFile = null;
-            isUnknown = false;
-            if(!sourceFile.Exists)
-            {
-                usedSourceFile = UnknownFile;
-                isUnknown = true;
-            }
-            else
-            {
-                usedSourceFile = sourceFile;
-            }
-            if(!destFile.Directory.Exists)
-            {
-                try
-                {
-                    destFile.Directory.Create();
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception(string.Format("Creating Directory '{0}' failed.", destFile.Directory.FullName), ex);
-                }
-            }
-
-            using(Bitmap sourceBitmap = (Bitmap)Image.FromFile(usedSourceFile.FullName))
-            {
-                using(Bitmap destBitmap = CreateStatueBitmap(sourceBitmap))
-                {
-                    destBitmap.Save(destFile.FullName);
-                }
-            }
-        }
-
         public Bitmap CreateStatueBitmap(Bitmap sourceBitmap)
         {
             Bitmap destBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
@@ -115,30 +62,24 @@ namespace TileSetCompiler.Creators
             return destBitmap;            
         }
 
-        public Bitmap CreateStatueBitmapFromFile(FileInfo sourceFile, out bool isUnknown)
+        public Bitmap CreateStatueBitmapFromFile(FileInfo sourceFile, string name, out bool isUnknown)
         {
-            FileInfo usedSourceFile = null;
             isUnknown = false;
             if (!sourceFile.Exists)
             {
-                Console.WriteLine("Source File '{0}' not found. Using Unknown Statue file.", sourceFile.FullName);
-                usedSourceFile = UnknownFile;
+                Console.WriteLine("Source File '{0}' not found. Creating Missing Statue file.", sourceFile.FullName);
                 isUnknown = true;
             }
-            else
-            {
-                usedSourceFile = sourceFile;
-            }
-            Bitmap sourceBitmap = (Bitmap)Image.FromFile(usedSourceFile.FullName);
             if (!isUnknown)
             {
-                var statueBitmap = CreateStatueBitmap(sourceBitmap);
-                sourceBitmap.Dispose();
-                return statueBitmap;
+                using (Bitmap sourceBitmap = (Bitmap)Image.FromFile(sourceFile.FullName))
+                {
+                    return CreateStatueBitmap(sourceBitmap);
+                }
             }
             else
             {
-                return sourceBitmap;
+                return MissingStatueTileCreator.CreateTile(_missingTileType, _missingTileSubType, name);
             }
             
         }

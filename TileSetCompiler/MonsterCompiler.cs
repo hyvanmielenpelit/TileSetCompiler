@@ -13,13 +13,12 @@ namespace TileSetCompiler
     class MonsterCompiler : BitmapCompiler
     {
         const string _subDirName = "Monsters";
-        const string _unknownMonsterFileName = "UnknownMonster.png";
-        const string _unknownStatueFileName = "UnknownMonsterStatue.png";
         const int _monsterLineLength = 4;
         const string _type_normal = "normal";
         const string _type_statue = "statue";
         const string _statueDirName = "statues";
         const string _normalDirName = "normal";
+        const string _missingMonsterTileType = "Monster";
 
         private Dictionary<string, string> _genderSuffix = new Dictionary<string, string>()
         {
@@ -31,19 +30,16 @@ namespace TileSetCompiler
         public static string MonsterDirectoryName { get { return _subDirName; } }
         public static string StatueDirectoryName { get { return _statueDirName; } }
 
-        public FileInfo UnknownStatueFile { get; private set; }
         public StatueCreator StatueCreator { get; private set; }
+        protected MissingTileCreator MissingMonsterTileCreator { get; private set; }
 
-        public MonsterCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownMonsterFileName, tileNameWriter)
+        public MonsterCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-            UnknownStatueFile = new FileInfo(Path.Combine(BaseDirectory.FullName, _unknownStatueFileName));
+            MissingMonsterTileCreator = new MissingTileCreator();
+            MissingMonsterTileCreator.TextColor = Color.Red;
+            MissingMonsterTileCreator.Capitalize = true;
 
-            if(!UnknownStatueFile.Exists)
-            {
-                throw new Exception(string.Format("Could not find Unknown Monster Statue icon '{0}'.", UnknownStatueFile.FullName));
-            }
-
-            StatueCreator = new StatueCreator(_subDirName, _unknownStatueFileName);
+            StatueCreator = new StatueCreator();
         }
 
         public override void CompileOne(string[] splitLine)
@@ -67,39 +63,48 @@ namespace TileSetCompiler
                 var subDir2 = Path.Combine(_normalDirName, name.ToLower().Replace(" ", "_"));
 
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                FileInfo usedMonsterFile = null;
                 var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+                var filePath = Path.Combine(monsterDirPath, fileName);
+                FileInfo file = new FileInfo(filePath);
+                bool isTileMissing = false;
 
                 if (!Directory.Exists(monsterDirPath))
                 {
-                    Console.WriteLine("Monster directory '{0}' not found. Using Unknown Monster icon.", monsterDirPath);
-                    usedMonsterFile = UnknownFile;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Monster icon");
+                    Console.WriteLine("Monster directory '{0}' not found. Creating a Missing Monster Tile.", monsterDirPath);
+                    isTileMissing = true;
+                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating a Missing Monster Tile.");
                 }
                 else
                 {
-                    var filePath = Path.Combine(monsterDirPath, fileName);
-                    FileInfo file = new FileInfo(filePath);
 
                     if (file.Exists)
                     {
-                        usedMonsterFile = file;
                         WriteTileNameSuccess(relativePath);
                     }
                     else
                     {
-                        Console.WriteLine("Monster file '{0}' not found. Using Unknown Monster icon.", file.FullName);
-                        usedMonsterFile = UnknownFile;
-                        WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Monster icon");
+                        Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
+                        isTileMissing = true;
+                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
                     }
                 }
 
-                using (var image = new Bitmap(Image.FromFile(usedMonsterFile.FullName)))
+                if(!isTileMissing)
                 {
-                    DrawImageToTileSet(image);
-                    IncreaseCurXY();
+                    using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                    {
+                        DrawImageToTileSet(image);
+                    }
                 }
+                else
+                {
+                    using (var image = MissingMonsterTileCreator.CreateTile(_missingMonsterTileType, "", name))
+                    {
+                        DrawImageToTileSet(image);
+                    }
+                }
+                IncreaseCurXY();
             }
             else if (type == _type_statue)
             {
@@ -115,7 +120,7 @@ namespace TileSetCompiler
                 var destFileRelativePath = Path.Combine(destSubDirPath, destFileName);
 
                 bool isUnknown;
-                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, out isUnknown))
+                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, out isUnknown))
                 {
                     if(!isUnknown)
                     {
@@ -123,7 +128,7 @@ namespace TileSetCompiler
                     }
                     else
                     {
-                        Console.WriteLine("Monster file '{0}' not found for statue creation. Using Unknown Monster Statue icon.", sourceFile.FullName);
+                        Console.WriteLine("Monster file '{0}' not found for statue creation. Creating a Missing Monster Tile.", sourceFile.FullName);
                         WriteTileNameAutogenerationError(sourceRelativePath, destFileRelativePath, type);
                     }
                     DrawImageToTileSet(image);

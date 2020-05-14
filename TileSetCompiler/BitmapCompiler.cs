@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Creators;
 using TileSetCompiler.Data;
 
 namespace TileSetCompiler
@@ -12,25 +13,18 @@ namespace TileSetCompiler
     abstract class BitmapCompiler
     {
         protected DirectoryInfo BaseDirectory { get; set; }
-        protected FileInfo UnknownFile { get; set; }
         protected StreamWriter TileNameWriter { get; private set; }
         protected Color TransparencyColor { get; private set; }
 
-        protected BitmapCompiler(string subDirectoryName, string unknownFileName, StreamWriter tileNameWriter)
+        protected BitmapCompiler(string subDirectoryName, StreamWriter tileNameWriter)
         {
             BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirectoryName));
-            UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
 
             if (!BaseDirectory.Exists)
             {
                 throw new Exception(string.Format("Base directory '{0}' not found.", BaseDirectory.FullName));
             }
                 
-            if (!UnknownFile.Exists)
-            {
-                throw new Exception(string.Format("Unknown file '{0}' not found in directory '{1}'.", UnknownFile, BaseDirectory.FullName));
-            }
-
             TileNameWriter = tileNameWriter;
 
             TransparencyColor = Color.FromArgb(71, 108, 108);

@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
     class ArtifactCompiler : BitmapCompiler
     {
         const string _subDirName = "Artifacts";
-        const string _unknownFileName = "UnknownArtifact.png";
         const int _lineLength = 3;
+        const string _artifactMissingTileType = "Item";
 
-        public ArtifactCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
+        public MissingTileCreator MissingArtifactTileCreator { get; set; }
+
+        public ArtifactCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-
+            MissingArtifactTileCreator = new MissingTileCreator();
         }
 
         public override void CompileOne(string[] splitLine)
@@ -31,36 +34,45 @@ namespace TileSetCompiler
             FileInfo usedFile = null;
             var fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, fileName);
+            var filePath = Path.Combine(dirPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            bool isTileMissing = false;
 
             if (!Directory.Exists(dirPath))
             {
-                Console.WriteLine("Artifact directory '{0}' not found. Using Unknown Artifact icon.", dirPath);
-                usedFile = UnknownFile;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Artifact icon.");
+                Console.WriteLine("Artifact directory '{0}' not found. Creating Missing Artifact icon.", dirPath);
+                isTileMissing = true;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Artifact icon.");
             }
             else
             {
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-
                 if (file.Exists)
                 {
-                    usedFile = file;
                     WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
-                    Console.WriteLine("File '{0}' not found. Using Unknown Artifact icon.", file.FullName);
-                    usedFile = UnknownFile;
-                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Artifact icon.");
+                    Console.WriteLine("File '{0}' not found. Creating Missing Artifact icon.", file.FullName);
+                    isTileMissing = true;
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Artifact icon.");
                 }
             }
 
-            using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+            if(!isTileMissing)
             {
-                DrawImageToTileSet(image);
-                IncreaseCurXY();
+                using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+                {
+                    DrawImageToTileSet(image);
+                }
             }
+            else
+            {
+                using (var image = MissingArtifactTileCreator.CreateTile(_artifactMissingTileType, "", name))
+                {
+                    DrawImageToTileSet(image);
+                }
+            }
+            IncreaseCurXY();
         }
     }
 }

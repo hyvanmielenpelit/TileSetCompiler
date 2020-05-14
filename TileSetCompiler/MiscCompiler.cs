@@ -4,18 +4,19 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
     class MiscCompiler : BitmapCompiler
     {
         const string _subDirName = "Misc";
-        const string _unknownFileName = "UnknownMisc.png";
         const string _miscInvisible = "invisible";
         const string _miscExplode = "explode";
         const string _miscZap = "zap";
         const string _miscSwallow = "swallow";
         const string _miscWarning = "warning";
+        const string _missingTileType = "Misc";
 
         private Dictionary<string, int> _lineLengths = new Dictionary<string, int>()
         {
@@ -26,9 +27,11 @@ namespace TileSetCompiler
             { _miscWarning, 3 }
         };
 
-        public MiscCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
-        {
+        public MissingTileCreator MissingMiscTileCreator { get; set; }
 
+        public MiscCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
+        {
+            MissingMiscTileCreator = new MissingTileCreator();
         }
 
         public override void CompileOne(string[] splitLine)
@@ -51,11 +54,13 @@ namespace TileSetCompiler
 
             string subDir2 = null;
             string fileName = null;
+            string name = "";
             if (type == _miscInvisible)
             {
                 var type2 = splitLine[2];
                 subDir2 = type.ToLower().Replace(" ", "_");
                 fileName = type2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                name = type2;
             }
             else if (type == _miscExplode)
             {
@@ -63,6 +68,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
                 fileName = direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                name = direction;
             }
             else if (type == _miscZap)
             {
@@ -70,6 +76,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
                 fileName = type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                name = type2;
             }
             else if (type == _miscSwallow)
             {
@@ -77,47 +84,58 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), monster.ToLower().Replace(" ", "_"));
                 fileName = monster.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                name = direction;
             }
             else if (type == _miscWarning)
             {
                 var level = splitLine[2];
                 subDir2 = type.ToLower().Replace(" ", "_");
                 fileName = level.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                name = level;
             }
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
             FileInfo usedFile = null;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+            var filePath = Path.Combine(dirPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            bool isTileMissing = false;
 
             if (!Directory.Exists(dirPath))
             {
-                Console.WriteLine("Misc directory '{0}' not found. Using Unknown Misc icon.", dirPath);
-                usedFile = UnknownFile;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Misc icon.");
+                Console.WriteLine("Misc directory '{0}' not found. Creating Missing Misc tile.", dirPath);
+                isTileMissing = true;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Misc tile.");
             }
             else
             {
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-
                 if (file.Exists)
                 {
-                    usedFile = file;
                     WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
-                    Console.WriteLine("File '{0}' not found. Using Unknown Misc icon.", file.FullName);
-                    usedFile = UnknownFile;
-                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Misc icon.");
+                    Console.WriteLine("File '{0}' not found. Creating Missing Misc tile.", file.FullName);
+                    isTileMissing = true;
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Misc tile.");
                 }
             }
 
-            using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+            if(!isTileMissing)
             {
-                DrawImageToTileSet(image);
-                IncreaseCurXY();
+                using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+                {
+                    DrawImageToTileSet(image);
+                }
             }
+            else
+            {
+                using (var image = MissingMiscTileCreator.CreateTile(_missingTileType, type, name))
+                {
+                    DrawImageToTileSet(image);
+                }
+            }
+            IncreaseCurXY();
         }
     }
 }

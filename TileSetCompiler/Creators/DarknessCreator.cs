@@ -8,26 +8,13 @@ namespace TileSetCompiler.Creators
 {
     class DarknessCreator
     {
-        public DirectoryInfo BaseDirectory { get; set; }
-        public FileInfo UnknownFile { get; private set; }
+        public string MissingTileTypeName { get; private set; }
+        public MissingTileCreator MissingDarknessTileCreator { get; set; }
 
-        public DarknessCreator(string subDirName, string unknownFileName)
+        public DarknessCreator(string missingTileTypeName)
         {
-            if (string.IsNullOrEmpty(subDirName))
-            {
-                BaseDirectory = Program.InputDirectory;
-            }
-            else
-            {
-                BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirName));
-            }
-
-            UnknownFile = new FileInfo(Path.Combine(BaseDirectory.FullName, unknownFileName));
-
-            if (!UnknownFile.Exists)
-            {
-                throw new Exception(string.Format("Unknown Statue File '{0}' not found.", UnknownFile.FullName));
-            }
+            MissingTileTypeName = missingTileTypeName;
+            MissingDarknessTileCreator = new MissingTileCreator();
         }
 
         /// <summary>
@@ -58,30 +45,28 @@ namespace TileSetCompiler.Creators
             return destBitmap;
         }
 
-        public Bitmap CreateDarkBitmapFromFile(FileInfo sourceFile, float opacity, out bool isUnknown)
+        public Bitmap CreateDarkBitmapFromFile(FileInfo sourceFile, string name, float opacity, out bool isUnknown)
         {
-            FileInfo usedSourceFile = null;
             isUnknown = false;
             if (!sourceFile.Exists)
             {
-                Console.WriteLine("Source File '{0}' not found. Using Unknown Statue file.", sourceFile.FullName);
-                usedSourceFile = UnknownFile;
+                Console.WriteLine("Source File '{0}' not found. Creating Missing Darkened Tile.", sourceFile.FullName);
                 isUnknown = true;
             }
-            else
-            {
-                usedSourceFile = sourceFile;
-            }
-            Bitmap sourceBitmap = (Bitmap)Image.FromFile(usedSourceFile.FullName);
+            
             if (!isUnknown)
             {
-                var statueBitmap = CreateDarkBitmap(sourceBitmap, opacity);
-                sourceBitmap.Dispose();
-                return statueBitmap;
+                using(Bitmap sourceBitmap = (Bitmap)Image.FromFile(sourceFile.FullName))
+                {
+                    return CreateDarkBitmap(sourceBitmap, opacity);
+                }
             }
             else
             {
-                return sourceBitmap;
+                using (var missingBitmap = MissingDarknessTileCreator.CreateTile(MissingTileTypeName, "Darkened", name))
+                {
+                    return CreateDarkBitmap(missingBitmap, opacity);
+                }
             }
         }
     }

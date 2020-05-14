@@ -30,7 +30,6 @@ namespace TileSetCompiler
         {
             new OutputFileFormatData() { Extension = ".png", TransparencyMode= TransparencyMode.Real, BitDepth = BitDepth.BitDepth32 },
             new OutputFileFormatData() { Extension = ".png", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth32 },
-            new OutputFileFormatData() { Extension = ".bmp", TransparencyMode= TransparencyMode.Color, BitDepth = BitDepth.BitDepth24 }
         };
 
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()

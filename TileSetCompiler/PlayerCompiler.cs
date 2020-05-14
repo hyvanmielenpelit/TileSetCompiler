@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
     class PlayerCompiler : BitmapCompiler
     {
         const string _subDirName = "Player";
-        const string _unknownFileName = "UnknownPlayer.png";
         const int _lineLength = 6;
         const string _alignmantAny = "any";
+        const string _missingTileType = "Player";
 
-        public PlayerCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
+        public MissingTileCreator MissingPlayerTileCreator { get; set; }
+
+        public PlayerCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-
+            MissingPlayerTileCreator = new MissingTileCreator();
+            MissingPlayerTileCreator.BackgroundColor = Color.White;
         }
 
         public override void CompileOne(string[] splitLine)
@@ -35,40 +39,48 @@ namespace TileSetCompiler
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
-            FileInfo usedFile = null;
             string alignmentSuffix = alignment == _alignmantAny ? "" : "_" + alignment.ToLower().Replace(" ", "_");
             string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + alignmentSuffix + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+            var filePath = Path.Combine(dirPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            bool isTileMissing = false;
 
             if (!Directory.Exists(dirPath))
             {
-                Console.WriteLine("Player directory '{0}' not found. Using Unknown Player icon.", dirPath);
-                usedFile = UnknownFile;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Player icon.");
+                Console.WriteLine("Player directory '{0}' not found. Creating Missing Player Tile.", dirPath);
+                isTileMissing = true;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Player Tile.");
             }
             else
             {
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-
                 if (file.Exists)
                 {
-                    usedFile = file;
                     WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
-                    Console.WriteLine("File '{0}' not found. Using Unknown Player icon.", file.FullName);
-                    usedFile = UnknownFile;
-                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Player icon.");
+                    Console.WriteLine("File '{0}' not found. Creating Missing Player Tile.", file.FullName);
+                    isTileMissing = true;
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Player Tile.");
                 }
             }
 
-            using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+            if(!isTileMissing)
             {
-                DrawImageToTileSet(image);
-                IncreaseCurXY();
+                using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                {
+                    DrawImageToTileSet(image);
+                }
             }
+            else
+            {
+                using (var image = MissingPlayerTileCreator.CreateTile(_missingTileType, race, role))
+                {
+                    DrawImageToTileSet(image);
+                }
+            }
+            IncreaseCurXY();
         }
     }
 }

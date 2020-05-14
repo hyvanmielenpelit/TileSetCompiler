@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Text;
+using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
     class ObjectCompiler : BitmapCompiler
     {
         const string _subDirName = "Objects";
-        const string _unknownFileName = "UnknownObject.png";
         const int _lineLength = 5;
         const string _noDescription = "no description";
+        const string _missingTileType = "Item";
 
-        public ObjectCompiler(StreamWriter tileNameWriter) : base(_subDirName, _unknownFileName, tileNameWriter)
+        public MissingTileCreator MissingObjectTileCreator { get; set; }
+
+        public ObjectCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-
+            MissingObjectTileCreator = new MissingTileCreator();
+            MissingObjectTileCreator.TextColor = Color.DarkBlue;
         }
 
         public override void CompileOne(string[] splitLine)
@@ -51,36 +56,45 @@ namespace TileSetCompiler
             }
             
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
+            var filePath = Path.Combine(dirPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            bool isTileMissing = false;
 
             if (!Directory.Exists(dirPath))
             {
-                Console.WriteLine("Object directory '{0}' not found. Using Unknown Object icon.", dirPath);
-                usedFile = UnknownFile;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Using Unknown Object icon.");
+                Console.WriteLine("Object directory '{0}' not found. Creating Missing Object Tile.", dirPath);
+                isTileMissing = true;
+                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Object Tile.");
             }
             else
             {
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-
                 if (file.Exists)
                 {
-                    usedFile = file;
                     WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
-                    Console.WriteLine("File '{0}' not found. Using Unknown Object icon.", file.FullName);
-                    usedFile = UnknownFile;
-                    WriteTileNameErrorFileNotFound(relativePath, "Using Unknown Object icon.");
+                    Console.WriteLine("File '{0}' not found. Creating Missing Object Tile.", file.FullName);
+                    isTileMissing = true;
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Tile.");
                 }
             }
 
-            using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+            if(!isTileMissing)
             {
-                DrawImageToTileSet(image);
-                IncreaseCurXY();
+                using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+                {
+                    DrawImageToTileSet(image);
+                }
             }
+            else
+            {
+                using (var image = MissingObjectTileCreator.CreateTile(_missingTileType, objectTypeSingular, name))
+                {
+                    DrawImageToTileSet(image);
+                }
+            }
+            IncreaseCurXY();
         }
     }
 }
