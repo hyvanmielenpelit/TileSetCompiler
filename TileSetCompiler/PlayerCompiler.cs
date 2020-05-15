@@ -57,6 +57,7 @@ namespace TileSetCompiler
             {
                 if (file.Exists)
                 {
+                    Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
                     WriteTileNameSuccess(relativePath);
                 }
                 else

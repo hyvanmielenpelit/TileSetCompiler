@@ -60,7 +60,7 @@ namespace TileSetCompiler
             {
                 var type2 = splitLine[2];
                 subDir2 = type.ToLower().Replace(" ", "_");
-                fileName = type2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                 name = type2;
             }
             else if (type == _miscExplode)
@@ -68,7 +68,7 @@ namespace TileSetCompiler
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
-                fileName = direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                 name = direction;
             }
             else if (type == _miscZap)
@@ -76,7 +76,7 @@ namespace TileSetCompiler
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
-                fileName = type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                 name = type2;
             }
             else if (type == _miscSwallow)
@@ -84,7 +84,7 @@ namespace TileSetCompiler
                 var monster = splitLine[2];
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), monster.ToLower().Replace(" ", "_"));
-                fileName = monster.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                fileName = monster.ToLower().Replace(" ", "_") + "_" + type.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                 name = direction;
             }
             else if (type == _miscWarning)
@@ -133,6 +133,7 @@ namespace TileSetCompiler
             {
                 if (file.Exists)
                 {
+                    Console.WriteLine("Compiled Misc Tile {0} successfully.", relativePath);
                     WriteTileNameSuccess(relativePath);
                 }
                 else

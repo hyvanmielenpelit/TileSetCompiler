@@ -106,7 +106,7 @@ namespace TileSetCompiler
                 {
                     Console.WriteLine("File '{0}' not found. Creating Missing Cmap tile.", file.FullName);
                     isTileMissing = true;
-                    WriteCmapTileNameErrorFileNotFound(relativePath, "Creating Missing Cmap tile.", desc);
+                    WriteCmapTileNameErrorFileNotFound(relativePath, desc, "Creating Missing Cmap tile.");
                 }
 
                 if (!isTileMissing)
