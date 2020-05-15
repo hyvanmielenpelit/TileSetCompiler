@@ -77,6 +77,7 @@ namespace TileSetCompiler.Creators
                         rotatedBitmap.SetResolution(middleLeftBitmap.HorizontalResolution, middleLeftBitmap.VerticalResolution);
                         using (Graphics gRotatedBitmap = Graphics.FromImage(rotatedBitmap))
                         {
+                            gRotatedBitmap.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                             float middleX = (float)centerBitmap.Width / 2;
                             float middleY = (float)centerBitmap.Height / 2;
                             gRotatedBitmap.TranslateTransform(middleX, middleY);

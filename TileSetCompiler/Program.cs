@@ -297,13 +297,12 @@ namespace TileSetCompiler
         }
 
         //public static string TestSourceFile { get { return @"G:\Jaetut Drivet\Hyvän mielen pelit projektit\GnollHack\Tileset_Test\Objects\missile\weapons\arrow\weapon_arrow_missile_middle-left.png"; } }
-        //public static string TestTargetFile { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test1.png"; } }
         //public static string TestTargetFileFormat { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test-{0}.png"; } }
 
         //private static void TestCode()
         //{
         //    MissileCreator missileCreator = new MissileCreator();
-        //    using(var bmp = new Bitmap(TestSourceFile))
+        //    using (var bmp = new Bitmap(TestSourceFile))
         //    {
         //        using (var bmp2 = missileCreator.CreateMissile(bmp, MissileDirection.TopLeft))
         //        {
@@ -320,7 +319,7 @@ namespace TileSetCompiler
         //    {
         //        File.Delete(filePath);
         //    }
-            
+
         //    bmp.Save(filePath);
         //}
     }
