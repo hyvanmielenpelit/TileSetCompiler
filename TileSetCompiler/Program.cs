@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml.Schema;
+using TileSetCompiler.Creators;
 using TileSetCompiler.Data;
 
 namespace TileSetCompiler
@@ -68,6 +69,9 @@ namespace TileSetCompiler
 
         static void Main(string[] args)
         {
+            //TestCode();
+            //return;
+
             //-----------------------------------------------------------
             // First argument is input directory
             //-----------------------------------------------------------
@@ -291,5 +295,33 @@ namespace TileSetCompiler
                 OutputFiles.Add(height, outputFormats);
             }
         }
+
+        //public static string TestSourceFile { get { return @"G:\Jaetut Drivet\Hyvän mielen pelit projektit\GnollHack\Tileset_Test\Objects\missile\weapons\arrow\weapon_arrow_missile_middle-left.png"; } }
+        //public static string TestTargetFile { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test1.png"; } }
+        //public static string TestTargetFileFormat { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test-{0}.png"; } }
+
+        //private static void TestCode()
+        //{
+        //    MissileCreator missileCreator = new MissileCreator();
+        //    using(var bmp = new Bitmap(TestSourceFile))
+        //    {
+        //        using (var bmp2 = missileCreator.CreateMissile(bmp, MissileDirection.TopLeft))
+        //        {
+        //            SaveTestBitmap(bmp2, "final");
+        //        }
+        //    }
+        //}
+
+        //public static void SaveTestBitmap(Bitmap bmp, string suffix)
+        //{
+        //    string filePath = string.Format(TestTargetFileFormat, suffix);
+
+        //    if (File.Exists(filePath))
+        //    {
+        //        File.Delete(filePath);
+        //    }
+            
+        //    bmp.Save(filePath);
+        //}
     }
 }
