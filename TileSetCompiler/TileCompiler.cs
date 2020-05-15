@@ -25,6 +25,7 @@ namespace TileSetCompiler
         protected ObjectCompiler ObjectCompiler { get; private set; }
         protected ArtifactCompiler ArtifactCompiler { get; private set; }
         protected CmapCompiler CmapCompiler { get; private set; }
+        protected CmapVariationCompiler CmapVariationCompiler { get; private set; }
         protected MiscCompiler MiscCompiler { get; private set; }
         protected PlayerCompiler PlayerCompiler { get; private set; }
 
@@ -60,6 +61,7 @@ namespace TileSetCompiler
             ObjectCompiler = new ObjectCompiler(TileNameWriter);
             ArtifactCompiler = new ArtifactCompiler(TileNameWriter);
             CmapCompiler = new CmapCompiler(TileNameWriter);
+            CmapVariationCompiler = new CmapVariationCompiler(TileNameWriter);
             MiscCompiler = new MiscCompiler(TileNameWriter);
             PlayerCompiler = new PlayerCompiler(TileNameWriter);
 
@@ -133,7 +135,7 @@ namespace TileSetCompiler
                     }
                     else if (objectType == _objectType_cmap_variation)
                     {
-                        //TODO
+                        CmapVariationCompiler.CompileOne(splitLine);
                     }
                     else
                     {
