@@ -33,6 +33,8 @@ namespace TileSetCompiler
         public MiscCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
             MissingMiscTileCreator = new MissingTileCreator();
+            MissingMiscTileCreator.TextColor = Color.Black;
+            MissingMiscTileCreator.BackgroundColor = Color.Azure;
         }
 
         public override void CompileOne(string[] splitLine)
