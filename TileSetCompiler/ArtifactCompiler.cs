@@ -11,7 +11,7 @@ namespace TileSetCompiler
     class ArtifactCompiler : ItemCompiler
     {
         const string _subDirName = "Artifacts";
-        const int _lineLength = 3;
+        const int _lineLength = 6;
         const string _artifactMissingTileType = "Artifact";
         const string _artifactNoDescription = "no base item description";
 
@@ -31,6 +31,17 @@ namespace TileSetCompiler
 
             var type = splitLine[1];
             var name = splitLine[2];
+            var desc = splitLine[3];
+            var desc2 = splitLine[5];
+            var nameOrDesc = name;
+            if(!string.IsNullOrWhiteSpace(desc))
+            {
+                nameOrDesc = desc;
+            }
+            else if (!string.IsNullOrWhiteSpace(desc2))
+            {
+                nameOrDesc = desc2;
+            }
 
             if(!_typeSuffix.ContainsKey(type))
             {
@@ -39,7 +50,7 @@ namespace TileSetCompiler
 
             string direction = null;
 
-            if (type == _objectTypeMissile)
+            if (type == _typeMissile)
             {
                 if (splitLine.Length < 7)
                 {
@@ -52,7 +63,7 @@ namespace TileSetCompiler
                 }
             }
 
-            if (type == _objectTypeMissile && _missileData[direction].Direction.HasValue && direction != _baseMissileDirection)
+            if (type == _typeMissile && _missileData[direction].Direction.HasValue && direction != _baseMissileDirection)
             {
                 //Autogenerate missile icon
                 var subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), name.ToLower().Replace(" ", "_"));
@@ -74,7 +85,7 @@ namespace TileSetCompiler
                 FileInfo file = new FileInfo(filePath);
                 bool isTileMissing = false;
 
-                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, name.ToProperCaseFirst(), missileDirection.Value, out isTileMissing))
+                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection.Value, out isTileMissing))
                 {
                     if (!isTileMissing)
                     {
@@ -90,7 +101,7 @@ namespace TileSetCompiler
                     IncreaseCurXY();
                 }
             }
-            else if (type == _objectTypeMissile)
+            else if (type == _typeMissile)
             {
                 var dirPath = Path.Combine(type.ToLower().Replace(" ", "_"), name.ToLower().Replace(" ", "_"));
                 var fileName = name.ToLower().Replace(" ", "_") +
@@ -102,7 +113,7 @@ namespace TileSetCompiler
                 FileInfo file = new FileInfo(filePath);
                 bool isTileMissing = false;
 
-                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, name.ToProperCaseFirst(), MissileDirection.MiddleLeft, out isTileMissing))
+                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), MissileDirection.MiddleLeft, out isTileMissing))
                 {
                     if (!isTileMissing)
                     {
@@ -158,15 +169,18 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingArtifactTileCreator.CreateTile(_artifactMissingTileType, "", name))
+                    var subType = "";
+                    if(type != _typeNormal)
+                    {
+                        subType = type;
+                    }
+                    using (var image = MissingArtifactTileCreator.CreateTile(_artifactMissingTileType, subType, nameOrDesc))
                     {
                         DrawImageToTileSet(image);
                     }
                 }
                 IncreaseCurXY();
-            }
-
-            
+            }            
         }
     }
 }

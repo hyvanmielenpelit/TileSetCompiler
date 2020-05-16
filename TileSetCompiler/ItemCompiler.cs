@@ -9,9 +9,9 @@ namespace TileSetCompiler
 {
     abstract class ItemCompiler : BitmapCompiler
     {
-        protected const string _objectTypeNormal = "normal";
-        protected const string _objectTypeLit = "lit";
-        protected const string _objectTypeMissile = "missile";
+        protected const string _typeNormal = "normal";
+        protected const string _typeLit = "lit";
+        protected const string _typeMissile = "missile";
         protected const string _missileAutogenerateType = "Missile";
 
         protected Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()

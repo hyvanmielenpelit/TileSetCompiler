@@ -61,7 +61,7 @@ namespace TileSetCompiler
             string subDir2 = null;
             string fileName = null;
 
-            if (type == _objectTypeMissile)
+            if (type == _typeMissile)
             {
                 if (splitLine.Length < 6)
                 {
@@ -74,7 +74,7 @@ namespace TileSetCompiler
                 }
             }
 
-            if (type == _objectTypeMissile && _missileData[direction].Direction.HasValue && direction != _baseMissileDirection)
+            if (type == _typeMissile && _missileData[direction].Direction.HasValue && direction != _baseMissileDirection)
             {
                 //Autogenerate missile icon
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"),
@@ -115,7 +115,7 @@ namespace TileSetCompiler
                     IncreaseCurXY();
                 }               
             }
-            else if (type == _objectTypeMissile)
+            else if (type == _typeMissile)
             {
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"),
                         objectType.ToLower().Replace(" ", "_"),
@@ -191,7 +191,13 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingObjectTileCreator.CreateTile(_missingTileType, objectTypeSingular, nameOrDesc.ToProperCaseFirst()))
+                    var subType = objectTypeSingular;
+                    if(type != _typeNormal)
+                    {
+                        subType += " " + type;
+                    }
+
+                    using (var image = MissingObjectTileCreator.CreateTile(_missingTileType, subType, nameOrDesc.ToProperCaseFirst()))
                     {
                         DrawImageToTileSet(image);
                     }
