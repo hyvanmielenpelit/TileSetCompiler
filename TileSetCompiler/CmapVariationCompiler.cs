@@ -91,21 +91,32 @@ namespace TileSetCompiler
                 var sourceFilePath = Path.Combine(dirPath, sbSourceFileName.ToString());
                 var sourceFile = new FileInfo(sourceFilePath);
 
-                bool isTileMissing;
-                using (var image = DarknessCreator.CreateDarkBitmapFromFile(sourceFile, name, info.Opacity, out isTileMissing))
+                Bitmap sourceBitmap = null;
+                try
                 {
-                    if (!isTileMissing)
-                    {
-                        WriteCmapTileNameAutogenerationSuccess(sourceFilePath, relativePath, _cmapVariationAutogenerationType, null);
-                    }
-                    else
+                    if (!sourceFile.Exists)
                     {
                         Console.WriteLine("Cmap Variation file '{0}' not found for darkness creation. Creating Missing Cmap Variation Tile.", sourceFile.FullName);
                         WriteCmapTileNameAutogenerationError(sourceFilePath, relativePath, _cmapVariationAutogenerationType, null);
+                        sourceBitmap = MissingCmapVariationTileCreator.CreateTile(_missingCmapType, _cmapVariationSubType, name);
                     }
-
-                    DrawImageToTileSet(image);
-                    IncreaseCurXY();
+                    else
+                    {
+                        sourceBitmap = new Bitmap(sourceFile.FullName);
+                    }
+                    using (var image = DarknessCreator.CreateDarkBitmap(sourceBitmap, info.Opacity))
+                    {
+                        WriteCmapTileNameAutogenerationSuccess(sourceFilePath, relativePath, _cmapVariationAutogenerationType, null);
+                        DrawImageToTileSet(image);
+                        IncreaseCurXY();
+                    }
+                }
+                finally
+                {
+                    if(sourceBitmap != null)
+                    {
+                        sourceBitmap.Dispose();
+                    }
                 }
             }
             else

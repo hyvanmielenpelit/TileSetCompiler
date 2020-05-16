@@ -13,7 +13,7 @@ namespace TileSetCompiler
     class Program
     {
         private static Size _tileSize = new Size(64, 96);
-        private static List<int> _tileHeights = new List<int>(new int[] { 96, 72, 48, 36, 24, 18 });
+        private static List<int> _tileHeights = new List<int>(new int[] { 96 }); //, 72, 48, 36, 24, 18
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
         private static Dictionary<TransparencyMode, string> _transparencyModeSuffix = new Dictionary<TransparencyMode, string>()
@@ -35,12 +35,12 @@ namespace TileSetCompiler
 
         private static Dictionary<int, Size> _tileSizes = new Dictionary<int, Size>()
         {
-            { 96, new Size (64, 96) },
-            { 72, new Size (48, 72) },
-            { 48, new Size (32, 48) },
-            { 36, new Size (24, 36) },
-            { 24, new Size (16, 24) },
-            { 18, new Size (12, 18) }
+            { 96, new Size (64, 96) } //,
+            //{ 72, new Size (48, 72) },
+            //{ 48, new Size (32, 48) },
+            //{ 36, new Size (24, 36) },
+            //{ 24, new Size (16, 24) },
+            //{ 18, new Size (12, 18) }
         };
 
         public static List<OutputFileFormatData> OutputFileFormats { get { return _outputFileFormats; } }

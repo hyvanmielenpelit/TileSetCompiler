@@ -71,7 +71,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
                 fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = direction;
+                name = type2 + " " + direction;
             }
             else if (type == _miscZap)
             {
@@ -79,7 +79,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
                 fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = type2;
+                name = type2 + " " + direction;
             }
             else if (type == _miscSwallow)
             {
@@ -87,7 +87,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), monster.ToLower().Replace(" ", "_"));
                 fileName = monster.ToLower().Replace(" ", "_") + "_" + type.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = direction;
+                name = monster + " " + direction;
             }
             else if (type == _miscWarning)
             {
@@ -108,9 +108,10 @@ namespace TileSetCompiler
                 else if (splitLine.Length >= 4)
                 {
                     var category = splitLine[2];
-                    name = splitLine[3];
+                    var name2 = splitLine[3];
                     subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), category.ToLower().Replace(" ", "_"));
-                    fileName = category.ToLower().Replace(" ", "_") + "_" + name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                    fileName = category.ToLower().Replace(" ", "_") + "_" + name2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                    name = category + " " + name2;
                 }
                 else
                 {
