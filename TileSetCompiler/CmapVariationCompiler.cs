@@ -27,6 +27,7 @@ namespace TileSetCompiler
             MissingCmapVariationTileCreator = new MissingTileCreator();
             MissingCmapVariationTileCreator.BackgroundColor = Color.LightGray;
             MissingCmapVariationTileCreator.TextColor = Color.DarkGreen;
+            MissingCmapVariationTileCreator.Capitalize = false;
         }
 
         public override void CompileOne(string[] splitLine)

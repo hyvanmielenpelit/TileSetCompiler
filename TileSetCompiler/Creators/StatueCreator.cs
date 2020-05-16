@@ -18,7 +18,8 @@ namespace TileSetCompiler.Creators
         public StatueCreator()
         {
             MissingStatueTileCreator = new MissingTileCreator();
-            MissingStatueTileCreator.TextColor = Color.Red;
+            MissingStatueTileCreator.TextColor = Color.GhostWhite;
+            MissingStatueTileCreator.BackgroundColor = Color.Gray;
             MissingStatueTileCreator.Capitalize = true;
 
             float red = 0.8f;

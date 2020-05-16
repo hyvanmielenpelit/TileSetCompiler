@@ -191,7 +191,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingObjectTileCreator.CreateTile(_missingTileType, objectTypeSingular, name))
+                    using (var image = MissingObjectTileCreator.CreateTile(_missingTileType, objectTypeSingular, nameOrDesc.ToProperCaseFirst()))
                     {
                         DrawImageToTileSet(image);
                     }
