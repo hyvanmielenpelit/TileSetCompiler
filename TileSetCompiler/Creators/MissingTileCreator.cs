@@ -53,10 +53,9 @@ namespace TileSetCompiler.Creators
                 {
                     sb.AppendLine(capitalize ? subType.ToProperCaseFirst() : subType);
                 }
-                var splitName = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                foreach(var word in splitName)
+                if(!string.IsNullOrWhiteSpace(name))
                 {
-                    sb.AppendLine(capitalize ? word.ToProperCaseFirst() : word);
+                    sb.AppendLine(capitalize ? name.ToProperCase() : name);
                 }
                 var label = sb.ToString();
                 g.DrawString(label, TextFont, textBrush, new RectangleF(PointF.Empty, tileSizeF), sFormat);
