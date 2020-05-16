@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
@@ -77,7 +78,12 @@ namespace TileSetCompiler
             }
             else
             {
-                using (var image = MissingPlayerTileCreator.CreateTile(_missingTileType, race, role))
+                var name = role.ToProperCase() + Environment.NewLine + gender.ToProperCase();
+                if(alignment != _alignmantAny)
+                {
+                    name += Environment.NewLine + alignment.ToProperCase();
+                }
+                using (var image = MissingPlayerTileCreator.CreateTile(_missingTileType, race.ToProperCase(), name))
                 {
                     DrawImageToTileSet(image);
                 }
