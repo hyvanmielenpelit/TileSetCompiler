@@ -28,6 +28,12 @@ namespace TileSetCompiler
             { "base", "" }
         };
 
+        private Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
+        {
+            { "normal", "" },
+            { "ridden", "_ridden" }
+        };
+
         public static string MonsterDirectoryName { get { return _subDirName; } }
         public static string StatueDirectoryName { get { return _statueDirName; } }
 
@@ -143,7 +149,17 @@ namespace TileSetCompiler
                 //Other type
                 var subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), name.ToLower().Replace(" ", "_"));
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
+
+                if(!_typeSuffix.ContainsKey(type))
+                {
+                    throw new Exception(string.Format("Unknown monster type '{0}'.", type));
+                }
+
+                var fileName = name.ToLower().Replace(" ", "_") + 
+                    genderSuffix + 
+                    _typeSuffix[type] +
+                    Program.ImageFileExtension;
+
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(monsterDirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
