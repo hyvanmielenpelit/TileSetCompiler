@@ -2,7 +2,7 @@
   "profiles": {
     "TileSetCompiler": {
       "commandName": "Project",
-      "commandLineArgs": "\"G:\\Jaetut Drivet\\Hyvän mielen pelit projektit\\GnollHack\\Tileset_Test\" ../../../../../../../GnollHackTileSetOutput gnollhack"
+      "commandLineArgs": "\"G:\\Jaetut Drivet\\Hyvän mielen pelit projektit\\GnollHack\\Tileset_Test2\" ../../../../../../../GnollHackTileSetOutput gnollhack"
     }
   }
 }

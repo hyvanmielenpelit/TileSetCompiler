@@ -74,17 +74,20 @@ namespace TileSetCompiler
                 }
             }
 
-            if (type == _typeMissile && _missileData[direction].Direction.HasValue && direction != _baseMissileDirection)
+            if (type == _typeMissile)
             {
                 //Autogenerate missile icon
-                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"),
-                    objectType.ToLower().Replace(" ", "_"),
-                    nameOrDesc.ToLower().Replace(" ", "_"));
+                subDir2 = Path.Combine(_typeNormal,
+                    objectType.ToLower().Replace(" ", "_"));
                     
                 fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
-                    nameOrDesc.ToLower().Replace(" ", "_") +
-                    _typeSuffix[type] +
-                    _missileData[_baseMissileDirection].FileSuffix + Program.ImageFileExtension;
+                    nameOrDesc.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+
+                if(!_missileData.ContainsKey(direction))
+                {
+                    throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction.ToString()));
+                }
+
                 MissileDirection? missileDirection = _missileData[direction].Direction;
 
                 var targetFileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
@@ -114,39 +117,6 @@ namespace TileSetCompiler
                     DrawImageToTileSet(missileBitmap);
                     IncreaseCurXY();
                 }               
-            }
-            else if (type == _typeMissile)
-            {
-                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"),
-                        objectType.ToLower().Replace(" ", "_"),
-                        nameOrDesc.ToLower().Replace(" ", "_"));
-
-                fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
-                    nameOrDesc.ToLower().Replace(" ", "_") +
-                    _typeSuffix[type] +
-                    _missileData[direction].FileSuffix + Program.ImageFileExtension;
-
-                string dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                var relativePath = Path.Combine(_subDirName, subDir2, fileName);
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
-
-                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), MissileDirection.MiddleLeft, out isTileMissing))
-                {
-                    if (!isTileMissing)
-                    {
-                        Console.WriteLine("Compiled Object Missile {0} successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Generated Missing Object Missile {0} Tile.", relativePath);
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Missile Tile.");
-                    }
-                    DrawImageToTileSet(missileBitmap);
-                    IncreaseCurXY();
-                }
             }
             else
             {
@@ -186,7 +156,7 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawImageToTileSet(image);
+                        DrawItemToTileSet(image);
                     }
                 }
                 else

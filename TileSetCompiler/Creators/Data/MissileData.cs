@@ -11,14 +11,14 @@ namespace TileSetCompiler.Creators.Data
 
         }
 
-        public MissileData(string fileSuffix, MissileDirection? direction)
+        public MissileData(string fileSuffix, MissileDirection direction)
         {
             FileSuffix = fileSuffix;
             Direction = direction;
         }
 
         public string FileSuffix { get; set; }
-        public MissileDirection? Direction { get; set; }
+        public MissileDirection Direction { get; set; }
 
     }
 }

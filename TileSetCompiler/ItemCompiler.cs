@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
@@ -23,7 +24,7 @@ namespace TileSetCompiler
 
         protected Dictionary<string, MissileData?> _missileData = new Dictionary<string, MissileData?>()
         {
-            { "generic",  new MissileData("", null) },
+            { "generic",  new MissileData("", MissileDirection.MiddleLeft) },
             { "top-left", new MissileData("_top-left", MissileDirection.TopLeft) },
             { "top-center", new MissileData("_top-center", MissileDirection.TopCenter) },
             { "top-right", new MissileData("_top-right", MissileDirection.TopRight) },
@@ -41,6 +42,21 @@ namespace TileSetCompiler
         protected ItemCompiler(string subDirectoryName, StreamWriter tileNameWriter) : base(subDirectoryName, tileNameWriter)
         {
             ItemMissileCreator = new MissileCreator();
+        }
+
+        protected void DrawItemToTileSet(Bitmap image)
+        {
+            using (Bitmap targetBitmap = new Bitmap(Program.MaxTileSize.Width, Program.MaxTileSize.Height))
+            {
+                targetBitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                using (Graphics gTargetBitmap = Graphics.FromImage(targetBitmap))
+                {
+                    int x = targetBitmap.Width - image.Width;
+                    int y = targetBitmap.Height - image.Height;
+                    gTargetBitmap.DrawImage(image, x, y);
+                    DrawImageToTileSet(targetBitmap);
+                }
+            }            
         }
     }
 }

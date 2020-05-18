@@ -13,6 +13,7 @@ namespace TileSetCompiler
     class Program
     {
         private static Size _tileSize = new Size(64, 96);
+        private static Size _itemSize = new Size(64, 48);
         private static List<int> _tileHeights = new List<int>(new int[] { 96 }); //, 72, 48, 36, 24, 18
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
@@ -49,6 +50,7 @@ namespace TileSetCompiler
         public static Dictionary<int, Dictionary<OutputFileFormatData, Bitmap>> TileSets { get; set; }
         public static string ImageFileExtension { get { return ".png"; } }
         public static Size MaxTileSize { get { return _tileSize; } }
+        public static Size ItemSize { get { return _itemSize; } }
         public static Dictionary<int, Size> TileSizes { get { return _tileSizes; } }
         public static DirectoryInfo OutputDirectory { get; set; }
         public static Dictionary<int, Dictionary<OutputFileFormatData, FileInfo>> OutputFiles { get; set; }
