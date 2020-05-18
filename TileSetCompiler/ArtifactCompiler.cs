@@ -78,16 +78,18 @@ namespace TileSetCompiler
 
                 MissileDirection missileDirection = _missileData[direction].Direction;
 
-                var targetFileName = name.ToLower().Replace(" ", "_") +
-                    _typeSuffix[type] +
-                    _missileData[direction].FileSuffix + Program.ImageFileExtension;
 
                 string dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(dirPath, fileName);
-                var targetSubDir2 = _typeMissile;
-                var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
                 FileInfo file = new FileInfo(filePath);
+
+                var targetSubDir2 = Path.Combine(_typeMissile, name.ToLower().Replace(" ", "_"));
+                var targetFileName = name.ToLower().Replace(" ", "_") +
+                    _typeSuffix[type] +
+                    _missileData[direction].FileSuffix + Program.ImageFileExtension;
+                var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
+
                 bool isTileMissing = false;
 
                 using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
