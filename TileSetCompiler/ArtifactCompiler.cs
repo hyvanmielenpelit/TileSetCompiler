@@ -12,6 +12,7 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Artifacts";
         const int _lineLength = 6;
+        const int _missileLineLength = 7;
         const string _artifactMissingTileType = "Artifact";
         const string _artifactNoDescription = "no base item description";
 
@@ -53,7 +54,7 @@ namespace TileSetCompiler
 
             if (type == _typeMissile)
             {
-                if (splitLine.Length < 7)
+                if (splitLine.Length < _missileLineLength)
                 {
                     throw new Exception(string.Format("Too few elements in a missile line: '{0}'.", string.Join(',', splitLine)));
                 }
@@ -72,7 +73,7 @@ namespace TileSetCompiler
 
                 if (!_missileData.ContainsKey(direction))
                 {
-                    throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction.ToString()));
+                    throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction));
                 }
 
                 MissileDirection missileDirection = _missileData[direction].Direction;

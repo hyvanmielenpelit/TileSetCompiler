@@ -85,10 +85,10 @@ namespace TileSetCompiler
 
                 if(!_missileData.ContainsKey(direction))
                 {
-                    throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction.ToString()));
+                    throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction));
                 }
 
-                MissileDirection? missileDirection = _missileData[direction].Direction;
+                MissileDirection missileDirection = _missileData[direction].Direction;
 
                 var targetFileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
                     nameOrDesc.ToLower().Replace(" ", "_") + 
@@ -102,7 +102,7 @@ namespace TileSetCompiler
                 FileInfo file = new FileInfo(filePath);
                 bool isTileMissing = false;
 
-                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection.Value, out isTileMissing))
+                using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
                 {
                     if(!isTileMissing)
                     {
