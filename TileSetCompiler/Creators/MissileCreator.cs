@@ -43,6 +43,7 @@ namespace TileSetCompiler.Creators
         public MissileCreator()
         {
             MissingMissileTileCreator = new MissingTileCreator();
+            MissingMissileTileCreator.TextColor = Color.Brown;
         }
 
         public Bitmap CreateMissile(Bitmap itemBitmap, MissileDirection direction)

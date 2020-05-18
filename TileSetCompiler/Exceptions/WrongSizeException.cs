@@ -10,7 +10,7 @@ namespace TileSetCompiler.Exceptions
         public Size WrongSize { get; set; }
         public Size RightSize { get; set; }
 
-        public WrongSizeException()
+        public WrongSizeException() : base()
         {
 
         }
