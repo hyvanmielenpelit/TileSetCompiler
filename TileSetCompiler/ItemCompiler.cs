@@ -56,7 +56,7 @@ namespace TileSetCompiler
                     gTargetBitmap.DrawImage(image, x, y);
                     DrawImageToTileSet(targetBitmap);
                 }
-            }            
+            }
         }
     }
 }
