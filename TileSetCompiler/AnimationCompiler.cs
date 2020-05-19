@@ -7,7 +7,7 @@ using TileSetCompiler.Creators;
 
 namespace TileSetCompiler
 {
-    class AnimationCompiler : BitmapCompiler
+    class AnimationCompiler : ItemCompiler
     {
         const string _subDirName = "Animation";
         const int _lineLength = 3;
@@ -64,7 +64,14 @@ namespace TileSetCompiler
             {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
-                    DrawImageToTileSet(image);
+                    if(image.Size == Program.ItemSize)
+                    {
+                        DrawItemToTileSet(image);
+                    }
+                    else
+                    {
+                        DrawImageToTileSet(image);
+                    }
                 }
             }
             else
