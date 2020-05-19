@@ -10,13 +10,15 @@ namespace TileSetCompiler
     class TileCompiler : IDisposable
     {
         const string _manifestFile = "tile_definition.csv";
-        const string _objectType_monster = "monsters";
-        const string _objectType_object = "objects";
-        const string _objectType_artifact = "artifacts";
-        const string _objectType_cmap = "cmap";
-        const string _objectType_misc = "misc";
-        const string _objectType_player = "player";
-        const string _objectType_cmap_variation = "cmap-variations";
+        const string _tileType_monster = "monsters";
+        const string _tileType_object = "objects";
+        const string _tileType_artifact = "artifacts";
+        const string _tileType_cmap = "cmap";
+        const string _tileType_misc = "misc";
+        const string _tileType_player = "player";
+        const string _tileType_cmap_variation = "cmap-variations";
+        const string _tileType_UI = "user-interface";
+        const string _tileType_animation = "animation";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
@@ -28,6 +30,8 @@ namespace TileSetCompiler
         protected CmapVariationCompiler CmapVariationCompiler { get; private set; }
         protected MiscCompiler MiscCompiler { get; private set; }
         protected PlayerCompiler PlayerCompiler { get; private set; }
+        protected UICompiler UICompiler { get; private set; }
+        protected AnimationCompiler AnimationCompiler { get; private set; }
 
         public FileInfo TileNameFile { get; set; }
         public StreamWriter TileNameWriter { get; private set; }
@@ -64,6 +68,8 @@ namespace TileSetCompiler
             CmapVariationCompiler = new CmapVariationCompiler(TileNameWriter);
             MiscCompiler = new MiscCompiler(TileNameWriter);
             PlayerCompiler = new PlayerCompiler(TileNameWriter);
+            UICompiler = new UICompiler(TileNameWriter);
+            AnimationCompiler = new AnimationCompiler(TileNameWriter);
 
             string manifestPath = Path.Combine(BaseDirectory.FullName, _manifestFile);
             Manifest = new FileInfo(manifestPath);
@@ -76,9 +82,7 @@ namespace TileSetCompiler
             if (!Manifest.Exists)
             {
                 throw new Exception(string.Format("Manifest File '{0}' not found.", Manifest.FullName));
-            }
-
-            
+            }            
         }
 
         public int GetTileNumber()
@@ -107,39 +111,47 @@ namespace TileSetCompiler
                 while ((line = stream.ReadLine()) != null)
                 {
                     var splitLine = line.Split(',');
-                    var objectType = splitLine[0];
+                    var tileType = splitLine[0];
 
-                    if (objectType == _objectType_monster)
+                    if (tileType == _tileType_monster)
                     {
                         MonsterCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_object)
+                    else if (tileType == _tileType_object)
                     {
                         ObjectCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_artifact)
+                    else if (tileType == _tileType_artifact)
                     {
                         ArtifactCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_cmap)
+                    else if (tileType == _tileType_cmap)
                     {
                         CmapCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_misc)
+                    else if (tileType == _tileType_misc)
                     {
                         MiscCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_player)
+                    else if (tileType == _tileType_player)
                     {
                         PlayerCompiler.CompileOne(splitLine);
                     }
-                    else if (objectType == _objectType_cmap_variation)
+                    else if (tileType == _tileType_cmap_variation)
                     {
                         CmapVariationCompiler.CompileOne(splitLine);
                     }
+                    else if (tileType == _tileType_UI)
+                    {
+                        UICompiler.CompileOne(splitLine);
+                    }
+                    else if (tileType == _tileType_animation)
+                    {
+                        AnimationCompiler.CompileOne(splitLine);
+                    }
                     else
                     {
-                        throw new Exception(string.Format("Unknown object type '{0}' in line '{1}'.", objectType, line));
+                        throw new Exception(string.Format("Unknown tile type '{0}' in line '{1}'.", tileType, line));
                     }
                 }
 

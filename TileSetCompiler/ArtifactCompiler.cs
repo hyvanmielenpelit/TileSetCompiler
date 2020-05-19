@@ -128,7 +128,7 @@ namespace TileSetCompiler
                 {
                     if (file.Exists)
                     {
-                        Console.WriteLine("Compiled Artifact {0} successfully.", relativePath);
+                        Console.WriteLine("Compiled Artifact '{0}' successfully.", relativePath);
                         WriteTileNameSuccess(relativePath);
                     }
                     else
