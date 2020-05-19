@@ -28,6 +28,8 @@ namespace TileSetCompiler
             MissingUITileCreator.BackgroundColor = Color.Gray;
 
             MissingUISubTileCreator = new MissingSubTileCreator();
+            MissingUISubTileCreator.TextColor = Color.Yellow;
+            MissingUISubTileCreator.BackgroundColor = Color.Gray;
         }
 
         public override void CompileOne(string[] splitLine)
@@ -144,19 +146,30 @@ namespace TileSetCompiler
                         {
                             using (var subTileBitmap = new Bitmap(Image.FromFile(file.FullName)))
                             {
-                                if(subTileBitmap.Size != subTileSize)
+                                if (subTileBitmap.Size != subTileSize)
                                 {
                                     throw new WrongSizeException(subTileBitmap.Size, subTileSize, string.Format("Image File '{0}' is of wrong size ({1}x{2}, when the right is {3}x{4}).",
                                         file.FullName, subTileBitmap.Width, subTileBitmap.Height, subTileSize.Width, subTileSize.Height));
                                 }
+
                                 DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
-                            }
+                            }                                                     
                         }
                         else
                         {
-                            using (var subTileBitmap = MissingUISubTileCreator.CreateSubTile(subTileSize, subTileName))
+                            if (subTileSize == Program.MaxTileSize)
                             {
-                                DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
+                                using (var subTileBitmap = MissingUITileCreator.CreateTile(_missingUIType, type.ToProperCase() + Environment.NewLine + tileName.ToProperCase(), subTileName))
+                                {
+                                    DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
+                                }
+                            }
+                            else
+                            {
+                                using (var subTileBitmap = MissingUISubTileCreator.CreateSubTile(subTileSize, subTileName))
+                                {
+                                    DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
+                                }
                             }
                         }
                     }
