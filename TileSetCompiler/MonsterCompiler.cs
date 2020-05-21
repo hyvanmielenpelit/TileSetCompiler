@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Exceptions;
 using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
@@ -14,7 +15,7 @@ namespace TileSetCompiler
     class MonsterCompiler : BitmapCompiler
     {
         const string _subDirName = "Monsters";
-        const int _monsterLineLength = 4;
+        const int _monsterLineLength = 7;
         const string _type_normal = "normal";
         const string _type_statue = "statue";
         const string _statueDirName = "statues";
@@ -67,6 +68,11 @@ namespace TileSetCompiler
 
             var type = splitLine[2];
             var name = splitLine[3];
+            var widthInTiles = int.Parse(splitLine[4]);
+            var heightInTiles = int.Parse(splitLine[5]);
+            var mainTileAligntmentInt = int.Parse(splitLine[6]);
+            MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAligntmentInt;
+
             if (type == _type_normal)
             {
                 var subDir2 = name.ToLower().Replace(" ", "_");
@@ -104,7 +110,13 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        CropAndDrawImageToTileSet(image);
+                        if(image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
+                        {
+                            throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
+                                string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
+                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, image.Height != heightInTiles * Program.MaxTileSize.Height));
+                        }
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
                         StoreTileFile(file);
                     }
                 }
@@ -194,7 +206,14 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawImageToTileSet(image);
+                        if (image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
+                        {
+                            throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
+                                string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
+                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, image.Height != heightInTiles * Program.MaxTileSize.Height));
+                        }
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
+                        StoreTileFile(file);
                     }
                 }
                 else

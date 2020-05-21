@@ -82,6 +82,8 @@ namespace TileSetCompiler
             }
             var tilePosition = (EnlargementTilePosition)tilePositionIndex;
 
+            var targetPathRelative = Path.Combine(_subDirName, enlargementName, tilePositionName + Program.ImageFileExtension);
+
             if (Program.TileFiles.ContainsKey(originalTileIndex))
             {
                 //The original tile exists
@@ -188,6 +190,9 @@ namespace TileSetCompiler
                     int x = xTile * Program.MaxTileSize.Width;
                     int y = yTile * Program.MaxTileSize.Height;
 
+                    var sourcePathRelative = Path.GetRelativePath(Program.InputDirectory.FullName, originalTileFile.FullName);
+                    Console.WriteLine("Compiled Enlargement '{0}' successfully.", targetPathRelative);
+                    WriteTileNameAutogenerationSuccess(sourcePathRelative, targetPathRelative, "Enlargement");
                     CropAndDrawImageToTileSet(originalImage, new Point(x, y), Program.MaxTileSize);
                     IncreaseCurXY();
                 }
@@ -195,6 +200,9 @@ namespace TileSetCompiler
             else
             {
                 //The original tile is missing
+                Console.WriteLine("Original File ID '{0}' not found. Creating Missing Enlargement Tile.", originalTileIndex);
+                WriteTileNameAutogenerationError("Tile Index: " + originalTileIndex.ToString(), targetPathRelative, "Enlargement");
+
                 using (var image = MissingEnlargementCreator.CreateTileWithTextLines(_missingAnimationType, enlargementName, tilePositionName))
                 {
                     DrawImageToTileSet(image);

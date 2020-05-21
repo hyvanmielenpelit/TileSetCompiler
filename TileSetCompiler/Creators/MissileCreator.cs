@@ -48,70 +48,106 @@ namespace TileSetCompiler.Creators
 
         public Bitmap CreateMissile(Bitmap itemBitmap, MissileDirection direction)
         {
-            if(itemBitmap.Size != Program.ItemSize)
-            {
-                throw new WrongSizeException(itemBitmap.Size, Program.ItemSize, "itemBitmap Size is wrong.");
-            }
-
             MissileBitmapTransformation transformation = _transformations[direction];
-
             Bitmap targetBitmap = new Bitmap(Program.MaxTileSize.Width, Program.MaxTileSize.Height);
             targetBitmap.SetResolution(itemBitmap.HorizontalResolution, itemBitmap.VerticalResolution);
 
-            using (Graphics gTargetBitmap = Graphics.FromImage(targetBitmap))
+            if (itemBitmap.Size == Program.ItemSize)
             {
-                if (transformation.Rotation == 0f)
+                using (Graphics gTargetBitmap = Graphics.FromImage(targetBitmap))
                 {
-                    int x = (targetBitmap.Width - itemBitmap.Width) / 2;
-                    int y = (targetBitmap.Height - itemBitmap.Height) / 2;
-                    gTargetBitmap.DrawImage(itemBitmap, x, y);
-                    if (transformation.FlipHorizontally)
+                    if (transformation.Rotation == 0f)
                     {
-                        targetBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                    }
-                    return targetBitmap;
-                }
-                else
-                {
-                    //Create square bitmap
-                    int sideLength = Math.Min(Program.MaxTileSize.Width, Program.MaxTileSize.Height);
-                    using (Bitmap centerBitmap = new Bitmap(sideLength, sideLength))
-                    {
-                        centerBitmap.SetResolution(itemBitmap.HorizontalResolution, itemBitmap.VerticalResolution);
-                        using (Graphics gCenterBitmap = Graphics.FromImage(centerBitmap))
-                        {
-                            int x = (centerBitmap.Width - itemBitmap.Width) / 2;
-                            int y = (centerBitmap.Height - itemBitmap.Height) / 2;
-                            gCenterBitmap.DrawImage(itemBitmap, x, y);
-                        }
+                        int x = (targetBitmap.Width - itemBitmap.Width) / 2;
+                        int y = (targetBitmap.Height - itemBitmap.Height) / 2;
+                        gTargetBitmap.DrawImage(itemBitmap, x, y);
                         if (transformation.FlipHorizontally)
                         {
-                            centerBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                            targetBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
                         }
-                        using (Bitmap rotatedBitmap = new Bitmap(centerBitmap.Width, centerBitmap.Height))
+                        return targetBitmap;
+                    }
+                    else
+                    {
+                        //Create square bitmap
+                        int sideLength = Math.Min(Program.MaxTileSize.Width, Program.MaxTileSize.Height);
+                        using (Bitmap centerBitmap = new Bitmap(sideLength, sideLength))
                         {
-                            rotatedBitmap.SetResolution(itemBitmap.HorizontalResolution, itemBitmap.VerticalResolution);
-                            using (Graphics gRotatedBitmap = Graphics.FromImage(rotatedBitmap))
+                            centerBitmap.SetResolution(itemBitmap.HorizontalResolution, itemBitmap.VerticalResolution);
+                            using (Graphics gCenterBitmap = Graphics.FromImage(centerBitmap))
                             {
-                                gRotatedBitmap.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                                float middleX = (float)centerBitmap.Width / 2;
-                                float middleY = (float)centerBitmap.Height / 2;
-                                gRotatedBitmap.TranslateTransform(middleX, middleY);
-                                gRotatedBitmap.RotateTransform(transformation.Rotation);
-                                gRotatedBitmap.TranslateTransform(-1 * middleX, -1 * middleY);
-                                gRotatedBitmap.DrawImage(centerBitmap, new Point(0, 0));
-
-                                int x = (targetBitmap.Width - rotatedBitmap.Width) / 2;
-                                int y = (targetBitmap.Height - rotatedBitmap.Height) / 2;
-                                gTargetBitmap.DrawImage(rotatedBitmap, x, y);
-                                return targetBitmap;
+                                int x = (centerBitmap.Width - itemBitmap.Width) / 2;
+                                int y = (centerBitmap.Height - itemBitmap.Height) / 2;
+                                gCenterBitmap.DrawImage(itemBitmap, x, y);
                             }
+                            RotateSquareBitmap(targetBitmap, gTargetBitmap, centerBitmap, transformation);
+                            return targetBitmap;
                         }
-
                     }
                 }
             }
-            
+            else if(itemBitmap.Size == Program.MaxTileSize)
+            {
+                using (Graphics gTargetBitmap = Graphics.FromImage(targetBitmap))
+                {
+                    if (transformation.Rotation == 0f)
+                    {
+                        gTargetBitmap.DrawImage(itemBitmap, 0, 0);
+                        if (transformation.FlipHorizontally)
+                        {
+                            targetBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                        }
+                        return targetBitmap;
+                    }
+                    else
+                    {
+                        //Create square bitmap
+                        int sideLength = Math.Min(Program.MaxTileSize.Width, Program.MaxTileSize.Height);
+                        int x = (itemBitmap.Width- sideLength) / 2;
+                        int y = (itemBitmap.Height - sideLength) / 2;
+                        using (Bitmap centerBitmap = itemBitmap.Clone(new Rectangle(new Point(x, y), new Size(sideLength, sideLength)), itemBitmap.PixelFormat))
+                        {
+                            centerBitmap.SetResolution(itemBitmap.HorizontalResolution, itemBitmap.VerticalResolution);
+                            using (Graphics gCenterBitmap = Graphics.FromImage(centerBitmap))
+                            {
+                                gCenterBitmap.DrawImage(itemBitmap, x, y);
+                            }
+                            RotateSquareBitmap(targetBitmap, gTargetBitmap, centerBitmap, transformation);
+                            return targetBitmap;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception(string.Format("Image for missile creations is of wrong size: {0}x{1}.", itemBitmap.Width, itemBitmap.Height));
+            }            
+        }
+
+        private void RotateSquareBitmap(Bitmap targetBitmap, Graphics gTargetBitmap, Bitmap centerBitmap, MissileBitmapTransformation transformation)
+        {
+            if (transformation.FlipHorizontally)
+            {
+                centerBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            }
+            using (Bitmap rotatedBitmap = new Bitmap(centerBitmap.Width, centerBitmap.Height))
+            {
+                rotatedBitmap.SetResolution(centerBitmap.HorizontalResolution, centerBitmap.VerticalResolution);
+                using (Graphics gRotatedBitmap = Graphics.FromImage(rotatedBitmap))
+                {
+                    gRotatedBitmap.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    float middleX = (float)centerBitmap.Width / 2;
+                    float middleY = (float)centerBitmap.Height / 2;
+                    gRotatedBitmap.TranslateTransform(middleX, middleY);
+                    gRotatedBitmap.RotateTransform(transformation.Rotation);
+                    gRotatedBitmap.TranslateTransform(-1 * middleX, -1 * middleY);
+                    gRotatedBitmap.DrawImage(centerBitmap, new Point(0, 0));
+
+                    int x = (targetBitmap.Width - rotatedBitmap.Width) / 2;
+                    int y = (targetBitmap.Height - rotatedBitmap.Height) / 2;
+                    gTargetBitmap.DrawImage(rotatedBitmap, x, y);
+                }
+            }
         }
 
         public Bitmap CreateMissileFromFile(FileInfo file, string name, MissileDirection direction, out bool isMissing)

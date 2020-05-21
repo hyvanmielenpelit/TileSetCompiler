@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Data;
@@ -18,15 +19,8 @@ namespace TileSetCompiler
 
         protected BitmapCompiler(string subDirectoryName, StreamWriter tileNameWriter)
         {
-            BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirectoryName));
-
-            if (!BaseDirectory.Exists)
-            {
-                throw new Exception(string.Format("Base directory '{0}' not found.", BaseDirectory.FullName));
-            }
-                
+            BaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, subDirectoryName));                
             TileNameWriter = tileNameWriter;
-
             TransparencyColor = Color.FromArgb(71, 108, 108);
         }
 
@@ -104,6 +98,74 @@ namespace TileSetCompiler
                 }
             }
         }
+
+        protected void DrawMainTileToTileSet(Bitmap image, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment)
+        {
+            int xTile = 0;
+            int yTile = 0;
+            if(widthInTiles == 1 && heightInTiles == 1)
+            {
+                DrawImageToTileSet(image);
+                return;
+            }
+            else if(widthInTiles == 1 && heightInTiles == 2)
+            {
+                xTile = 0;
+                yTile = 1;
+            }
+            else if(widthInTiles == 2)
+            {
+                if (mainTileAlignment == MainTileAlignment.Left)
+                {
+                    xTile = 0;
+                }
+                else
+                {
+                    xTile = 1;
+                }
+                if (heightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else if(heightInTiles == 2)
+                {
+                    yTile = 1;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else if (widthInTiles == 3)
+            {
+                xTile = 1;
+                if (heightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else if (heightInTiles == 2)
+                {
+                    yTile = 1;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            int x = xTile * Program.MaxTileSize.Width;
+            int y = yTile * Program.MaxTileSize.Height;
+
+            using (var croppedBitmap = image.Clone(new Rectangle(new Point(x, y), Program.MaxTileSize), image.PixelFormat))
+            {
+                DrawImageToTileSet(croppedBitmap);
+            }
+        }
+
 
         protected void DrawImageToTileSet(Bitmap image)
         {

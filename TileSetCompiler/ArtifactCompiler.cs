@@ -11,8 +11,7 @@ namespace TileSetCompiler
     class ArtifactCompiler : ItemCompiler
     {
         const string _subDirName = "Artifacts";
-        const int _lineLength = 6;
-        const int _missileLineLength = 7;
+        const int _lineLength = 10;
         const string _artifactMissingTileType = "Artifact";
         const string _artifactNoDescription = "no base item description";
 
@@ -51,19 +50,29 @@ namespace TileSetCompiler
             }
 
             string direction = null;
+            bool isFullSizeBitmap = true;
 
             if (type == _typeMissile)
             {
-                if (splitLine.Length < _missileLineLength)
-                {
-                    throw new Exception(string.Format("Too few elements in a missile line: '{0}'.", string.Join(',', splitLine)));
-                }
                 direction = splitLine[6];
                 if (!_missileData.ContainsKey(direction))
                 {
                     throw new Exception(string.Format("Invalid direction '{0}'. Line: '{1}'.", direction, string.Join(',', splitLine)));
                 }
             }
+            else
+            {
+                isFullSizeBitmap = int.Parse(splitLine[6]) > 0;
+            }
+
+            int widthInTiles = int.Parse(splitLine[7]);
+            int heightInTiles = int.Parse(splitLine[8]);
+            int mainTileAlignmentInt = int.Parse(splitLine[9]);
+            if (!Enum.IsDefined(typeof(MainTileAlignment), mainTileAlignmentInt))
+            {
+                throw new Exception(string.Format("MainTileAlignment '{0}' is invalid. Should be 0 or 1.", mainTileAlignmentInt));
+            }
+            MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
             if (type == _typeMissile)
             {
@@ -145,7 +154,7 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawItemToTileSet(image);
+                        DrawItemToTileSet(image, isFullSizeBitmap);
                         StoreTileFile(file);
                     }
                 }
