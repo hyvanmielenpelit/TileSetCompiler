@@ -92,6 +92,7 @@ namespace TileSetCompiler
                     }
 
                     DrawImageToTileSet(image);
+                    StoreTileFile(sourceFile);
                     IncreaseCurXY();
                 }
             }
@@ -115,6 +116,7 @@ namespace TileSetCompiler
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         DrawImageToTileSet(image);
+                        StoreTileFile(file);
                     }
                 }
                 else

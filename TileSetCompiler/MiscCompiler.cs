@@ -120,7 +120,6 @@ namespace TileSetCompiler
             }
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-            FileInfo usedFile = null;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
@@ -149,9 +148,10 @@ namespace TileSetCompiler
 
             if(!isTileMissing)
             {
-                using (var image = new Bitmap(Image.FromFile(usedFile.FullName)))
+                using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     DrawImageToTileSet(image);
+                    StoreTileFile(file);
                 }
             }
             else

@@ -11,9 +11,17 @@ namespace TileSetCompiler
     class PlayerCompiler : BitmapCompiler
     {
         const string _subDirName = "Player";
-        const int _lineLength = 6;
+        const int _lineLength = 7;
         const string _alignmantAny = "any";
         const string _missingTileType = "Player";
+        const string _typeNormal = "normal";
+
+        private Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
+        {
+            { "normal", "" },
+            { "body", "_body" },
+            { "attack", "_attack" }
+        };
 
         public MissingTileCreator MissingPlayerTileCreator { get; set; }
 
@@ -31,18 +39,28 @@ namespace TileSetCompiler
                 throw new Exception(string.Format("Player line '{0}' has too few elements.", string.Join(',', splitLine)));
             }
 
-            var role = splitLine[1];
-            var race = splitLine[2];
-            var gender = splitLine[3];
-            var alignment = splitLine[4];
-            var level = splitLine[5]; //Not used for now
+            var type = splitLine[1];
+
+            if(!_typeSuffix.ContainsKey(type))
+            {
+                throw new Exception(string.Format("Player Type '{0}' not found in _typeSuffix. Line: {1}", type, string.Join(',', splitLine)));
+            }
+
+            var typeSuffix = _typeSuffix[type];
+
+            var role = splitLine[2];
+            var race = splitLine[3];
+            var gender = splitLine[4];
+            var alignment = splitLine[5];
+            var level = splitLine[6]; //Not used for now
 
             var subDir2 = Path.Combine(race.ToLower().Replace(" ", "_"), role.ToLower().Replace(" ", "_"));
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
             string alignmentSuffix = alignment == _alignmantAny ? "" : "_" + alignment.ToLower().Replace(" ", "_");
-            string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + alignmentSuffix + Program.ImageFileExtension;
+            string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + 
+                alignmentSuffix + typeSuffix + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
@@ -73,17 +91,16 @@ namespace TileSetCompiler
             {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
-                    DrawImageToTileSet(image);
+                    CropAndDrawImageToTileSet(image);
+                    StoreTileFile(file);
                 }
             }
             else
             {
-                var name = role.ToProperCase() + Environment.NewLine + gender.ToProperCase();
-                if(alignment != _alignmantAny)
-                {
-                    name += Environment.NewLine + alignment.ToProperCase();
-                }
-                using (var image = MissingPlayerTileCreator.CreateTile(_missingTileType, race.ToProperCase(), name))
+                using (var image = MissingPlayerTileCreator.CreateTileWithTextLines(_missingTileType, 
+                    race.ToProperCase(), role.ToProperCase(), gender.ToProperCase(),
+                    (alignment != _alignmantAny ? alignment.ToProperCase() : ""),
+                    (type != _typeNormal ? type.ToProperCase() : "")))
                 {
                     DrawImageToTileSet(image);
                 }

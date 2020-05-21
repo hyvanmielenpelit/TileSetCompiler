@@ -68,7 +68,7 @@ namespace TileSetCompiler
             if (type == _typeMissile)
             {
                 //Autogenerate missile icon
-                var subDir2 = _typeNormal;
+                var subDir2 = name.ToLower().Replace(" ", "_");
                 var fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
 
                 if (!_missileData.ContainsKey(direction))
@@ -84,7 +84,7 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
-                var targetSubDir2 = Path.Combine(_typeMissile, name.ToLower().Replace(" ", "_"));
+                var targetSubDir2 = name.ToLower().Replace(" ", "_");
                 var targetFileName = name.ToLower().Replace(" ", "_") +
                     _typeSuffix[type] +
                     _missileData[direction].FileSuffix + Program.ImageFileExtension;
@@ -105,15 +105,17 @@ namespace TileSetCompiler
                         WriteTileNameAutogenerationError(relativePath, targetRelativePath, _missileAutogenerateType);
                     }
                     DrawImageToTileSet(missileBitmap);
+                    StoreTileFile(file);
                     IncreaseCurXY();
                 }
             }
             else
             {
-                var dirPath = Path.Combine(BaseDirectory.FullName, type.ToLower().Replace(" ", "_"));
+                var subDir2 = name.ToLower().Replace(" ", "_");
+                var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 var fileName = name.ToLower().Replace(" ", "_") + _typeSuffix[type] + Program.ImageFileExtension;
 
-                var relativePath = Path.Combine(_subDirName, type.ToLower().Replace(" ", "_"), fileName);
+                var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
                 bool isTileMissing = false;
@@ -144,6 +146,7 @@ namespace TileSetCompiler
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         DrawItemToTileSet(image);
+                        StoreTileFile(file);
                     }
                 }
                 else

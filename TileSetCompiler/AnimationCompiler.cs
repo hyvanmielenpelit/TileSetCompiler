@@ -70,8 +70,9 @@ namespace TileSetCompiler
                     }
                     else
                     {
-                        DrawImageToTileSet(image);
+                        CropAndDrawImageToTileSet(image);
                     }
+                    StoreTileFile(file);
                 }
             }
             else

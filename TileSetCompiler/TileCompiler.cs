@@ -19,6 +19,7 @@ namespace TileSetCompiler
         const string _tileType_cmap_variation = "cmap-variations";
         const string _tileType_UI = "user-interface";
         const string _tileType_animation = "animation";
+        const string _tileType_enlargement = "enlargement";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
@@ -32,6 +33,7 @@ namespace TileSetCompiler
         protected PlayerCompiler PlayerCompiler { get; private set; }
         protected UICompiler UICompiler { get; private set; }
         protected AnimationCompiler AnimationCompiler { get; private set; }
+        protected EnlargementCompiler EnlargementCompiler { get; private set; }
 
         public FileInfo TileNameFile { get; set; }
         public StreamWriter TileNameWriter { get; private set; }
@@ -70,6 +72,7 @@ namespace TileSetCompiler
             PlayerCompiler = new PlayerCompiler(TileNameWriter);
             UICompiler = new UICompiler(TileNameWriter);
             AnimationCompiler = new AnimationCompiler(TileNameWriter);
+            EnlargementCompiler = new EnlargementCompiler(TileNameWriter);
 
             string manifestPath = Path.Combine(BaseDirectory.FullName, _manifestFile);
             Manifest = new FileInfo(manifestPath);
@@ -148,6 +151,10 @@ namespace TileSetCompiler
                     else if (tileType == _tileType_animation)
                     {
                         AnimationCompiler.CompileOne(splitLine);
+                    }
+                    else if (tileType == _tileType_enlargement)
+                    {
+                        EnlargementCompiler.CompileOne(splitLine);
                     }
                     else
                     {

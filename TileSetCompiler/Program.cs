@@ -67,6 +67,8 @@ namespace TileSetCompiler
         public static int MaxX { get; set; }
         public static int MaxY { get; set; }
         public static int CurrentCount { get; set; }
+        public static Dictionary<int, FileInfo> TileFiles { get; set; }
+
         protected static TileCompiler TileCompiler { get; set; }
 
         static void Main(string[] args)
@@ -162,8 +164,9 @@ namespace TileSetCompiler
             //This is the name of the file, where the program writes the names of all tiles in the tileset
             TileNameOutputFileName = OutputFileName + _tileNameSuffix + _tileNameExtension;
 
-
             InitializeOutputFiles();
+
+            TileFiles = new Dictionary<int, FileInfo>();
 
             using (TileCompiler = new TileCompiler())
             {

@@ -31,7 +31,9 @@ namespace TileSetCompiler
         private Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
         {
             { "normal", "" },
-            { "ridden", "_ridden" }
+            { "statue", "_statue" },
+            { "body", "_body" },
+            { "attack", "_attack" }
         };
 
         public static string MonsterDirectoryName { get { return _subDirName; } }
@@ -67,7 +69,7 @@ namespace TileSetCompiler
             var name = splitLine[3];
             if (type == _type_normal)
             {
-                var subDir2 = Path.Combine(_normalDirName, name.ToLower().Replace(" ", "_"));
+                var subDir2 = name.ToLower().Replace(" ", "_");
 
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
@@ -102,7 +104,8 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawImageToTileSet(image);
+                        CropAndDrawImageToTileSet(image);
+                        StoreTileFile(file);
                     }
                 }
                 else
@@ -116,15 +119,15 @@ namespace TileSetCompiler
             }
             else if (type == _type_statue)
             {
-                var sourceSubDir2 = Path.Combine(_normalDirName, name.ToLower().Replace(" ", "_"));
+                var sourceSubDir2 =name.ToLower().Replace(" ", "_");
 
                 var sourceMonsterDirPath = Path.Combine(BaseDirectory.FullName, sourceSubDir2);
                 var sourceFileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
                 var sourceRelativePath = Path.Combine(_subDirName, sourceSubDir2, sourceFileName);
                 FileInfo sourceFile = new FileInfo(Path.Combine(sourceMonsterDirPath, sourceFileName));
 
-                var destSubDirPath = Path.Combine(_statueDirName, name.ToLower().Replace(" ", "_"));
-                string destFileName = _type_statue + "_" + name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
+                var destSubDirPath = Path.Combine(name.ToLower().Replace(" ", "_"));
+                string destFileName = name.ToLower().Replace(" ", "_") + genderSuffix + _typeSuffix[type] + Program.ImageFileExtension;
                 var destFileRelativePath = Path.Combine(_subDirName, destSubDirPath, destFileName);
 
                 bool isUnknown;
@@ -147,7 +150,7 @@ namespace TileSetCompiler
             else
             {
                 //Other type
-                var subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), name.ToLower().Replace(" ", "_"));
+                var subDir2 = name.ToLower().Replace(" ", "_");
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
                 if(!_typeSuffix.ContainsKey(type))

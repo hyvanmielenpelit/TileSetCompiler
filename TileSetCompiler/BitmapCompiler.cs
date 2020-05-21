@@ -32,25 +32,98 @@ namespace TileSetCompiler
 
         public abstract void CompileOne(string[] splitLine);
 
+        protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size)
+        {
+            using (var croppedBitmap = image.Clone(new Rectangle(point, size), image.PixelFormat))
+            {
+                DrawImageToTileSet(croppedBitmap);
+            }
+        }
+
+        protected void CropAndDrawImageToTileSet(Bitmap image, ContentAlignment alignment = ContentAlignment.BottomCenter)
+        {
+            Bitmap rightSizeImage = null;
+            bool rightSizeImageNeeded = false;
+
+            try
+            {
+                if (image.Width > Program.MaxTileSize.Width || image.Height > Program.MaxTileSize.Height)
+                {
+                    int x = 0; 
+                    if(alignment == ContentAlignment.TopCenter || alignment == ContentAlignment.MiddleCenter || alignment == ContentAlignment.BottomCenter)
+                    {
+                        x = (image.Width - Program.MaxTileSize.Width) / 2; //Align Horizontally: Center
+                    }
+                    else if (alignment == ContentAlignment.TopLeft || alignment == ContentAlignment.MiddleLeft || alignment == ContentAlignment.BottomLeft)
+                    {
+                        x = 0; //Align Horizontally: Left
+                    }
+                    else if (alignment == ContentAlignment.TopRight || alignment == ContentAlignment.MiddleRight || alignment == ContentAlignment.BottomRight)
+                    {
+                        x = image.Width - Program.MaxTileSize.Width; //Align Horizontally: Right
+                    }
+                    else
+                    {
+                        throw new NotImplementedException(string.Format("Horizontal Alignment in '{0}' not implemented.", alignment.ToString()));
+                    }
+
+                    int y = 0;
+                    if (alignment == ContentAlignment.BottomCenter || alignment == ContentAlignment.BottomLeft || alignment == ContentAlignment.BottomRight)
+                    {
+                        y = image.Height - Program.MaxTileSize.Height; //Align Vertically: Bottom
+                    }
+                    else if (alignment == ContentAlignment.TopCenter || alignment == ContentAlignment.TopLeft || alignment == ContentAlignment.TopRight)
+                    {
+                        y = 0; //Align Vertically: Top
+                    }
+                    else if (alignment == ContentAlignment.MiddleCenter || alignment == ContentAlignment.MiddleLeft || alignment == ContentAlignment.MiddleRight)
+                    {
+                        y = (image.Height - Program.MaxTileSize.Height) / 2; //Align Vertically: Middle
+                    }
+                    else
+                    {
+                        throw new NotImplementedException(string.Format("Vertical Alignment in '{0}' not implemented.", alignment.ToString()));
+                    }
+                    
+                    Rectangle rec = new Rectangle(new Point(x, y), Program.MaxTileSize);
+                    rightSizeImage = image.Clone(rec, image.PixelFormat);
+                    rightSizeImageNeeded = true;
+                }
+                else
+                {
+                    rightSizeImage = image;
+                }
+
+                DrawImageToTileSet(rightSizeImage);
+            }
+            finally
+            {
+                if (rightSizeImageNeeded)
+                {
+                    rightSizeImage.Dispose();
+                }
+            }
+        }
+
         protected void DrawImageToTileSet(Bitmap image)
         {
-            foreach(var kvp in Program.TileSets)
+            foreach (var kvp in Program.TileSets)
             {
                 var size = Program.TileSizes[kvp.Key];
 
                 if (kvp.Key < Program.MaxTileSize.Height)
-                {                    
+                {
                     using (var resizedImage = ResizeImage(image, size.Width, size.Height))
                     {
                         DrawImage(resizedImage, size, kvp.Value);
                     }
                 }
-                else 
+                else
                 {
                     DrawImage(image, size, kvp.Value);
                 }
-            }            
-        }
+            }
+        }        
 
         private void DrawImage(Bitmap image, Size tileSize, Dictionary<OutputFileFormatData, Bitmap> tileSetDic)
         {
@@ -92,6 +165,15 @@ namespace TileSetCompiler
                 throw new Exception("Aborting.");
             }
             Program.CurrentCount++;
+        }
+
+        protected void StoreTileFile(FileInfo file)
+        {
+            if(file == null)
+            {
+                throw new ArgumentNullException("file");
+            }
+            Program.TileFiles.Add(Program.CurrentCount, file);
         }
 
         /// <summary>
