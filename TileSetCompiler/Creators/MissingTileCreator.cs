@@ -80,7 +80,7 @@ namespace TileSetCompiler.Creators
             {
                 if(!string.IsNullOrWhiteSpace(line))
                 {
-                    sb.AppendLine(capitalize ? line.ToProperCaseFirst() : line);
+                    sb.AppendLine(capitalize ? line.ToProperCase() : line);
                 }
             }
             return CreateTileWithText(sb.ToString());

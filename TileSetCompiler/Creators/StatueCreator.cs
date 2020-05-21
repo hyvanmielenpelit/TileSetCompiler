@@ -63,7 +63,7 @@ namespace TileSetCompiler.Creators
             return destBitmap;            
         }
 
-        public Bitmap CreateStatueBitmapFromFile(FileInfo sourceFile, string name, out bool isUnknown)
+        public Bitmap CreateStatueBitmapFromFile(FileInfo sourceFile, string name, string genderDesc, out bool isUnknown)
         {
             isUnknown = false;
             if (!sourceFile.Exists)
@@ -80,7 +80,7 @@ namespace TileSetCompiler.Creators
             }
             else
             {
-                return MissingStatueTileCreator.CreateTile(_missingTileType, _missingTileSubType, name);
+                return MissingStatueTileCreator.CreateTileWithTextLines(_missingTileType, _missingTileSubType, name, genderDesc);
             }
             
         }

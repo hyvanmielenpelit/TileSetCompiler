@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Data;
 using TileSetCompiler.Exceptions;
 using TileSetCompiler.Extensions;
 
@@ -22,19 +23,19 @@ namespace TileSetCompiler
         const string _normalDirName = "normal";
         const string _missingMonsterTileType = "Monster";
 
-        private Dictionary<string, string> _genderSuffix = new Dictionary<string, string>()
+        private Dictionary<string, CategoryInfo> _genderSuffix = new Dictionary<string, CategoryInfo>()
         {
-            { "male", "_male" },
-            { "female", "_female" },
-            { "base", "" }
+            { "male", new CategoryInfo("_male", "Male") },
+            { "female", new CategoryInfo("_female", "Female") },
+            { "base", new CategoryInfo("", "") }
         };
 
-        private Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
+        private Dictionary<string, CategoryInfo> _typeSuffix = new Dictionary<string, CategoryInfo>()
         {
-            { "normal", "" },
-            { "statue", "_statue" },
-            { "body", "_body" },
-            { "attack", "_attack" }
+            { "normal", new CategoryInfo("", "") },
+            { "statue", new CategoryInfo("_statue", "Statue") },
+            { "body", new CategoryInfo("_body", "Body") },
+            { "attack", new CategoryInfo("_attack", "Attack") }
         };
 
         public static string MonsterDirectoryName { get { return _subDirName; } }
@@ -64,7 +65,7 @@ namespace TileSetCompiler
             {
                 throw new Exception(string.Format("Invalid gender '{0}' in monster line '{1}'.", gender, string.Join(',', splitLine)));
             }
-            string genderSuffix = _genderSuffix[gender];
+            string genderSuffix = _genderSuffix[gender].Suffix;
 
             var type = splitLine[2];
             var name = splitLine[3];
@@ -122,7 +123,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingMonsterTileCreator.CreateTile(_missingMonsterTileType, "", name))
+                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeSuffix[type].Description, name, _genderSuffix[gender].Description))
                     {
                         DrawImageToTileSet(image);
                     }
@@ -139,11 +140,11 @@ namespace TileSetCompiler
                 FileInfo sourceFile = new FileInfo(Path.Combine(sourceMonsterDirPath, sourceFileName));
 
                 var destSubDirPath = Path.Combine(name.ToLower().Replace(" ", "_"));
-                string destFileName = name.ToLower().Replace(" ", "_") + genderSuffix + _typeSuffix[type] + Program.ImageFileExtension;
+                string destFileName = name.ToLower().Replace(" ", "_") + genderSuffix + _typeSuffix[type].Suffix + Program.ImageFileExtension;
                 var destFileRelativePath = Path.Combine(_subDirName, destSubDirPath, destFileName);
 
                 bool isUnknown;
-                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, out isUnknown))
+                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, _genderSuffix[gender].Description, out isUnknown))
                 {
                     if(!isUnknown)
                     {
@@ -172,7 +173,7 @@ namespace TileSetCompiler
 
                 var fileName = name.ToLower().Replace(" ", "_") + 
                     genderSuffix + 
-                    _typeSuffix[type] +
+                    _typeSuffix[type].Suffix +
                     Program.ImageFileExtension;
 
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
@@ -218,7 +219,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingMonsterTileCreator.CreateTile(_missingMonsterTileType, type, name))
+                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeSuffix[type].Description, name, _genderSuffix[gender].Description))
                     {
                         DrawImageToTileSet(image);
                     }

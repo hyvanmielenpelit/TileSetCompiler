@@ -26,7 +26,14 @@ namespace TileSetCompiler.Extensions
                 {
                     sb.Append(' ');
                 }
-                sb.Append(split.ToProperCaseFirst());
+                if(sb.Length > 0 && (split == "the" || split == "of"))
+                {
+                    sb.Append(split);
+                }
+                else
+                {
+                    sb.Append(split.ToProperCaseFirst());
+                }
             }
             return sb.ToString();
         }
