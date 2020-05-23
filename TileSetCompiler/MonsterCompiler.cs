@@ -67,6 +67,11 @@ namespace TileSetCompiler
             }
 
             var type = splitLine[2];
+            if (!_typeData.ContainsKey(type))
+            {
+                throw new Exception(string.Format("Invalid type '{0}' in monster line '{1}'.", type, string.Join(',', splitLine)));
+            }
+
             var name = splitLine[3];
             var widthInTiles = int.Parse(splitLine[4]);
             var heightInTiles = int.Parse(splitLine[5]);
