@@ -14,7 +14,7 @@ namespace TileSetCompiler
     {
         private static Size _tileSize = new Size(64, 96);
         private static Size _itemSize = new Size(64, 48);
-        private static List<int> _tileHeights = new List<int>(new int[] { 96, 24 }); //, 72, 48, 36, 24, 18
+        private static List<int> _tileHeights = new List<int>(new int[] { 96 }); //, 72, 48, 36, 24, 18
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
         private static Dictionary<TransparencyMode, string> _transparencyModeSuffix = new Dictionary<TransparencyMode, string>()
@@ -40,7 +40,7 @@ namespace TileSetCompiler
             //{ 72, new Size (48, 72) },
             //{ 48, new Size (32, 48) },
             //{ 36, new Size (24, 36) },
-            ,{ 24, new Size (16, 24) }
+            //,{ 24, new Size (16, 24) }
             //,{ 18, new Size (12, 18) }
         };
 
