@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Data;
 using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
@@ -12,15 +12,27 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Player";
         const int _lineLength = 7;
-        const string _alignmantAny = "any";
         const string _missingTileType = "Player";
-        const string _typeNormal = "normal";
 
-        private Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
+        private Dictionary<string, CategoryData> _typeData = new Dictionary<string, CategoryData>()
         {
-            { "normal", "" },
-            { "body", "_body" },
-            { "attack", "_attack" }
+            { "normal", new CategoryData("", "") },
+            { "body", new CategoryData("_body", "Body") },
+            { "attack", new CategoryData("_attack", "Attack") },
+            { "throw", new CategoryData("_throw", "Throw") },
+            { "fire", new CategoryData("_fire", "Fire") },
+            { "cast", new CategoryData("_cast", "Cast") },
+            { "special-attack", new CategoryData("_special-attack", "Special Attack") },
+            { "item-use", new CategoryData("_item-use", "Item Use") },
+            { "door-use", new CategoryData("_door-use", "Door Use") }
+        };
+
+        private Dictionary<string, CategoryData> _alignmentData = new Dictionary<string, CategoryData>()
+        {
+            { "any", new CategoryData("", "") },
+            { "lawful", new CategoryData("_lawful", "Lawful") },
+            { "neutral", new CategoryData("_neutral", "Neutral") },
+            { "chaotic", new CategoryData("_chaotic", "Chaotic") }
         };
 
         public MissingTileCreator MissingPlayerTileCreator { get; set; }
@@ -41,26 +53,29 @@ namespace TileSetCompiler
 
             var type = splitLine[1];
 
-            if(!_typeSuffix.ContainsKey(type))
+            if(!_typeData.ContainsKey(type))
             {
-                throw new Exception(string.Format("Player Type '{0}' not found in _typeSuffix. Line: {1}", type, string.Join(',', splitLine)));
+                throw new Exception(string.Format("Player Type '{0}' not found in _typeData. Line: {1}", type, string.Join(',', splitLine)));
             }
-
-            var typeSuffix = _typeSuffix[type];
 
             var role = splitLine[2];
             var race = splitLine[3];
             var gender = splitLine[4];
             var alignment = splitLine[5];
+
+            if (!_alignmentData.ContainsKey(alignment))
+            {
+                throw new Exception(string.Format("Player Alignment '{0}' not found in _alignmentData. Line: {1}", alignment, string.Join(',', splitLine)));
+            }
+
             var level = splitLine[6]; //Not used for now
 
             var subDir2 = Path.Combine(race.ToLower().Replace(" ", "_"), role.ToLower().Replace(" ", "_"));
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
-            string alignmentSuffix = alignment == _alignmantAny ? "" : "_" + alignment.ToLower().Replace(" ", "_");
             string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + 
-                alignmentSuffix + typeSuffix + Program.ImageFileExtension;
+                _alignmentData[alignment].Suffix + _typeData[type].Suffix + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
@@ -98,9 +113,7 @@ namespace TileSetCompiler
             else
             {
                 using (var image = MissingPlayerTileCreator.CreateTileWithTextLines(_missingTileType, 
-                    race.ToProperCase(), role.ToProperCase(), gender.ToProperCase(),
-                    (alignment != _alignmantAny ? alignment.ToProperCase() : ""),
-                    (type != _typeNormal ? type.ToProperCase() : "")))
+                    race, role, gender, _alignmentData[alignment].Description, _typeData[type].Description))
                 {
                     DrawImageToTileSet(image);
                 }

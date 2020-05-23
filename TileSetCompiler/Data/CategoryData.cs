@@ -4,17 +4,17 @@ using System.Text;
 
 namespace TileSetCompiler.Data
 {
-    class CategoryInfo
+    class CategoryData
     {
         public string Suffix { get; set; }
         public string Description { get; set; }
 
-        public CategoryInfo()
+        public CategoryData()
         {
 
         }
 
-        public CategoryInfo(string suffix, string description)
+        public CategoryData(string suffix, string description)
         {
             Suffix = suffix;
             Description = description;

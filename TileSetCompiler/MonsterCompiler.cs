@@ -17,29 +17,29 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Monsters";
         const int _monsterLineLength = 7;
-        const string _type_normal = "normal";
         const string _type_statue = "statue";
-        const string _statueDirName = "statues";
-        const string _normalDirName = "normal";
         const string _missingMonsterTileType = "Monster";
 
-        private Dictionary<string, CategoryInfo> _genderSuffix = new Dictionary<string, CategoryInfo>()
+        private Dictionary<string, CategoryData> _genderData = new Dictionary<string, CategoryData>()
         {
-            { "male", new CategoryInfo("_male", "Male") },
-            { "female", new CategoryInfo("_female", "Female") },
-            { "base", new CategoryInfo("", "") }
+            { "male", new CategoryData("_male", "Male") },
+            { "female", new CategoryData("_female", "Female") },
+            { "base", new CategoryData("", "") }
         };
 
-        private Dictionary<string, CategoryInfo> _typeSuffix = new Dictionary<string, CategoryInfo>()
+        private Dictionary<string, CategoryData> _typeData = new Dictionary<string, CategoryData>()
         {
-            { "normal", new CategoryInfo("", "") },
-            { "statue", new CategoryInfo("_statue", "Statue") },
-            { "body", new CategoryInfo("_body", "Body") },
-            { "attack", new CategoryInfo("_attack", "Attack") }
+            { "normal", new CategoryData("", "") },
+            { "statue", new CategoryData("_statue", "Statue") },
+            { "body", new CategoryData("_body", "Body") },
+            { "attack", new CategoryData("_attack", "Attack") },
+            { "throw", new CategoryData("_throw", "Throw") },
+            { "fire", new CategoryData("_fire", "Fire") },
+            { "cast", new CategoryData("_cast", "Cast") },
+            { "special-attack", new CategoryData("_special-attack", "Special Attack") },
+            { "item-use", new CategoryData("_item-use", "Item Use") },
+            { "door-use", new CategoryData("_door-use", "Door Use") }
         };
-
-        public static string MonsterDirectoryName { get { return _subDirName; } }
-        public static string StatueDirectoryName { get { return _statueDirName; } }
 
         public StatueCreator StatueCreator { get; private set; }
         protected MissingTileCreator MissingMonsterTileCreator { get; private set; }
@@ -61,11 +61,10 @@ namespace TileSetCompiler
             }
 
             var gender = splitLine[1];
-            if(!_genderSuffix.ContainsKey(gender))
+            if(!_genderData.ContainsKey(gender))
             {
                 throw new Exception(string.Format("Invalid gender '{0}' in monster line '{1}'.", gender, string.Join(',', splitLine)));
             }
-            string genderSuffix = _genderSuffix[gender].Suffix;
 
             var type = splitLine[2];
             var name = splitLine[3];
@@ -74,77 +73,21 @@ namespace TileSetCompiler
             var mainTileAligntmentInt = int.Parse(splitLine[6]);
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAligntmentInt;
 
-            if (type == _type_normal)
-            {
-                var subDir2 = name.ToLower().Replace(" ", "_");
-
-                var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                var fileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
-                var relativePath = Path.Combine(_subDirName, subDir2, fileName);
-                var filePath = Path.Combine(monsterDirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
-
-                if (!Directory.Exists(monsterDirPath))
-                {
-                    Console.WriteLine("Monster directory '{0}' not found. Creating a Missing Monster Tile.", monsterDirPath);
-                    isTileMissing = true;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating a Missing Monster Tile.");
-                }
-                else
-                {
-
-                    if (file.Exists)
-                    {
-                        Console.WriteLine("Compiled Monster Tile {0} successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
-                        isTileMissing = true;
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
-                    }
-                }
-
-                if(!isTileMissing)
-                {
-                    using (var image = new Bitmap(Image.FromFile(file.FullName)))
-                    {
-                        if(image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
-                        {
-                            throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
-                                string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
-                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, image.Height != heightInTiles * Program.MaxTileSize.Height));
-                        }
-                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
-                        StoreTileFile(file);
-                    }
-                }
-                else
-                {
-                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeSuffix[type].Description, name, _genderSuffix[gender].Description))
-                    {
-                        DrawImageToTileSet(image);
-                    }
-                }
-                IncreaseCurXY();
-            }
-            else if (type == _type_statue)
+            if (type == _type_statue)
             {
                 var sourceSubDir2 =name.ToLower().Replace(" ", "_");
 
                 var sourceMonsterDirPath = Path.Combine(BaseDirectory.FullName, sourceSubDir2);
-                var sourceFileName = name.ToLower().Replace(" ", "_") + genderSuffix + Program.ImageFileExtension;
+                var sourceFileName = name.ToLower().Replace(" ", "_") + _genderData[gender].Suffix + Program.ImageFileExtension;
                 var sourceRelativePath = Path.Combine(_subDirName, sourceSubDir2, sourceFileName);
                 FileInfo sourceFile = new FileInfo(Path.Combine(sourceMonsterDirPath, sourceFileName));
 
                 var destSubDirPath = Path.Combine(name.ToLower().Replace(" ", "_"));
-                string destFileName = name.ToLower().Replace(" ", "_") + genderSuffix + _typeSuffix[type].Suffix + Program.ImageFileExtension;
+                string destFileName = name.ToLower().Replace(" ", "_") + _genderData[gender].Suffix + _typeData[type].Suffix + Program.ImageFileExtension;
                 var destFileRelativePath = Path.Combine(_subDirName, destSubDirPath, destFileName);
 
                 bool isUnknown;
-                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, _genderSuffix[gender].Description, out isUnknown))
+                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, _genderData[gender].Description, out isUnknown))
                 {
                     if(!isUnknown)
                     {
@@ -162,18 +105,17 @@ namespace TileSetCompiler
             }
             else
             {
-                //Other type
                 var subDir2 = name.ToLower().Replace(" ", "_");
                 var monsterDirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
-                if(!_typeSuffix.ContainsKey(type))
+                if(!_typeData.ContainsKey(type))
                 {
                     throw new Exception(string.Format("Unknown monster type '{0}'.", type));
                 }
 
-                var fileName = name.ToLower().Replace(" ", "_") + 
-                    genderSuffix + 
-                    _typeSuffix[type].Suffix +
+                var fileName = name.ToLower().Replace(" ", "_") +
+                     _genderData[gender].Suffix + 
+                    _typeData[type].Suffix +
                     Program.ImageFileExtension;
 
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
@@ -192,7 +134,12 @@ namespace TileSetCompiler
 
                     if (file.Exists)
                     {
-                        Console.WriteLine("Created Monster {0} Tile {1} successfully.", type.ToProperCase(), relativePath);
+                        string typeDesc = _typeData[type].Description;
+                        if(string.IsNullOrEmpty(typeDesc))
+                        {
+                            typeDesc = type.ToProperCase();
+                        }
+                        Console.WriteLine("Created Monster {0} Tile '{1}' successfully.", typeDesc, relativePath);
                         WriteTileNameSuccess(relativePath);
                     }
                     else
@@ -219,7 +166,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeSuffix[type].Description, name, _genderSuffix[gender].Description))
+                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
                     {
                         DrawImageToTileSet(image);
                     }
