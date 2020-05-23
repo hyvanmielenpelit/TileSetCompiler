@@ -51,12 +51,7 @@ namespace TileSetCompiler
                 throw new Exception(string.Format("Object Type '{0}' unknown. Line: '{1}'.", type, string.Join(',', splitLine)));
             }
 
-            var objectTypeSingular = objectType.ToLower();
-            if (objectTypeSingular.EndsWith("s"))
-            {
-                objectTypeSingular = objectTypeSingular.Substring(0, objectTypeSingular.Length - 1);
-            }
-
+            var objectTypeSingular = GetSingular(objectType);
             string direction = null;
             string subDir2 = null;
             string fileName = null;

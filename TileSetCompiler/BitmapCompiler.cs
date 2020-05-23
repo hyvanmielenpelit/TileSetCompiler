@@ -13,6 +13,11 @@ namespace TileSetCompiler
 {
     abstract class BitmapCompiler
     {
+        private List<string> _sEndingSingularWords = new List<string>()
+        {
+            "status"
+        };
+
         protected DirectoryInfo BaseDirectory { get; set; }
         protected StreamWriter TileNameWriter { get; private set; }
         protected Color TransparencyColor { get; private set; }
@@ -359,6 +364,34 @@ namespace TileSetCompiler
             {
                 gTileBitmap.DrawImage(subTileBitmap, new Point(x, y));
             }
+        }
+
+        protected string GetSingular(string word)
+        {
+            if(string.IsNullOrEmpty(word))
+            {
+                return word;
+            }
+
+            string wordLower = word.ToLower();
+            if (_sEndingSingularWords.Contains(wordLower))
+            {
+                //Is singular
+                return word;
+            }
+
+            if(wordLower.EndsWith("ses"))
+            {
+                return word.Substring(0, word.Length - 2);
+            }
+
+            if (wordLower.EndsWith("s"))
+            {
+                return word.Substring(0, word.Length - 1);
+            }
+
+            //Already singular
+            return word;
         }
     }
 }

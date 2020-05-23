@@ -95,7 +95,10 @@ namespace TileSetCompiler
                 {
                     throw new Exception(string.Format("UI Tile line has too few elements: {0}", string.Join(',', splitLine)));
                 }
+                
                 var tileName = splitLine[2];
+                var tileNameSingular = GetSingular(tileName);
+
                 int numSubTiles = int.Parse(splitLine[3]);
 
                 if (splitLine.Length < numSubTiles + _uiTileSplitItemsBeforeNames)
@@ -115,7 +118,7 @@ namespace TileSetCompiler
                     {
                         int i2 = i + _uiTileSplitItemsBeforeNames;
                         var subTileName = splitLine[i2];
-                        var fileName = tileName.ToLower().Replace(" ", "_") + "_" + subTileName.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                        var fileName = tileNameSingular.ToLower().Replace(" ", "_") + "_" + subTileName.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
                         var relativePath = Path.Combine(_subDirName, type.ToLower().Replace(" ", "_"), tileName.ToLower().Replace(" ", "_"), fileName);
                         var filePath = Path.Combine(dirPath, fileName);
                         FileInfo file = new FileInfo(filePath);
