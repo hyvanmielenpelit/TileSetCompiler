@@ -94,7 +94,7 @@ namespace TileSetCompiler
 
             using (var stream = Manifest.OpenText())
             {
-                string? line = null;
+                string line = null;
                 while ((line = stream.ReadLine()) != null)
                 {
                     lineNumber++;

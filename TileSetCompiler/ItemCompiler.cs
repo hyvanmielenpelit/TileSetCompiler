@@ -22,7 +22,7 @@ namespace TileSetCompiler
             { "missile", "_missile" }
         };
 
-        protected Dictionary<string, MissileData?> _missileData = new Dictionary<string, MissileData?>()
+        protected Dictionary<string, MissileData> _missileData = new Dictionary<string, MissileData>()
         {
             { "generic",  new MissileData("", MissileDirection.MiddleLeft) },
             { "top-left", new MissileData("_top-left", MissileDirection.TopLeft) },
