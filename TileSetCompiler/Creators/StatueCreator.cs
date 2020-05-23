@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using TileSetCompiler.Exceptions;
 
 namespace TileSetCompiler.Creators
 {
@@ -82,7 +83,45 @@ namespace TileSetCompiler.Creators
             {
                 return MissingStatueTileCreator.CreateTileWithTextLines(_missingTileType, _missingTileSubType, name, genderDesc);
             }
-            
+        }
+
+        public Bitmap CreateStatueMainTileFromFile(FileInfo sourceFile, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, string name, string genderDesc, out bool isUnknown)
+        {
+            isUnknown = false;
+            if (!sourceFile.Exists)
+            {
+                Console.WriteLine("Source File '{0}' not found. Creating Missing Statue file.", sourceFile.FullName);
+                isUnknown = true;
+            }
+            if (!isUnknown)
+            {
+                using (Bitmap sourceBitmap = (Bitmap)Image.FromFile(sourceFile.FullName))
+                {
+                    if (sourceBitmap.Width != widthInTiles * Program.MaxTileSize.Width || sourceBitmap.Height != heightInTiles * Program.MaxTileSize.Height)
+                    {
+                        throw new WrongSizeException(sourceBitmap.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
+                            string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", sourceFile.FullName,
+                            sourceBitmap.Width, sourceBitmap.Height, widthInTiles * Program.MaxTileSize.Width, sourceBitmap.Height != heightInTiles * Program.MaxTileSize.Height));
+                    }
+
+                    bool isOneTile;
+                    var point = Program.GetMainTileLocationInPixels(widthInTiles, heightInTiles, mainTileAlignment, out isOneTile);
+
+                    if (isOneTile)
+                    {
+                        return CreateStatueBitmap(sourceBitmap);
+                    }
+
+                    using (var croppedBitmap = sourceBitmap.Clone(new Rectangle(point, Program.MaxTileSize), sourceBitmap.PixelFormat))
+                    {
+                        return CreateStatueBitmap(croppedBitmap);
+                    }
+                }
+            }
+            else
+            {
+                return MissingStatueTileCreator.CreateTileWithTextLines(_missingTileType, _missingTileSubType, name, genderDesc);
+            }
         }
     }
 }

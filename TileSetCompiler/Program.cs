@@ -301,6 +301,74 @@ namespace TileSetCompiler
             }
         }
 
+        public static Point GetMainTileLocation(int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, out bool isOneTile)
+        {
+            int xTile = 0;
+            int yTile = 0;
+            isOneTile = false;
+            if (widthInTiles == 1 && heightInTiles == 1)
+            {
+                isOneTile = true;
+                return Point.Empty;
+            }
+            else if (widthInTiles == 1 && heightInTiles == 2)
+            {
+                xTile = 0;
+                yTile = 1;
+            }
+            else if (widthInTiles == 2)
+            {
+                if (mainTileAlignment == MainTileAlignment.Left)
+                {
+                    xTile = 0;
+                }
+                else
+                {
+                    xTile = 1;
+                }
+                if (heightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else if (heightInTiles == 2)
+                {
+                    yTile = 1;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else if (widthInTiles == 3)
+            {
+                xTile = 1;
+                if (heightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else if (heightInTiles == 2)
+                {
+                    yTile = 1;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            return new Point(xTile, yTile);
+        }
+
+        public static Point GetMainTileLocationInPixels(int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, out bool isOneTile)
+        {
+            var pointInTiles = GetMainTileLocation(widthInTiles, heightInTiles, mainTileAlignment, out isOneTile);
+            return new Point(pointInTiles.X * MaxTileSize.Width, pointInTiles.Y * MaxTileSize.Height);
+        }
+
         //public static string TestSourceFile { get { return @"G:\Jaetut Drivet\Hyvän mielen pelit projektit\GnollHack\Tileset_Test\Objects\missile\weapons\arrow\weapon_arrow_missile_middle-left.png"; } }
         //public static string TestTargetFileFormat { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test-{0}.png"; } }
 

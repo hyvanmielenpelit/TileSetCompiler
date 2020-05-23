@@ -92,7 +92,8 @@ namespace TileSetCompiler
                 var destFileRelativePath = Path.Combine(_subDirName, destSubDirPath, destFileName);
 
                 bool isUnknown;
-                using (var image = StatueCreator.CreateStatueBitmapFromFile(sourceFile, name, _genderData[gender].Description, out isUnknown))
+                using (var image = StatueCreator.CreateStatueMainTileFromFile(sourceFile,
+                    widthInTiles, heightInTiles, mainTileAlignment, name, _genderData[gender].Description, out isUnknown))
                 {
                     if(!isUnknown)
                     {
