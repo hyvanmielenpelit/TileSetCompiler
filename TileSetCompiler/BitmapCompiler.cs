@@ -272,15 +272,36 @@ namespace TileSetCompiler
 
         protected void WriteTileNameLine(string relativePath, string successText, string infoText)
         {
-            TileNameWriter.WriteLine(string.Format("{0}\t{1}\t{2}\t{3}", Program.CurrentCount + 1,
+            TileNameWriter.WriteLine(string.Format("{0}\t{1}\t{2}\t{3}", Program.CurrentCount,
                 (relativePath ?? "").Replace("\t","_"),
                 (successText ?? "").Replace("\t", "_"),
                 (infoText ?? "").Replace("\t", "_")));
         }
 
+        protected void WriteSubTileNameLine(int subTileIndex, int numSubTiles, string relativePath, string successText, string infoText)
+        {
+            if(numSubTiles > 1)
+            {
+                TileNameWriter.WriteLine(string.Format("{0}/{1}\t{2}\t{3}\t{4}", Program.CurrentCount, subTileIndex,
+                    (relativePath ?? "").Replace("\t", "_"),
+                    (successText ?? "").Replace("\t", "_"),
+                    (infoText ?? "").Replace("\t", "_")));
+            }
+            else
+            {
+                WriteTileNameLine(relativePath, successText, infoText);
+            }
+        }
+
         protected void WriteTileNameSuccess(string relativePath)
         {
             WriteTileNameLine(relativePath, "OK", "OK");
+            Program.FoundTileNumber++;
+        }
+
+        protected void WriteSubTileNameSuccess(int subTileIndex, int numSubTiles, string relativePath)
+        {
+            WriteSubTileNameLine(subTileIndex, numSubTiles, relativePath, "OK", "OK");
             Program.FoundTileNumber++;
         }
 
@@ -302,10 +323,42 @@ namespace TileSetCompiler
             Program.MissingTileNumber++;
         }
 
+        protected void WriteSubTileNameErrorFileNotFound(int subTileIndex, int numSubTiles, string relativePath, string infoText)
+        {
+            WriteSubTileNameLine(subTileIndex, numSubTiles, relativePath, "File not found", infoText);
+            Program.MissingTileNumber++;
+        }
+
         protected void WriteTileNameErrorDirectoryNotFound(string relativePath, string infoText)
         {
             WriteTileNameLine(relativePath, "Directory not found", infoText);
             Program.MissingTileNumber++;
+        }
+
+        protected void WriteSubTileNameErrorDirectoryNotFound(int subTileIndex, int numSubTiles, string relativePath, string infoText)
+        {
+            WriteSubTileNameLine(subTileIndex, numSubTiles, relativePath, "Directory not found", infoText);
+            Program.MissingTileNumber++;
+        }
+
+        protected void DrawSubTile(Bitmap tileBitmap, Size subTileSize, int index, Bitmap subTileBitmap)
+        {
+            int x = (subTileSize.Width * index) % tileBitmap.Width;
+            int y = ((subTileSize.Width * index) / tileBitmap.Width) * subTileSize.Height;
+
+            if (y + subTileSize.Height > tileBitmap.Height)
+            {
+                throw new Exception(string.Format("Error UI Sub-Tile would overflow in height: {0} > {1}.", y + subTileSize.Height, tileBitmap.Height));
+            }
+            else if (x + subTileBitmap.Width > tileBitmap.Width)
+            {
+                throw new Exception(string.Format("Error UI Sub-Tile would overflow in width: {0} > {1}.", x + subTileBitmap.Width, tileBitmap.Width));
+            }
+
+            using (Graphics gTileBitmap = Graphics.FromImage(tileBitmap))
+            {
+                gTileBitmap.DrawImage(subTileBitmap, new Point(x, y));
+            }
         }
     }
 }

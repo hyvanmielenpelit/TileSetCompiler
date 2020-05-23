@@ -120,25 +120,28 @@ namespace TileSetCompiler
                         var filePath = Path.Combine(dirPath, fileName);
                         FileInfo file = new FileInfo(filePath);
                         bool isSubTileMissing = false;
+                        string tileCalled = numSubTiles > 1 ? "Sub-Tile" : "Tile";
 
                         if (!Directory.Exists(dirPath))
                         {
-                            Console.WriteLine("User Interface directory '{0}' not found. Creating Missing UI Sub-Tile.", dirPath);
+                            Console.WriteLine("User Interface directory '{0}' not found. Creating Missing UI {1}.", dirPath, tileCalled);
                             isSubTileMissing = true;
-                            WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing UI Sub-Tile.");
+                            WriteSubTileNameErrorDirectoryNotFound(i, numSubTiles, relativePath, 
+                                string.Format("Creating Missing UI {0}.", tileCalled));
                         }
                         else
                         {
                             if (file.Exists)
                             {
-                                Console.WriteLine("Compiled UI Sub-Tile '{0}' successfully.", relativePath);
-                                WriteTileNameSuccess(relativePath);
+                                Console.WriteLine("Compiled UI {0} '{1}' successfully.", tileCalled, relativePath);
+                                WriteSubTileNameSuccess(i, numSubTiles, relativePath);
                             }
                             else
                             {
-                                Console.WriteLine("File '{0}' not found. Creating Missing UI Sub-Tile.", file.FullName);
+                                Console.WriteLine("File '{0}' not found. Creating Missing UI {1}.", file.FullName, tileCalled);
                                 isSubTileMissing = true;
-                                WriteTileNameErrorFileNotFound(relativePath, "Creating Missing UI Tile.");
+                                WriteSubTileNameErrorFileNotFound(i, numSubTiles, relativePath, 
+                                    string.Format("Creating Missing UI {0}.", tileCalled));
                             }
                         }
 
@@ -182,26 +185,6 @@ namespace TileSetCompiler
             else
             {
                 throw new Exception(string.Format("Unknown UI type '{0}' in line '{1}'.", type, string.Join(',', splitLine)));
-            }
-        }
-
-        protected void DrawSubTile(Bitmap tileBitmap, Size subTileSize, int index, Bitmap subTileBitmap)
-        {
-            int x = (subTileSize.Width * index) % tileBitmap.Width;
-            int y = ((subTileSize.Width * index) / tileBitmap.Width) * subTileSize.Height;
-
-            if(y + subTileSize.Height > tileBitmap.Height)
-            {
-                throw new Exception(string.Format("Error UI Sub-Tile would overflow in height: {0} > {1}.", y + subTileSize.Height, tileBitmap.Height));
-            }
-            else if(x + subTileBitmap.Width > tileBitmap.Width)
-            {
-                throw new Exception(string.Format("Error UI Sub-Tile would overflow in width: {0} > {1}.", x + subTileBitmap.Width, tileBitmap.Width));
-            }
-
-            using(Graphics gTileBitmap = Graphics.FromImage(tileBitmap))
-            {
-                gTileBitmap.DrawImage(subTileBitmap, new Point(x, y));
             }
         }
     }
