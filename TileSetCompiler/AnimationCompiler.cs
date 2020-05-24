@@ -76,30 +76,21 @@ namespace TileSetCompiler
                 {
                     throw new Exception(string.Format("Original Tile ID '{0}' not found in TileFiles. Original File probably does not exist.", originalTileNumber));
                 }
-                using (var originalImage = new Bitmap(Image.FromFile(Program.TileFiles[originalTileNumber].FullName)))
+                using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
-                    using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                    if (image.Size == Program.ItemSize)
                     {
-                        if(originalImage.Size != image.Size)
-                        {
-                            throw new WrongSizeException(image.Size, originalImage.Size,
-                                string.Format("Animation tile and original tile are of different size: {0}x{1} and {2}x{3}.",
-                                image.Width, image.Height, originalImage.Width, originalImage.Height));
-                        }
-                        if (image.Size == Program.ItemSize)
-                        {
-                            DrawItemToTileSet(image, false);
-                        }
-                        else if (image.Size == Program.MaxTileSize)
-                        {
-                            DrawImageToTileSet(image);
-                        }
-                        else
-                        {
-                            DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
-                        }
-                        StoreTileFile(file);
+                        DrawItemToTileSet(image, false);
                     }
+                    else if (image.Size == Program.MaxTileSize)
+                    {
+                        DrawImageToTileSet(image);
+                    }
+                    else
+                    {
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
+                    }
+                    StoreTileFile(file);
                 }
             }
             else
