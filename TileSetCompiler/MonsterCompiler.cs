@@ -39,7 +39,8 @@ namespace TileSetCompiler
             { "special-attack", new CategoryData("_special-attack", "Special Attack") },
             { "item-use", new CategoryData("_item-use", "Item Use") },
             { "door-use", new CategoryData("_door-use", "Door Use") },
-            { "kick", new CategoryData("_kick", "Kick") }
+            { "kick", new CategoryData("_kick", "Kick") },
+            { "death", new CategoryData("_death", "Death") }
         };
 
         public StatueCreator StatueCreator { get; private set; }
