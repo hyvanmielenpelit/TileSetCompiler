@@ -101,7 +101,7 @@ namespace TileSetCompiler.Creators
                     {
                         throw new WrongSizeException(sourceBitmap.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
                             string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", sourceFile.FullName,
-                            sourceBitmap.Width, sourceBitmap.Height, widthInTiles * Program.MaxTileSize.Width, sourceBitmap.Height != heightInTiles * Program.MaxTileSize.Height));
+                            sourceBitmap.Width, sourceBitmap.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
                     }
 
                     bool isOneTile;
