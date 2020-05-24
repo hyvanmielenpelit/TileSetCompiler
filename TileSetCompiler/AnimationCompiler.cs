@@ -31,7 +31,7 @@ namespace TileSetCompiler
 
             var animation = splitLine[1];
             var frame = splitLine[2];
-            var originalTileNumber = int.Parse(splitLine[3]);            
+            var originalTileNumber = int.Parse(splitLine[3]); //Not used   
             int widthInTiles = int.Parse(splitLine[4]);
             int heightInTiles = int.Parse(splitLine[5]);
             int mainTileAlignmentInt = int.Parse(splitLine[6]);
@@ -72,10 +72,6 @@ namespace TileSetCompiler
 
             if (!isTileMissing)
             {
-                if (!Program.TileFiles.ContainsKey(originalTileNumber))
-                {
-                    throw new Exception(string.Format("Original Tile ID '{0}' not found in TileFiles. Original File probably does not exist.", originalTileNumber));
-                }
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     if (image.Size == Program.ItemSize)
