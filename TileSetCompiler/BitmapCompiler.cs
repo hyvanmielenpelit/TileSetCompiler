@@ -184,13 +184,16 @@ namespace TileSetCompiler
             Program.CurrentCount++;
         }
 
-        protected void StoreTileFile(FileInfo file)
+        protected void StoreTileFile(FileInfo file, bool isStatue = false)
         {
             if(file == null)
             {
                 throw new ArgumentNullException("file");
             }
-            Program.TileFiles.Add(Program.CurrentCount, file);
+            var tileFileData = new TileData();
+            tileFileData.File = file;
+            tileFileData.IsStatue = isStatue;
+            Program.TileFileData.Add(Program.CurrentCount, tileFileData);
         }
 
         /// <summary>

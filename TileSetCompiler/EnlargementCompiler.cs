@@ -30,12 +30,15 @@ namespace TileSetCompiler
         const string _missingAnimationType = "Enlargement";
 
         public MissingTileCreator MissingEnlargementCreator { get; set; }
+        public StatueCreator StatueCreator { get; set; }
 
         public EnlargementCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
             MissingEnlargementCreator = new MissingTileCreator();
             MissingEnlargementCreator.BackgroundColor = Color.LightGray;
             MissingEnlargementCreator.TextColor = Color.Brown;
+
+            StatueCreator = new StatueCreator();
         }
 
         public override void CompileOne(string[] splitLine)
@@ -84,116 +87,54 @@ namespace TileSetCompiler
 
             var targetPathRelative = Path.Combine(_subDirName, enlargementName, tilePositionName + Program.ImageFileExtension);
 
-            if (Program.TileFiles.ContainsKey(originalTileIndex))
+            if (Program.TileFileData.ContainsKey(originalTileIndex))
             {
                 //The original tile exists
-                var originalTileFile = Program.TileFiles[originalTileIndex];
-                using (var originalImage = new Bitmap(Image.FromFile(originalTileFile.FullName)))
+                var originalTileData = Program.TileFileData[originalTileIndex];
+                using (var originalImage = new Bitmap(Image.FromFile(originalTileData.File.FullName)))
                 {
-                    int xTile = 0;
-                    int yTile = 0;
                     Size originalImageTileSize = new Size(originalImage.Width / Program.MaxTileSize.Width, originalImage.Height / Program.MaxTileSize.Height);
 
                     if (originalImageTileSize.Height == 1 && (tilePosition == EnlargementTilePosition.TopLeft || tilePosition == EnlargementTilePosition.TopCenter || tilePosition == EnlargementTilePosition.TopRight))
                     {
                         throw new WrongSizeException(string.Format("Image '{0}' is too small in height for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileFile.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Height));
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Height));
                     }
                     if (originalImageTileSize.Width == 1 && (tilePosition == EnlargementTilePosition.TopLeft || tilePosition == EnlargementTilePosition.TopRight || tilePosition == EnlargementTilePosition.MiddleRight))
                     {
                         throw new WrongSizeException(string.Format("Image '{0}' is too small in width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileFile.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Height));
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Height));
                     }
                     if (originalImageTileSize.Width == 2 && mainTileAlignment == MainTileAlignment.Left && (tilePosition == EnlargementTilePosition.TopLeft || tilePosition == EnlargementTilePosition.MiddleLeft))
                     {
                         throw new WrongSizeException(string.Format("Image '{0}' is too small in left width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileFile.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
                     }
                     if (originalImageTileSize.Width == 2 && mainTileAlignment == MainTileAlignment.Right && (tilePosition == EnlargementTilePosition.TopRight || tilePosition == EnlargementTilePosition.MiddleRight))
                     {
                         throw new WrongSizeException(string.Format("Image '{0}' is too small in right width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileFile.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
                     }
 
-                    if (tilePosition == EnlargementTilePosition.TopLeft)
-                    {
-                        xTile = 0;
-                        yTile = 0;
-                    }
-                    else if (tilePosition == EnlargementTilePosition.TopCenter)
-                    {
-                        yTile = 0;
-                        if (enlargementWidthInTiles == 1)
-                        {
-                            xTile = 0;
-                        }
-                        else if (enlargementWidthInTiles == 2)
-                        {
-                            if (mainTileAlignment == MainTileAlignment.Left)
-                            {
-                                xTile = 0;
-                            }
-                            else
-                            {
-                                xTile = 1;
-                            }
-                        }
-                        else
-                        {
-                            xTile = 1;
-                        }
-                    }
-                    else if (tilePosition == EnlargementTilePosition.TopRight)
-                    {
-                        yTile = 0;
-                        if (enlargementWidthInTiles == 2)
-                        {
-                            xTile = 1;
-                        }
-                        else if (enlargementWidthInTiles == 3)
-                        {
-                            xTile = 2;
-                        }
-                    }
-                    else if (tilePosition == EnlargementTilePosition.MiddleLeft)
-                    {
-                        if(enlargementHeightInTiles == 1)
-                        {
-                            yTile = 0;
-                        }
-                        else
-                        {
-                            yTile = 1;
-                        }
-                        xTile = 0;
-                    }
-                    else if (tilePosition == EnlargementTilePosition.MiddleRight)
-                    {
-                        if (enlargementHeightInTiles == 1)
-                        {
-                            yTile = 0;
-                        }
-                        else
-                        {
-                            yTile = 1;
-                        }
-                        if (enlargementWidthInTiles == 2)
-                        {
-                            xTile = 1;
-                        }
-                        else if (enlargementWidthInTiles == 3)
-                        {
-                            xTile = 2;
-                        }
-                    }
+                    var point = Program.GetEnlargementTileLocationInPixels(tilePosition, enlargementWidthInTiles, enlargementHeightInTiles, mainTileAlignment);
 
-                    int x = xTile * Program.MaxTileSize.Width;
-                    int y = yTile * Program.MaxTileSize.Height;
+                    var sourcePathRelative = Path.GetRelativePath(Program.InputDirectory.FullName, originalTileData.File.FullName);
 
-                    var sourcePathRelative = Path.GetRelativePath(Program.InputDirectory.FullName, originalTileFile.FullName);
-                    Console.WriteLine("Compiled Enlargement '{0}' successfully.", targetPathRelative);
-                    WriteTileNameAutogenerationSuccess(sourcePathRelative, targetPathRelative, "Enlargement");
-                    CropAndDrawImageToTileSet(originalImage, new Point(x, y), Program.MaxTileSize);
+                    if(originalTileData.IsStatue)
+                    {
+                        using(var statueBitmap = StatueCreator.CreateCroppedStatueBitmap(originalImage, point, Program.MaxTileSize))
+                        {
+                            Console.WriteLine("Compiled Statue Enlargement '{0}' successfully.", targetPathRelative);
+                            WriteTileNameAutogenerationSuccess(sourcePathRelative, targetPathRelative, "Statue Enlargement");
+                            DrawImageToTileSet(statueBitmap);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Compiled Enlargement '{0}' successfully.", targetPathRelative);
+                        WriteTileNameAutogenerationSuccess(sourcePathRelative, targetPathRelative, "Enlargement");
+                        CropAndDrawImageToTileSet(originalImage, point, Program.MaxTileSize);
+                    }
                     IncreaseCurXY();
                 }
             }

@@ -54,11 +54,13 @@ namespace TileSetCompiler.Creators
             
             using (Graphics g = Graphics.FromImage(destBitmap))
             {
-                ImageAttributes attr = new ImageAttributes();
-                attr.SetColorMatrix(GrayScaleMatrix);
+                using (ImageAttributes attr = new ImageAttributes())
+                {
+                    attr.SetColorMatrix(GrayScaleMatrix);
 
-                g.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height),
-                    0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attr);
+                    g.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height),
+                        0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attr);
+                }
             }
 
             return destBitmap;            
@@ -121,6 +123,14 @@ namespace TileSetCompiler.Creators
             else
             {
                 return MissingStatueTileCreator.CreateTileWithTextLines(_missingTileType, _missingTileSubType, name, genderDesc);
+            }
+        }
+
+        public Bitmap CreateCroppedStatueBitmap(Bitmap image, Point point, Size size)
+        {
+            using (var croppedBitmap = image.Clone(new Rectangle(point, size), image.PixelFormat))
+            {
+                return CreateStatueBitmap(croppedBitmap);
             }
         }
     }

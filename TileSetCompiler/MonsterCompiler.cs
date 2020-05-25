@@ -108,6 +108,7 @@ namespace TileSetCompiler
                         WriteTileNameAutogenerationError(sourceRelativePath, destFileRelativePath, type);
                     }
                     DrawImageToTileSet(image);
+                    StoreTileFile(sourceFile, true);
                     IncreaseCurXY();
                 }
             }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml.Schema;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Data;
+using TileSetCompiler.Exceptions;
 
 namespace TileSetCompiler
 {
@@ -67,7 +68,7 @@ namespace TileSetCompiler
         public static int MaxX { get; set; }
         public static int MaxY { get; set; }
         public static int CurrentCount { get; set; }
-        public static Dictionary<int, FileInfo> TileFiles { get; set; }
+        public static Dictionary<int, TileData> TileFileData { get; set; }
 
         protected static TileCompiler TileCompiler { get; set; }
 
@@ -166,7 +167,7 @@ namespace TileSetCompiler
 
             InitializeOutputFiles();
 
-            TileFiles = new Dictionary<int, FileInfo>();
+            TileFileData = new Dictionary<int, TileData>();
 
             using (TileCompiler = new TileCompiler())
             {
@@ -369,31 +370,120 @@ namespace TileSetCompiler
             return new Point(pointInTiles.X * MaxTileSize.Width, pointInTiles.Y * MaxTileSize.Height);
         }
 
-        //public static string TestSourceFile { get { return @"G:\Jaetut Drivet\Hyvän mielen pelit projektit\GnollHack\Tileset_Test\Objects\missile\weapons\arrow\weapon_arrow_missile_middle-left.png"; } }
-        //public static string TestTargetFileFormat { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test-{0}.png"; } }
+        public static Point GetEnlargementTileLocation(EnlargementTilePosition tilePosition, int enlargementWidthInTiles, int enlargementHeightInTiles, MainTileAlignment mainTileAlignment)
+        {
+            int xTile = 0;
+            int yTile = 0;            
 
-        //private static void TestCode()
-        //{
-        //    MissileCreator missileCreator = new MissileCreator();
-        //    using (var bmp = new Bitmap(TestSourceFile))
-        //    {
-        //        using (var bmp2 = missileCreator.CreateMissile(bmp, MissileDirection.TopLeft))
-        //        {
-        //            SaveTestBitmap(bmp2, "final");
-        //        }
-        //    }
-        //}
+            if (tilePosition == EnlargementTilePosition.TopLeft)
+            {
+                xTile = 0;
+                yTile = 0;
+            }
+            else if (tilePosition == EnlargementTilePosition.TopCenter)
+            {
+                yTile = 0;
+                if (enlargementWidthInTiles == 1)
+                {
+                    xTile = 0;
+                }
+                else if (enlargementWidthInTiles == 2)
+                {
+                    if (mainTileAlignment == MainTileAlignment.Left)
+                    {
+                        xTile = 0;
+                    }
+                    else
+                    {
+                        xTile = 1;
+                    }
+                }
+                else
+                {
+                    xTile = 1;
+                }
+            }
+            else if (tilePosition == EnlargementTilePosition.TopRight)
+            {
+                yTile = 0;
+                if (enlargementWidthInTiles == 2)
+                {
+                    xTile = 1;
+                }
+                else if (enlargementWidthInTiles == 3)
+                {
+                    xTile = 2;
+                }
+            }
+            else if (tilePosition == EnlargementTilePosition.MiddleLeft)
+            {
+                if (enlargementHeightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else
+                {
+                    yTile = 1;
+                }
+                xTile = 0;
+            }
+            else if (tilePosition == EnlargementTilePosition.MiddleRight)
+            {
+                if (enlargementHeightInTiles == 1)
+                {
+                    yTile = 0;
+                }
+                else
+                {
+                    yTile = 1;
+                }
+                if (enlargementWidthInTiles == 2)
+                {
+                    xTile = 1;
+                }
+                else if (enlargementWidthInTiles == 3)
+                {
+                    xTile = 2;
+                }
+            }
 
-        //public static void SaveTestBitmap(Bitmap bmp, string suffix)
-        //{
-        //    string filePath = string.Format(TestTargetFileFormat, suffix);
+            return new Point(xTile, yTile);
+        }
 
-        //    if (File.Exists(filePath))
-        //    {
-        //        File.Delete(filePath);
-        //    }
+        public static Point GetEnlargementTileLocationInPixels(EnlargementTilePosition tilePosition, int enlargementWidthInTiles, int enlargementHeightInTiles, MainTileAlignment mainTileAlignment)
+        {
+            var tilePoint = GetEnlargementTileLocation(tilePosition, enlargementWidthInTiles, enlargementHeightInTiles, mainTileAlignment);
+            int x = tilePoint.X * MaxTileSize.Width;
+            int y = tilePoint.Y * MaxTileSize.Height;
+            return new Point(x, y);
 
-        //    bmp.Save(filePath);
-        //}
+        }
+
+            //public static string TestSourceFile { get { return @"G:\Jaetut Drivet\Hyvän mielen pelit projektit\GnollHack\Tileset_Test\Objects\missile\weapons\arrow\weapon_arrow_missile_middle-left.png"; } }
+            //public static string TestTargetFileFormat { get { return @"C:\Users\tommi\source\GnollHackTileSetOutput\test-{0}.png"; } }
+
+            //private static void TestCode()
+            //{
+            //    MissileCreator missileCreator = new MissileCreator();
+            //    using (var bmp = new Bitmap(TestSourceFile))
+            //    {
+            //        using (var bmp2 = missileCreator.CreateMissile(bmp, MissileDirection.TopLeft))
+            //        {
+            //            SaveTestBitmap(bmp2, "final");
+            //        }
+            //    }
+            //}
+
+            //public static void SaveTestBitmap(Bitmap bmp, string suffix)
+            //{
+            //    string filePath = string.Format(TestTargetFileFormat, suffix);
+
+            //    if (File.Exists(filePath))
+            //    {
+            //        File.Delete(filePath);
+            //    }
+
+            //    bmp.Save(filePath);
+            //}
+        }
     }
-}
