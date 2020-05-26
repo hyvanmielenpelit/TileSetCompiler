@@ -20,6 +20,7 @@ namespace TileSetCompiler
         const string _tileType_UI = "user-interface";
         const string _tileType_animation = "animation";
         const string _tileType_enlargement = "enlargement";
+        const string _tileType_replacement = "replacement";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
@@ -34,6 +35,7 @@ namespace TileSetCompiler
         protected UICompiler UICompiler { get; private set; }
         protected AnimationCompiler AnimationCompiler { get; private set; }
         protected EnlargementCompiler EnlargementCompiler { get; private set; }
+        protected ReplacementCompiler ReplacementCompiler { get; private set; }
 
         public FileInfo TileNameFile { get; set; }
         public StreamWriter TileNameWriter { get; private set; }
@@ -73,6 +75,7 @@ namespace TileSetCompiler
             UICompiler = new UICompiler(TileNameWriter);
             AnimationCompiler = new AnimationCompiler(TileNameWriter);
             EnlargementCompiler = new EnlargementCompiler(TileNameWriter);
+            ReplacementCompiler = new ReplacementCompiler(TileNameWriter);
 
             string manifestPath = Path.Combine(BaseDirectory.FullName, _manifestFile);
             Manifest = new FileInfo(manifestPath);
@@ -155,6 +158,10 @@ namespace TileSetCompiler
                     else if (tileType == _tileType_enlargement)
                     {
                         EnlargementCompiler.CompileOne(splitLine);
+                    }
+                    else if (tileType == _tileType_replacement)
+                    {
+                        ReplacementCompiler.CompileOne(splitLine);
                     }
                     else
                     {

@@ -346,5 +346,14 @@ namespace TileSetCompiler
             //Already singular
             return word;
         }
+
+        protected string DoFileNameConversions(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+            return s.ToLower().Replace(" ", "_");
+        }
     }
 }

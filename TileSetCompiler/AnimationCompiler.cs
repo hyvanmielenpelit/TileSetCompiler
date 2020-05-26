@@ -97,7 +97,6 @@ namespace TileSetCompiler
                 }
             }
             IncreaseCurXY();
-
         }
     }
 }
