@@ -102,18 +102,18 @@ namespace TileSetCompiler
                     }
                     if (originalImageTileSize.Width == 1 && (tilePosition == EnlargementTilePosition.TopLeft || tilePosition == EnlargementTilePosition.TopRight || tilePosition == EnlargementTilePosition.MiddleRight))
                     {
-                        throw new WrongSizeException(string.Format("Image '{0}' is too small in width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Height));
+                        throw new WrongSizeException(string.Format("Image '{0}' is too small in width for enlargement. Size: {1}x{2}. Minimum Width: {3}.",
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 2 * Program.MaxTileSize.Width));
                     }
                     if (originalImageTileSize.Width == 2 && mainTileAlignment == MainTileAlignment.Left && (tilePosition == EnlargementTilePosition.TopLeft || tilePosition == EnlargementTilePosition.MiddleLeft))
                     {
-                        throw new WrongSizeException(string.Format("Image '{0}' is too small in left width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
+                        throw new WrongSizeException(string.Format("Image '{0}' is too small in left width for enlargement. Size: {1}x{2}. Minimum Width: {3}.",
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Width));
                     }
                     if (originalImageTileSize.Width == 2 && mainTileAlignment == MainTileAlignment.Right && (tilePosition == EnlargementTilePosition.TopRight || tilePosition == EnlargementTilePosition.MiddleRight))
                     {
-                        throw new WrongSizeException(string.Format("Image '{0}' is too small in right width for enlargement. Size: {1}x{2}. Minimum Height: {3}.",
-                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Height));
+                        throw new WrongSizeException(string.Format("Image '{0}' is too small in right width for enlargement. Size: {1}x{2}. Minimum Width: {3}.",
+                            originalTileData.File.FullName, originalImage.Width, originalImage.Height, 3 * Program.MaxTileSize.Width));
                     }
 
                     var point = Program.GetEnlargementTileLocationInPixels(tilePosition, enlargementWidthInTiles, enlargementHeightInTiles, mainTileAlignment);
