@@ -11,7 +11,7 @@ namespace TileSetCompiler
     class CmapVariationCompiler : DungeonTileCompiler
     {
         const string _subDirName = "Cmap Variations";
-        const int _lineLength = 3;
+        const int _lineLength = 6;
         const string _cmapVariationSubType = "Variation";
         const string _cmapVariationAutogenerationType = "cmap-variation";
 
@@ -52,6 +52,16 @@ namespace TileSetCompiler
                     nameWithoutIndex = name.Substring(0, lastDash).ToLower().Replace(" ", "_");
                 }
             }
+
+            int widthInTiles = int.Parse(splitLine[3]);
+            int heightInTiles = int.Parse(splitLine[4]);
+            int mainTileAlignmentInt = int.Parse(splitLine[5]);
+            if (!Enum.IsDefined(typeof(MainTileAlignment), mainTileAlignmentInt))
+            {
+                throw new Exception(string.Format("MainTileAlignment '{0}' is invalid. Should be 0 or 1.", mainTileAlignmentInt));
+            }
+            MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
+
 
             var subDir = map.ToLower().Replace(" ", "_");
 
@@ -142,7 +152,14 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawImageToTileSet(image);
+                        if (image.Size == Program.MaxTileSize)
+                        {
+                            DrawImageToTileSet(image);
+                        }
+                        else
+                        {
+                            DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
+                        }
                         StoreTileFile(file);
                     }
                 }
