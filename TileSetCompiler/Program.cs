@@ -109,7 +109,7 @@ namespace TileSetCompiler
                     Console.ReadKey();
                     return;
                 }
-                Console.WriteLine("Found Directory '{0}'.", args[0]);
+                Console.WriteLine("Found Input Directory '{0}'.", usedDir);
                 Program.InputDirectory = usedDir;
             }
             catch (Exception ex)
@@ -132,22 +132,52 @@ namespace TileSetCompiler
                 return;
             }
 
-            OutputDirectory = new DirectoryInfo(args[1]);
-
-            if (!OutputDirectory.Exists)
+            try
             {
-                try
+                DirectoryInfo[] dirs = new DirectoryInfo[3];
+                dirs[0] = new DirectoryInfo(args[1]);
+                dirs[1] = new DirectoryInfo(args[1].Replace("Jaetut Drivet", "Shared drives"));
+                dirs[2] = new DirectoryInfo(args[1].Replace("Shared drives", "Jaetut Drivet"));
+                DirectoryInfo usedDir = null;
+                foreach (var dir in dirs)
                 {
-                    OutputDirectory.Create();
+                    usedDir = dir;
+                    if (usedDir.Exists)
+                    {
+                        break;
+                    }
                 }
-                catch (Exception ex)
+                if (!usedDir.Exists)
                 {
-                    Console.WriteLine("Error creating directory '{0}':", OutputDirectory.FullName);
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Output directories '{0}' does not exist.", string.Join<DirectoryInfo>(", ", dirs));
                     Console.ReadKey();
                     return;
                 }
+                Console.WriteLine("Found Output Directory '{0}'.", usedDir);
+                OutputDirectory = usedDir;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Output directory '{0}' is invalid.", args[1]);
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                return;
+            }
+
+            //if (!OutputDirectory.Exists)
+            //{
+            //    try
+            //    {
+            //        OutputDirectory.Create();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Error creating directory '{0}':", OutputDirectory.FullName);
+            //        Console.WriteLine(ex.Message);
+            //        Console.ReadKey();
+            //        return;
+            //    }
+            //}
 
             //-----------------------------------------------------------
             // Third argument is the output file name without extension
