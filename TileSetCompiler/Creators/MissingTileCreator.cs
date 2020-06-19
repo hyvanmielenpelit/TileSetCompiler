@@ -7,6 +7,12 @@ using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler.Creators
 {
+    public enum MissingTileSize
+    {
+        Full = 0,
+        Item = 1
+    }
+
     public class MissingTileCreator
     {
         public Color TextColor { get; set; }
@@ -15,6 +21,7 @@ namespace TileSetCompiler.Creators
         public StringAlignment HorizontalAlignment { get; set; }
         public StringAlignment VerticalAlignment { get; set; }
         public bool Capitalize { get; set; }
+        public MissingTileSize TileSize { get; set; }
 
         public MissingTileCreator()
         {
@@ -24,6 +31,7 @@ namespace TileSetCompiler.Creators
             HorizontalAlignment = StringAlignment.Center;
             VerticalAlignment = StringAlignment.Center;
             Capitalize = true;
+            TileSize = MissingTileSize.Full;
         }
 
         public void SetTextFont(FontFamily family, float size)
@@ -59,11 +67,21 @@ namespace TileSetCompiler.Creators
                 Brush bgBrush = new SolidBrush(BackgroundColor);
                 g.FillRectangle(bgBrush, new Rectangle(Point.Empty, Program.MaxTileSize));
                 Brush textBrush = new SolidBrush(TextColor);
-                SizeF tileSizeF = new SizeF((float)Program.MaxTileSize.Width, (float)Program.MaxTileSize.Height);
+                SizeF tileSizeF = SizeF.Empty;
+                PointF point = PointF.Empty;
+                if (TileSize == MissingTileSize.Full)
+                {
+                    tileSizeF = new SizeF((float)Program.MaxTileSize.Width, (float)Program.MaxTileSize.Height);
+                }
+                else if (TileSize == MissingTileSize.Item)
+                {
+                    point = new PointF(0, 48f);
+                    tileSizeF = new SizeF((float)Program.MaxTileSize.Width, ((float)Program.MaxTileSize.Height)/2f);
+                }
                 StringFormat sFormat = new StringFormat();
                 sFormat.Alignment = HorizontalAlignment;
                 sFormat.LineAlignment = VerticalAlignment;
-                g.DrawString(label, TextFont, textBrush, new RectangleF(PointF.Empty, tileSizeF), sFormat);
+                g.DrawString(label, TextFont, textBrush, new RectangleF(point, tileSizeF), sFormat);
             }
             return bmp;
         }

@@ -23,6 +23,7 @@ namespace TileSetCompiler
         {
             MissingObjectTileCreator = new MissingTileCreator();
             MissingObjectTileCreator.TextColor = Color.DarkBlue;
+            MissingObjectTileCreator.TileSize = MissingTileSize.Item;
         }
 
         public override void CompileOne(string[] splitLine)
