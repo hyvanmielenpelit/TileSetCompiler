@@ -347,13 +347,14 @@ namespace TileSetCompiler
             return word;
         }
 
-        protected string DoFileNameConversions(string s)
+        protected MainTileAlignment GetMainTileAlignment(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            int mainTileAlignmentInt = int.Parse(s);
+            if (!Enum.IsDefined(typeof(MainTileAlignment), mainTileAlignmentInt))
             {
-                return s;
+                throw new Exception(string.Format("MainTileAlignment '{0}' is invalid. Should be 0 or 1.", mainTileAlignmentInt));
             }
-            return s.ToLower().Replace(" ", "_");
+            return (MainTileAlignment)mainTileAlignmentInt;
         }
     }
 }

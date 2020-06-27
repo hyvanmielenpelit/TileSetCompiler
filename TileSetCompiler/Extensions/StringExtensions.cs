@@ -37,5 +37,14 @@ namespace TileSetCompiler.Extensions
             }
             return sb.ToString();
         }
+
+        public static string ToFileName(this string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+            return s.ToLower().Replace(" ", "_");
+        }
     }
 }

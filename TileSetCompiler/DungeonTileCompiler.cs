@@ -71,5 +71,22 @@ namespace TileSetCompiler
             }
             return sb.ToString();
         }
+
+        protected string GetNameWithoutIndex(string name)
+        {
+            var nameWithoutIndex = name.ToFileName();
+            int lastDash = name.LastIndexOf('-');
+            int lastPartNumber = -1;
+            if (lastDash > 0 && lastDash < name.Length - 1)
+            {
+                string lastPart = name.Substring(lastDash + 1);
+                bool isNumeral = int.TryParse(lastPart, out lastPartNumber);
+                if (isNumeral)
+                {
+                    nameWithoutIndex = name.Substring(0, lastDash).ToFileName();
+                }
+            }
+            return nameWithoutIndex;
+        }
     }
 }

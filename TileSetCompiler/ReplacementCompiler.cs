@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
@@ -40,8 +41,8 @@ namespace TileSetCompiler
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
-            var dirPath = Path.Combine(BaseDirectory.FullName, DoFileNameConversions(replacementName));
-            var fileName = DoFileNameConversions(replacementName) + "_" + DoFileNameConversions(tileName) + Program.ImageFileExtension;
+            var dirPath = Path.Combine(BaseDirectory.FullName, replacementName.ToFileName());
+            var fileName = replacementName.ToFileName() + "_" + tileName.ToFileName() + Program.ImageFileExtension;
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
             var relativePath = Path.GetRelativePath(Program.InputDirectory.FullName, file.FullName);

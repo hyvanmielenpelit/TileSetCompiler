@@ -16,11 +16,13 @@ namespace TileSetCompiler
         const string _tileType_cmap = "cmap";
         const string _tileType_misc = "misc";
         const string _tileType_player = "player";
-        const string _tileType_cmap_variation = "cmap-variations";
+        const string _tileType_cmap_variation = "cmap-variation";
         const string _tileType_UI = "user-interface";
         const string _tileType_animation = "animation";
         const string _tileType_enlargement = "enlargement";
         const string _tileType_replacement = "replacement";
+        const string _tileType_broken_cmap = "broken-cmap";
+        const string _tileType_broken_cmap_variation = "broken-cmap-variation";
 
         public FileInfo Manifest { get; private set; }
         public DirectoryInfo BaseDirectory { get { return Program.InputDirectory; } }
@@ -36,6 +38,8 @@ namespace TileSetCompiler
         protected AnimationCompiler AnimationCompiler { get; private set; }
         protected EnlargementCompiler EnlargementCompiler { get; private set; }
         protected ReplacementCompiler ReplacementCompiler { get; private set; }
+        protected BrokenCmapCompiler BrokenCmapCompiler { get; private set; }
+        protected BrokenCmapVariationCompiler BrokenCmapVariationCompiler { get; private set; }
 
         public FileInfo TileNameFile { get; set; }
         public StreamWriter TileNameWriter { get; private set; }
@@ -76,6 +80,8 @@ namespace TileSetCompiler
             AnimationCompiler = new AnimationCompiler(TileNameWriter);
             EnlargementCompiler = new EnlargementCompiler(TileNameWriter);
             ReplacementCompiler = new ReplacementCompiler(TileNameWriter);
+            BrokenCmapCompiler = new BrokenCmapCompiler(TileNameWriter);
+            BrokenCmapVariationCompiler = new BrokenCmapVariationCompiler(TileNameWriter);
 
             string manifestPath = Path.Combine(BaseDirectory.FullName, _manifestFile);
             Manifest = new FileInfo(manifestPath);
@@ -162,6 +168,14 @@ namespace TileSetCompiler
                     else if (tileType == _tileType_replacement)
                     {
                         ReplacementCompiler.CompileOne(splitLine);
+                    }
+                    else if (tileType == _tileType_broken_cmap)
+                    {
+                        BrokenCmapCompiler.CompileOne(splitLine);
+                    }
+                    else if (tileType == _tileType_broken_cmap_variation)
+                    {
+                        BrokenCmapVariationCompiler.CompileOne(splitLine);
                     }
                     else
                     {
