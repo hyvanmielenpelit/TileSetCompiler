@@ -55,7 +55,7 @@ namespace TileSetCompiler
             int heightInTiles = int.Parse(splitLine[5]);
             MainTileAlignment mainTileAlignment = GetMainTileAlignment(splitLine[6]);
 
-            var subDir2 = map.ToLower().Replace(" ", "_");
+            var subDir2 = map.ToFileName();
             var name2 = name.Substring(2);
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);

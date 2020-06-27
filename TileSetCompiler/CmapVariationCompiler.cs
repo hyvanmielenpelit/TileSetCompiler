@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Creators.Data;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
@@ -52,10 +53,10 @@ namespace TileSetCompiler
             MainTileAlignment mainTileAlignment = GetMainTileAlignment(splitLine[5]);
 
 
-            var subDir = map.ToLower().Replace(" ", "_");
+            var subDir = map.ToFileName();
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir);
-            var fileName = map.ToLower().Replace(" ", "_") + "_" + name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+            var fileName = map.ToFileName() + "_" + name.ToFileName() + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
