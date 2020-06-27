@@ -16,21 +16,21 @@ namespace TileSetCompiler
         const string _brokenSuffix = "_broken";
         const string _missingBrokenCmapType = "Broken Cmap";
 
-        protected MissingTileCreator MissingCmapVariationTileCreator { get; set; }
+        protected MissingTileCreator MissingBrokenCmapVariationTileCreator { get; set; }
 
         public BrokenCmapVariationCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-            MissingCmapVariationTileCreator = new MissingTileCreator();
-            MissingCmapVariationTileCreator.BackgroundColor = Color.LightGray;
-            MissingCmapVariationTileCreator.TextColor = Color.DarkRed;
-            MissingCmapVariationTileCreator.Capitalize = false;
+            MissingBrokenCmapVariationTileCreator = new MissingTileCreator();
+            MissingBrokenCmapVariationTileCreator.BackgroundColor = Color.LightGray;
+            MissingBrokenCmapVariationTileCreator.TextColor = Color.DarkRed;
+            MissingBrokenCmapVariationTileCreator.Capitalize = false;
         }
 
         public override void CompileOne(string[] splitLine)
         {
             if (splitLine.Length < _lineLength)
             {
-                throw new Exception(string.Format("Cmap Variation line '{0}' has too few elements.", string.Join(',', splitLine)));
+                throw new Exception(string.Format("Broken Cmap Variation line '{0}' has too few elements.", string.Join(',', splitLine)));
             }
 
             var map = splitLine[1];
@@ -67,7 +67,7 @@ namespace TileSetCompiler
             {
                 Console.WriteLine("File '{0}' not found. Creating Missing Broken Cmap Variation tile.", file.FullName);
                 WriteCmapTileNameErrorFileNotFound(relativePath, null, "Creating Missing Broken Cmap Variation tile.");
-                using (var image = MissingCmapVariationTileCreator.CreateTile(_missingBrokenCmapType, _cmapVariationSubType, name))
+                using (var image = MissingBrokenCmapVariationTileCreator.CreateTile(_missingBrokenCmapType, _cmapVariationSubType, name))
                 {
                     DrawImageToTileSet(image);
                 }

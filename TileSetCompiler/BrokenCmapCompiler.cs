@@ -16,14 +16,14 @@ namespace TileSetCompiler
         const string _brokenSuffix = "_broken";
         const string _missingBrokenCmapType = "Broken Cmap";
 
-        protected MissingTileCreator MissingCmapTileCreator { get; set; }
+        protected MissingTileCreator MissingBrokenCmapTileCreator { get; set; }
 
         public BrokenCmapCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
-            MissingCmapTileCreator = new MissingTileCreator();
-            MissingCmapTileCreator.BackgroundColor = Color.LightGray;
-            MissingCmapTileCreator.TextColor = Color.DarkRed;
-            MissingCmapTileCreator.Capitalize = false;
+            MissingBrokenCmapTileCreator = new MissingTileCreator();
+            MissingBrokenCmapTileCreator.BackgroundColor = Color.LightGray;
+            MissingBrokenCmapTileCreator.TextColor = Color.DarkRed;
+            MissingBrokenCmapTileCreator.Capitalize = false;
         }
 
         public override void CompileOne(string[] splitLine)
@@ -73,10 +73,10 @@ namespace TileSetCompiler
             }
             else
             {
-                Console.WriteLine("File '{0}' not found. Creating Missing Cmap tile.", file.FullName);
+                Console.WriteLine("File '{0}' not found. Creating Missing Broken Cmap tile.", file.FullName);
                 WriteCmapTileNameErrorFileNotFound(relativePath, desc, "Creating Missing Broken Cmap tile.");
 
-                using (var image = MissingCmapTileCreator.CreateTileWithTextLines(_missingBrokenCmapType, name2))
+                using (var image = MissingBrokenCmapTileCreator.CreateTileWithTextLines(_missingBrokenCmapType, name2))
                 {
                     DrawImageToTileSet(image);
                 }
