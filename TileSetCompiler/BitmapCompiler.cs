@@ -176,12 +176,12 @@ namespace TileSetCompiler
                 Program.CurX = 0;
                 Program.CurY++;
             }
-            if (Program.CurY > Program.MaxY)
+            Program.CurrentCount++;
+            if (Program.CurY > Program.MaxY && Program.CurrentCount != Program.TileNumber)
             {
                 Console.WriteLine("Program.CurY '{0}' is greater than Program.MaxY '{1}'.", Program.CurY, Program.MaxY);
                 throw new Exception("Aborting.");
             }
-            Program.CurrentCount++;
         }
 
         protected void StoreTileFile(FileInfo file, bool isStatue = false)
