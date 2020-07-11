@@ -133,44 +133,24 @@ namespace TileSetCompiler
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(monsterDirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
 
-                if (!Directory.Exists(monsterDirPath))
+                if (file.Exists)
                 {
-                    Console.WriteLine("Monster directory '{0}' not found. Creating a Missing Monster Tile.", monsterDirPath);
-                    isTileMissing = true;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating a Missing Monster Tile.");
-                }
-                else
-                {
-
-                    if (file.Exists)
+                    string typeDesc = _typeData[type].Description;
+                    if (string.IsNullOrEmpty(typeDesc))
                     {
-                        string typeDesc = _typeData[type].Description;
-                        if(string.IsNullOrEmpty(typeDesc))
-                        {
-                            typeDesc = type.ToProperCase();
-                        }
-                        Console.WriteLine("Created Monster {0} Tile '{1}' successfully.", typeDesc, relativePath);
-                        WriteTileNameSuccess(relativePath);
+                        typeDesc = "Normal";
                     }
-                    else
-                    {
-                        Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
-                        isTileMissing = true;
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
-                    }
-                }
+                    Console.WriteLine("Created Monster {0} Tile '{1}' successfully.", typeDesc, relativePath);
+                    WriteTileNameSuccess(relativePath);
 
-                if (!isTileMissing)
-                {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         if (image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
                         {
                             throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
                                 string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
-                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, image.Height != heightInTiles * Program.MaxTileSize.Height));
+                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
                         }
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
                         StoreTileFile(file);
@@ -178,6 +158,9 @@ namespace TileSetCompiler
                 }
                 else
                 {
+                    Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
+
                     using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
                     {
                         DrawImageToTileSet(image);

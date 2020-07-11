@@ -84,31 +84,12 @@ namespace TileSetCompiler
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
-            bool isTileMissing = false;
 
-            if (!Directory.Exists(dirPath))
+            if(file.Exists)
             {
-                Console.WriteLine("Player directory '{0}' not found. Creating Missing Player Tile.", dirPath);
-                isTileMissing = true;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Player Tile.");
-            }
-            else
-            {
-                if (file.Exists)
-                {
-                    Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
-                    WriteTileNameSuccess(relativePath);
-                }
-                else
-                {
-                    Console.WriteLine("File '{0}' not found. Creating Missing Player Tile.", file.FullName);
-                    isTileMissing = true;
-                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Player Tile.");
-                }
-            }
+                Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
+                WriteTileNameSuccess(relativePath);
 
-            if(!isTileMissing)
-            {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     CropAndDrawImageToTileSet(image);
@@ -117,6 +98,9 @@ namespace TileSetCompiler
             }
             else
             {
+                Console.WriteLine("File '{0}' not found. Creating Missing Player Tile.", file.FullName);
+                WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Player Tile.");
+
                 using (var image = MissingPlayerTileCreator.CreateTileWithTextLines(_missingTileType, 
                     race, role, gender, _alignmentData[alignment].Description, _typeData[type].Description))
                 {
