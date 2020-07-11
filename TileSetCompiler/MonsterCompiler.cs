@@ -40,7 +40,10 @@ namespace TileSetCompiler
             { "item-use", new CategoryData("_item-use", "Item Use") },
             { "door-use", new CategoryData("_door-use", "Door Use") },
             { "kick", new CategoryData("_kick", "Kick") },
-            { "death", new CategoryData("_death", "Death") }
+            { "death", new CategoryData("_death", "Death") },
+            { "passive-defense", new CategoryData("_passive-defense", "Passive Defense") },
+            { "defend", new CategoryData("_defend", "Defend") },
+            { "receive-damage", new CategoryData("_receive-damage", "Receive Damage") }
         };
 
         public StatueCreator StatueCreator { get; private set; }
