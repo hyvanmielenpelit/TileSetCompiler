@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Data;
+using TileSetCompiler.Exceptions;
 
 namespace TileSetCompiler
 {
@@ -104,8 +105,15 @@ namespace TileSetCompiler
             }
         }
 
-        protected void DrawMainTileToTileSet(Bitmap image, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment)
-        {            
+        protected void DrawMainTileToTileSet(Bitmap image, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, FileInfo file)
+        {
+            Size rightSize = new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height);
+            if (image.Size != rightSize)
+            {
+                throw new WrongSizeException(image.Size, rightSize, string.Format("Image '{0}' should be size {1}x{2} but is actually {3}x{4}.", file.FullName, 
+                    rightSize.Width, rightSize.Height, image.Width, image.Height));
+            }
+
             bool isOneTile;
             var point = Program.GetMainTileLocationInPixels(widthInTiles, heightInTiles, mainTileAlignment, out isOneTile);
 

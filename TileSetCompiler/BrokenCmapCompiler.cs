@@ -66,7 +66,7 @@ namespace TileSetCompiler
                     }
                     else
                     {
-                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
                     }
                     StoreTileFile(file);
                 }

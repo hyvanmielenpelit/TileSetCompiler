@@ -223,16 +223,26 @@ namespace TileSetCompiler
                         TileSetSize.Width * _tileSize.Width, TileSetSize.Height * _tileSize.Height);
                     Console.WriteLine("Finished.");
                 }
-                catch(Exception ex)
-                {
-                    //Error occurred
-                    Console.WriteLine(string.Format("Exception occurred: {0}", ex.Message));
-                    if(ex.InnerException != null)
-                    {
-                        Console.WriteLine(string.Format("Inner Exception: {0}", ex.InnerException.Message));
-                    }
-                    Console.WriteLine("Exiting.");
-                }
+                //catch(Exception ex)
+                //{
+                //    //Error occurred
+                //    Console.WriteLine(string.Format("Exception occurred: {0}", ex.Message));
+                //    if(!string.IsNullOrWhiteSpace(ex.StackTrace))
+                //    {
+                //        Console.WriteLine("Exception Stack Trace:");
+                //        Console.WriteLine(ex.StackTrace);
+                //    }
+                //    if (ex.InnerException != null)
+                //    {
+                //        Console.WriteLine(string.Format("Inner Exception: {0}", ex.InnerException.Message));
+                //        if(!string.IsNullOrWhiteSpace(ex.InnerException.StackTrace))
+                //        {
+                //            Console.WriteLine("Inner Exception Stack Trace:");
+                //            Console.WriteLine(ex.InnerException.StackTrace);
+                //        }
+                //    }
+                //    Console.WriteLine("Exiting.");
+                //}
                 finally
                 {
                     Console.ReadKey();

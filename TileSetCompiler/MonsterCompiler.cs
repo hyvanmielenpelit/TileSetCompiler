@@ -152,7 +152,7 @@ namespace TileSetCompiler
                                 string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
                                 image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
                         }
-                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment);
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
                         StoreTileFile(file);
                     }
                 }
