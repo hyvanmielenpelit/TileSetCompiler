@@ -208,8 +208,7 @@ namespace TileSetCompiler
                                 file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
                         }
                         Point pointInPixels = new Point(pointInTiles.Value.X * Program.MaxTileSize.Width, pointInTiles.Value.Y * Program.MaxTileSize.Height);
-                        image.Tag = file.FullName;
-                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file);
                     }
                     else
                     {

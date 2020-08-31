@@ -34,9 +34,14 @@ namespace TileSetCompiler
 
         protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size)
         {
+            CropAndDrawImageToTileSet(image, point, size, image.Tag as FileInfo);
+        }
+
+        protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size, FileInfo file)
+        {
             if (point.X + size.Width > image.Width || point.Y + size.Height > image.Height)
             {
-                throw new Exception(string.Format("Image '{0}' is not large enough for cloning.", image.Tag));
+                throw new Exception(string.Format("Image '{0}' is not large enough for cloning.", file != null ? file.FullName : ""));
             }
 
             using (var croppedBitmap = image.Clone(new Rectangle(point, size), image.PixelFormat))
@@ -214,6 +219,16 @@ namespace TileSetCompiler
             tileFileData.BitmapSizeInTiles = bitmapSizeInTiles;
             tileFileData.IsStatue = isStatue;
             Program.TileFileData.Add(Program.CurrentCount, tileFileData);
+        }
+
+        protected TileData GetTileFile(int tileNumber)
+        {
+            if(!Program.TileFileData.ContainsKey(tileNumber))
+            {
+                return null;
+                //throw new Exception(string.Format("Tile {0} has not been stored.", tileNumber));
+            }
+            return Program.TileFileData[tileNumber];
         }
 
         /// <summary>

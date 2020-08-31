@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Data;
 using TileSetCompiler.Exceptions;
 using TileSetCompiler.Extensions;
 
@@ -32,7 +33,7 @@ namespace TileSetCompiler
 
             var animation = splitLine[1];
             var frame = splitLine[2];
-            var originalTileNumber = int.Parse(splitLine[3]); //Not used   
+            var originalTileNumber = int.Parse(splitLine[3]);
             int widthInTiles = int.Parse(splitLine[4]);
             int heightInTiles = int.Parse(splitLine[5]);
             int mainTileAlignmentInt = int.Parse(splitLine[6]);
@@ -41,6 +42,10 @@ namespace TileSetCompiler
                 throw new Exception(string.Format("MainTileAlignment '{0}' is invalid. Should be 0 or 1.", mainTileAlignmentInt));
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
+
+            TileData originalTileData = GetTileFile(originalTileNumber);
+            Point? originalFilePointInTiles = originalTileData != null ? originalTileData.PointInTiles : null;
+            Size? originalFileBitmapSizeInTiles = originalTileData != null ? originalTileData.BitmapSizeInTiles : null;
 
             var dirPath = Path.Combine(BaseDirectory.FullName, animation.ToFileName());
             var fileName = animation.ToFileName() + "_" + frame.ToFileName() + Program.ImageFileExtension;
@@ -56,17 +61,31 @@ namespace TileSetCompiler
 
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
-                    if (image.Size == Program.ItemSize)
+                    if(originalFileBitmapSizeInTiles.HasValue && (originalFileBitmapSizeInTiles.Value.Width > 1 || originalFileBitmapSizeInTiles.Value.Height > 1))
                     {
-                        DrawItemToTileSet(image, false);
-                    }
-                    else if (image.Size == Program.MaxTileSize)
-                    {
-                        DrawImageToTileSet(image);
+                        Size rightSize = new Size(originalFileBitmapSizeInTiles.Value.Width * Program.MaxTileSize.Width, originalFileBitmapSizeInTiles.Value.Height * Program.MaxTileSize.Height);
+                        if (image.Size != rightSize)
+                        {
+                            throw new WrongSizeException(image.Size, rightSize, string.Format("Image '{0}' should be {1}x{2} but is in reality {3}x{4}",
+                                file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
+                        }
+                        Point pointInPixels = new Point(originalFilePointInTiles.Value.X * Program.MaxTileSize.Width, originalFilePointInTiles.Value.Y * Program.MaxTileSize.Height);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file);
                     }
                     else
                     {
-                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
+                        if (image.Size == Program.ItemSize)
+                        {
+                            DrawItemToTileSet(image, false);
+                        }
+                        else if (image.Size == Program.MaxTileSize)
+                        {
+                            DrawImageToTileSet(image);
+                        }
+                        else
+                        {
+                            DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
+                        }
                     }
                     StoreTileFile(file);
                 }
