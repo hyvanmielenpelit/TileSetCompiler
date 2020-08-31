@@ -199,12 +199,19 @@ namespace TileSetCompiler
 
         protected void StoreTileFile(FileInfo file, bool isStatue = false)
         {
-            if(file == null)
+            StoreTileFile(file, null, null, isStatue);
+        }
+
+        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false)
+        {
+            if (file == null)
             {
                 throw new ArgumentNullException("file");
             }
             var tileFileData = new TileData();
             tileFileData.File = file;
+            tileFileData.PointInTiles = pointInTiles;
+            tileFileData.BitmapSizeInTiles = bitmapSizeInTiles;
             tileFileData.IsStatue = isStatue;
             Program.TileFileData.Add(Program.CurrentCount, tileFileData);
         }

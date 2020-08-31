@@ -60,7 +60,7 @@ namespace TileSetCompiler
             string subDir2 = null;
             string fileName = null;
             string name = "";
-            Point? tilePoint = null;
+            Point? pointInTiles = null;
             Size? bitmapSizeInTiles = null;
 
             if (type == _miscInvisible)
@@ -81,7 +81,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 int xInTiles = int.Parse(splitLine[4]);
                 int yInTiles = int.Parse(splitLine[5]);
-                tilePoint = new Point(xInTiles, yInTiles);
+                pointInTiles = new Point(xInTiles, yInTiles);
                 int widthInTiles = int.Parse(splitLine[6]);
                 int heightInTiles = int.Parse(splitLine[7]);
                 bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
@@ -110,7 +110,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 int xInTiles = int.Parse(splitLine[4]);
                 int yInTiles = int.Parse(splitLine[5]);
-                tilePoint = new Point(xInTiles, yInTiles);
+                pointInTiles = new Point(xInTiles, yInTiles);
                 int widthInTiles = int.Parse(splitLine[6]);
                 int heightInTiles = int.Parse(splitLine[7]);
                 bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
@@ -139,7 +139,7 @@ namespace TileSetCompiler
                 var direction = splitLine[3];
                 int xInTiles = int.Parse(splitLine[4]);
                 int yInTiles = int.Parse(splitLine[5]);
-                tilePoint = new Point(xInTiles, yInTiles);
+                pointInTiles = new Point(xInTiles, yInTiles);
                 int widthInTiles = int.Parse(splitLine[6]);
                 int heightInTiles = int.Parse(splitLine[7]);
                 bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
@@ -207,7 +207,7 @@ namespace TileSetCompiler
                             throw new WrongSizeException(image.Size, rightSize, string.Format("Image '{0}' should be {1}x{2} but is in reality {3}x{4}",
                                 file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
                         }
-                        Point pointInPixels = new Point(tilePoint.Value.X * Program.MaxTileSize.Width, tilePoint.Value.Y * Program.MaxTileSize.Height);
+                        Point pointInPixels = new Point(pointInTiles.Value.X * Program.MaxTileSize.Width, pointInTiles.Value.Y * Program.MaxTileSize.Height);
                         image.Tag = file.FullName;
                         CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize);
                     }
@@ -215,7 +215,7 @@ namespace TileSetCompiler
                     {
                         DrawImageToTileSet(image);
                     }
-                    StoreTileFile(file);
+                    StoreTileFile(file, pointInTiles, bitmapSizeInTiles);
                 }
 
             }

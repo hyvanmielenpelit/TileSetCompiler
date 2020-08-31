@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Exceptions;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
@@ -41,37 +42,18 @@ namespace TileSetCompiler
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
-            var dirPath = Path.Combine(BaseDirectory.FullName, animation.ToLower().Replace(" ", "_"));
-            var fileName = animation.ToLower().Replace(" ", "_") + "_" + frame.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+            var dirPath = Path.Combine(BaseDirectory.FullName, animation.ToFileName());
+            var fileName = animation.ToFileName() + "_" + frame.ToFileName() + Program.ImageFileExtension;
 
-            var relativePath = Path.Combine(_subDirName, animation.ToLower().Replace(" ", "_"), fileName);
+            var relativePath = Path.Combine(_subDirName, animation.ToFileName(), fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
-            bool isTileMissing = false;
 
-            if (!Directory.Exists(dirPath))
+            if (file.Exists)
             {
-                Console.WriteLine("Animation directory '{0}' not found. Creating Missing Animation.", dirPath);
-                isTileMissing = true;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Animation.");
-            }
-            else
-            {
-                if (file.Exists)
-                {
-                    Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
-                    WriteTileNameSuccess(relativePath);
-                }
-                else
-                {
-                    Console.WriteLine("File '{0}' not found. Creating Missing Animation.", file.FullName);
-                    isTileMissing = true;
-                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Animation.");
-                }
-            }
+                Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
+                WriteTileNameSuccess(relativePath);
 
-            if (!isTileMissing)
-            {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     if (image.Size == Program.ItemSize)
@@ -91,11 +73,15 @@ namespace TileSetCompiler
             }
             else
             {
+                Console.WriteLine("File '{0}' not found. Creating Missing Animation.", file.FullName);
+                WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Animation.");
+
                 using (var image = MissingAnimationCreator.CreateTile(_missingAnimationType, animation, frame))
                 {
                     DrawImageToTileSet(image);
                 }
             }
+
             IncreaseCurXY();
         }
     }
