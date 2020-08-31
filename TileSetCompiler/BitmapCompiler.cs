@@ -34,6 +34,11 @@ namespace TileSetCompiler
 
         protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size)
         {
+            if (point.X + size.Width > image.Width || point.Y + size.Height > image.Height)
+            {
+                throw new Exception(string.Format("Image '{0}' is not large enough for cloning.", image.Tag));
+            }
+
             using (var croppedBitmap = image.Clone(new Rectangle(point, size), image.PixelFormat))
             {
                 DrawImageToTileSet(croppedBitmap);

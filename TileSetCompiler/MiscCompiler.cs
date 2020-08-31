@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Exceptions;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
@@ -58,42 +60,108 @@ namespace TileSetCompiler
             string subDir2 = null;
             string fileName = null;
             string name = "";
+            Point? tilePoint = null;
+            Size? bitmapSizeInTiles = null;
+
             if (type == _miscInvisible)
             {
                 var type2 = splitLine[2];
-                subDir2 = type.ToLower().Replace(" ", "_");
-                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                subDir2 = type.ToFileName();
+                fileName = type.ToFileName() + "_" + type2.ToFileName() + Program.ImageFileExtension;
                 name = type2;
             }
             else if (type == _miscExplode)
             {
+                if (splitLine.Length < 8)
+                {
+                    throw new Exception(string.Format("Misc Explode line '{0}' has less than 8 elements.", string.Join(',', splitLine)));
+                }
+
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
-                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = type2 + " " + direction;
+                int xInTiles = int.Parse(splitLine[4]);
+                int yInTiles = int.Parse(splitLine[5]);
+                tilePoint = new Point(xInTiles, yInTiles);
+                int widthInTiles = int.Parse(splitLine[6]);
+                int heightInTiles = int.Parse(splitLine[7]);
+                bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
+
+                if (widthInTiles > 1 || heightInTiles > 1)
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
+                else
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + "_" + direction.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
             }
             else if (type == _miscZap)
             {
+                if (splitLine.Length < 8)
+                {
+                    throw new Exception(string.Format("Misc Zap line '{0}' has less than 8 elements.", string.Join(',', splitLine)));
+                }
+
                 var type2 = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), type2.ToLower().Replace(" ", "_"));
-                fileName = type.ToLower().Replace(" ", "_") + "_" + type2.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = type2 + " " + direction;
+                int xInTiles = int.Parse(splitLine[4]);
+                int yInTiles = int.Parse(splitLine[5]);
+                tilePoint = new Point(xInTiles, yInTiles);
+                int widthInTiles = int.Parse(splitLine[6]);
+                int heightInTiles = int.Parse(splitLine[7]);
+                bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
+
+                if (widthInTiles > 1 || heightInTiles > 1)
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
+                else
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + "_" + direction.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
             }
             else if (type == _miscSwallow)
             {
+                if (splitLine.Length < 8)
+                {
+                    throw new Exception(string.Format("Misc Swallow line '{0}' has less than 8 elements.", string.Join(',', splitLine)));
+                }
+
                 var monster = splitLine[2];
                 var direction = splitLine[3];
-                subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), monster.ToLower().Replace(" ", "_"));
-                fileName = monster.ToLower().Replace(" ", "_") + "_" + type.ToLower().Replace(" ", "_") + "_" + direction.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                name = monster + " " + direction;
+                int xInTiles = int.Parse(splitLine[4]);
+                int yInTiles = int.Parse(splitLine[5]);
+                tilePoint = new Point(xInTiles, yInTiles);
+                int widthInTiles = int.Parse(splitLine[6]);
+                int heightInTiles = int.Parse(splitLine[7]);
+                bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
+
+                if (widthInTiles > 1 || heightInTiles > 1)
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), monster.ToFileName());
+                    fileName = monster.ToFileName() + "_" + type.ToFileName() + Program.ImageFileExtension;
+                    name = monster + " " + direction;
+                }
+                else
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), monster.ToFileName());
+                    fileName = monster.ToFileName() + "_" + type.ToFileName() + "_" + direction.ToFileName() + Program.ImageFileExtension;
+                    name = monster + " " + direction;
+                }
             }
             else if (type == _miscWarning)
             {
                 var level = splitLine[2];
-                subDir2 = type.ToLower().Replace(" ", "_");
-                fileName = level.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                subDir2 = type.ToFileName();
+                fileName = level.ToFileName() + Program.ImageFileExtension;
                 name = level;
             }
             else
@@ -102,15 +170,15 @@ namespace TileSetCompiler
                 if(splitLine.Length == 3)
                 {
                     name = splitLine[2];
-                    subDir2 = type.ToLower().Replace(" ", "_");
-                    fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                    subDir2 = type.ToFileName();
+                    fileName = name.ToFileName() + Program.ImageFileExtension;
                 }
                 else if (splitLine.Length >= 4)
                 {
                     var category = splitLine[2];
                     var name2 = splitLine[3];
-                    subDir2 = Path.Combine(type.ToLower().Replace(" ", "_"), category.ToLower().Replace(" ", "_"));
-                    fileName = category.ToLower().Replace(" ", "_") + "_" + name2.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                    subDir2 = Path.Combine(type.ToFileName(), category.ToFileName());
+                    fileName = category.ToFileName() + "_" + name2.ToFileName() + Program.ImageFileExtension;
                     name = category + " " + name2;
                 }
                 else
@@ -123,44 +191,44 @@ namespace TileSetCompiler
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
-            bool isTileMissing = false;
 
-            if (!Directory.Exists(dirPath))
+            if (file.Exists)
             {
-                Console.WriteLine("Misc directory '{0}' not found. Creating Missing Misc tile.", dirPath);
-                isTileMissing = true;
-                WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Misc tile.");
-            }
-            else
-            {
-                if (file.Exists)
-                {
-                    Console.WriteLine("Compiled Misc Tile {0} successfully.", relativePath);
-                    WriteTileNameSuccess(relativePath);
-                }
-                else
-                {
-                    Console.WriteLine("File '{0}' not found. Creating Missing Misc tile.", file.FullName);
-                    isTileMissing = true;
-                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Misc tile.");
-                }
-            }
+                Console.WriteLine("Compiled Misc Tile {0} successfully.", relativePath);
+                WriteTileNameSuccess(relativePath);
 
-            if(!isTileMissing)
-            {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
-                    DrawImageToTileSet(image);
+                    if(bitmapSizeInTiles.HasValue && (bitmapSizeInTiles.Value.Width > 1 || bitmapSizeInTiles.Value.Height > 1))
+                    {
+                        Size rightSize = new Size(bitmapSizeInTiles.Value.Width * Program.MaxTileSize.Width, bitmapSizeInTiles.Value.Height * Program.MaxTileSize.Height);
+                        if (image.Size != rightSize)
+                        {
+                            throw new WrongSizeException(image.Size, rightSize, string.Format("Image '{0}' should be {1}x{2} but is in reality {3}x{4}",
+                                file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
+                        }
+                        Point pointInPixels = new Point(tilePoint.Value.X * Program.MaxTileSize.Width, tilePoint.Value.Y * Program.MaxTileSize.Height);
+                        image.Tag = file.FullName;
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize);
+                    }
+                    else
+                    {
+                        DrawImageToTileSet(image);
+                    }
                     StoreTileFile(file);
                 }
+
             }
             else
             {
+                Console.WriteLine("File '{0}' not found. Creating Missing Misc tile.", file.FullName);
+                WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Misc tile.");
                 using (var image = MissingMiscTileCreator.CreateTile(_missingTileType, type, name))
                 {
                     DrawImageToTileSet(image);
                 }
             }
+
             IncreaseCurXY();
         }
     }
