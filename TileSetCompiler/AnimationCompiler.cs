@@ -49,13 +49,21 @@ namespace TileSetCompiler
 
             var dirPath = Path.Combine(BaseDirectory.FullName, animation.ToFileName());
             var fileName = animation.ToFileName() + "_" + frame.ToFileName() + Program.ImageFileExtension;
+            var fileName2 = frame.ToFileName() + Program.ImageFileExtension;
 
             var relativePath = Path.Combine(_subDirName, animation.ToFileName(), fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
+            var filePath2 = Path.Combine(dirPath, fileName2);
+            FileInfo file2 = new FileInfo(filePath2);
 
-            if (file.Exists)
+            if (file.Exists || file2.Exists)
             {
+                if(!file.Exists && file2.Exists)
+                {
+                    file = file2;
+                }
+
                 Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
                 WriteTileNameSuccess(relativePath);
 
