@@ -18,6 +18,8 @@ namespace TileSetCompiler
         const string _subDirName = "Monsters";
         const int _monsterLineLength = 7;
         const string _type_statue = "statue";
+        const string _type_corpse = "body";
+        const string _missingCorpseTileType = "Corpse";
         const string _missingMonsterTileType = "Monster";
 
         private Dictionary<string, CategoryData> _genderData = new Dictionary<string, CategoryData>()
@@ -49,12 +51,17 @@ namespace TileSetCompiler
 
         public StatueCreator StatueCreator { get; private set; }
         protected MissingTileCreator MissingMonsterTileCreator { get; private set; }
+        protected MissingTileCreator MissingCorpseTileCreator { get; private set; }
 
         public MonsterCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
             MissingMonsterTileCreator = new MissingTileCreator();
             MissingMonsterTileCreator.TextColor = Color.Red;
             MissingMonsterTileCreator.Capitalize = true;
+
+            MissingCorpseTileCreator = new MissingTileCreator();
+            MissingCorpseTileCreator.TextColor = Color.DarkBlue;
+            MissingCorpseTileCreator.TileSize = MissingTileSize.Item;
 
             StatueCreator = new StatueCreator();
         }
@@ -159,12 +166,25 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
-                    WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
-
-                    using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
+                    if(type == _type_corpse)
                     {
-                        DrawImageToTileSet(image);
+                        Console.WriteLine("Corpse file '{0}' not found. Creating a Missing Corpse Tile.", file.FullName);
+                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Corpse Tile.");
+
+                        using (var image = MissingCorpseTileCreator.CreateTile(_missingCorpseTileType, name, _genderData[gender].Description))
+                        {
+                            DrawImageToTileSet(image);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
+                        WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
+
+                        using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
+                        {
+                            DrawImageToTileSet(image);
+                        }
                     }
                 }
                 IncreaseCurXY();
