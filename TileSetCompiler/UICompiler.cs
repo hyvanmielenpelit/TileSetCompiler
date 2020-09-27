@@ -17,6 +17,7 @@ namespace TileSetCompiler
         const string _typeCursor = "cursor";
         const string _typeSpecialEffect = "special-effect";
         const string _typeUITile = "ui-tile";
+        const string _typeBuff = "buff";
         const int _uiTileSplitItemsBeforeNames = 6;
 
         public MissingTileCreator MissingUITileCreator { get; set; }
@@ -90,7 +91,7 @@ namespace TileSetCompiler
                 }
                 IncreaseCurXY();
             }
-            else if (type == _typeUITile)
+            else if (type == _typeUITile || type == _typeBuff)
             {
                 if(splitLine.Length < 4)
                 {
