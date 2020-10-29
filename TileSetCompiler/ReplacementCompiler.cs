@@ -56,7 +56,7 @@ namespace TileSetCompiler
                 {
                     if (image.Size == Program.ItemSize)
                     {
-                        DrawItemToTileSet(image, false);
+                        DrawItemToTileSet(image, false, mainTileAlignment);
                     }
                     else if (image.Size == Program.MaxTileSize)
                     {

@@ -155,7 +155,7 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawItemToTileSet(image, isFullSizeBitmap);
+                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
                         StoreTileFile(file);
                     }
                 }

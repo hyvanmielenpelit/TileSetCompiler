@@ -44,11 +44,35 @@ namespace TileSetCompiler
             ItemMissileCreator = new MissileCreator();
         }
 
-        protected void DrawItemToTileSet(Bitmap image, bool isFullSize)
+        protected void DrawItemToTileSet(Bitmap image, bool isFullSize, MainTileAlignment mainTileAlignment)
         {
             if(isFullSize)
             {
-                DrawImageToTileSet(image);
+                if(image.Width == Program.MaxTileSize.Width && image.Height == Program.MaxTileSize.Height)
+                {
+                    DrawImageToTileSet(image);
+                }
+                else
+                {
+                    using (Bitmap targetBitmap = new Bitmap(Program.MaxTileSize.Width, Program.MaxTileSize.Height))
+                    {
+
+                        targetBitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+                        using (Graphics gTargetBitmap = Graphics.FromImage(targetBitmap))
+                        {
+                            int x = 0;
+                            if(image.Width == 2 * Program.MaxTileSize.Width)
+                                x = mainTileAlignment == MainTileAlignment.Left ? 0: Program.MaxTileSize.Width;
+                            else if (image.Width == 3 * Program.MaxTileSize.Width)
+                                x = Program.MaxTileSize.Width;
+
+                            int y = image.Height - targetBitmap.Height;
+                            Rectangle srcrect = new Rectangle(x, y, Program.MaxTileSize.Width, Program.MaxTileSize.Height);
+                            gTargetBitmap.DrawImage(image, 0, 0, srcrect, GraphicsUnit.Pixel);
+                            DrawImageToTileSet(targetBitmap);
+                        }
+                    }
+                }
             }
             else
             {
