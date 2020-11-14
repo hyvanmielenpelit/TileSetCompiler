@@ -13,6 +13,7 @@ namespace TileSetCompiler.Data
         public bool IsFromTemplate { get; set; }
         public Point? PointInTiles { get; set; }
         public Size? BitmapSizeInTiles { get; set; }
+        public TemplateData TemplateData { get; set; }
 
         public TileData()
         {

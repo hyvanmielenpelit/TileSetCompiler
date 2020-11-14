@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Data;
 using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
@@ -195,7 +196,7 @@ namespace TileSetCompiler
                     using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
                     {
                         DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
-                        StoreTileFile(file, false, true);
+                        StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
                     }
 
                     Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
@@ -206,7 +207,7 @@ namespace TileSetCompiler
                     using (var image = CreateItemFromTemplate(template2File, templateColor, subTypeCode, subTypeName))
                     {
                         DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
-                        StoreTileFile(file, false, true);
+                        StoreTileFile(template2File, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
                     }
 
                     Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, template2RelativePath);
