@@ -46,5 +46,14 @@ namespace TileSetCompiler.Extensions
             }
             return s.ToLower().Replace(" ", "_");
         }
+
+        public static string ToDashed(this string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+            return s.ToLower().Replace(" ", "-");
+        }
     }
 }

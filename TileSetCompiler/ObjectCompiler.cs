@@ -153,7 +153,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
                 }
 
                 string templateDirPath = Path.Combine(BaseDirectory.FullName, templateSubDir);

@@ -141,8 +141,9 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
-                string templateSubDir = objectType.ToFileName();
-
+                //-----------------------------------------------
+                // Template 1 is found under Artifacts directory
+                //-----------------------------------------------
                 string templateFileName = null;
                 if (string.IsNullOrEmpty(subTypeName))
                 {
@@ -150,14 +151,17 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
                 }
 
-                string templateDirPath = Path.Combine(BaseDirectory.FullName, templateSubDir);
-                string templateRelativePath = Path.Combine(_subDirName, templateSubDir, templateFileName);
+                string templateDirPath = BaseDirectory.FullName;
+                string templateRelativePath = Path.Combine(_subDirName, templateFileName);
                 string templateFilePath = Path.Combine(templateDirPath, templateFileName);
                 FileInfo templateFile = new FileInfo(templateFilePath);
 
+                //---------------------------------------------
+                // Template 2 is found under Objects directory
+                //---------------------------------------------
                 string template2SubDir = objectType.ToFileName();
 
                 string template2FileName = null;
@@ -167,7 +171,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    template2FileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
+                    template2FileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
                 }
 
                 string template2DirPath = Path.Combine(ObjectBaseDirectory.FullName, template2SubDir);
