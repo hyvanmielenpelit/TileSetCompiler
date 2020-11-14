@@ -441,7 +441,7 @@ namespace TileSetCompiler
             {
                 if (templateImage.Size != bitmapSize)
                 {
-                    throw new WrongSizeException(templateImage.Size, Program.MaxTileSize,
+                    throw new WrongSizeException(templateImage.Size, bitmapSize,
                         string.Format("File '{0}' is of wrong size. It should be {0}x{1} but it is {2}x{3}.",
                         templateFile.FullName, bitmapSize.Width, bitmapSize.Height, templateImage.Width, templateImage.Height));
                 }
