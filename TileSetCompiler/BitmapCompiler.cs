@@ -435,11 +435,6 @@ namespace TileSetCompiler
             }
         }
 
-        protected void DrawBitmapFromTemplateToTileSet(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode, string subTypeName)
-        {
-           
-        }
-
         protected Bitmap CreateBitmapFromTemplate(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode, string subTypeName)
         {
             using (var templateImage = new Bitmap(Image.FromFile(templateFile.FullName)))
