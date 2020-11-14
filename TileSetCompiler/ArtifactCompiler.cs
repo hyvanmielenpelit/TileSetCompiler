@@ -11,14 +11,18 @@ namespace TileSetCompiler
     class ArtifactCompiler : ItemCompiler
     {
         const string _subDirName = "Artifacts";
-        const int _lineLength = 10;
+        const string _objectSubDirName = "Objects";
+        const int _lineLength = 14;
         const string _artifactMissingTileType = "Artifact";
         const string _artifactNoDescription = "no base item description";
 
+        protected DirectoryInfo ObjectBaseDirectory { get; set; }
         public MissingTileCreator MissingArtifactTileCreator { get; set; }
 
         public ArtifactCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
+            ObjectBaseDirectory = new DirectoryInfo(Path.Combine(Program.InputDirectory.FullName, _objectSubDirName));
+
             MissingArtifactTileCreator = new MissingTileCreator();
             MissingArtifactTileCreator.TextColor = Color.Purple;
             MissingArtifactTileCreator.TileSize = MissingTileSize.Item;
@@ -75,11 +79,19 @@ namespace TileSetCompiler
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
+            int colorCode = int.Parse(splitLine[10]);
+            Color templateColor = GetColorFromColorCode(colorCode);
+
+            int subTypeCode = int.Parse(splitLine[11]);
+            string subTypeName = splitLine[12];
+            string objectType = splitLine[13];
+            var objectTypeSingular = GetSingular(objectType);
+
             if (type == _typeMissile)
             {
                 //Autogenerate missile icon
-                var subDir2 = name.ToLower().Replace(" ", "_");
-                var fileName = name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                var subDir2 = name.ToFileName();
+                var fileName = name.ToFileName() + Program.ImageFileExtension;
 
                 if (!_missileData.ContainsKey(direction))
                 {
@@ -94,8 +106,8 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
-                var targetSubDir2 = name.ToLower().Replace(" ", "_");
-                var targetFileName = name.ToLower().Replace(" ", "_") +
+                var targetSubDir2 = name.ToFileName();
+                var targetFileName = name.ToFileName() +
                     _typeSuffix[type] +
                     _missileData[direction].FileSuffix + Program.ImageFileExtension;
                 var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
@@ -121,48 +133,88 @@ namespace TileSetCompiler
             }
             else
             {
-                var subDir2 = name.ToLower().Replace(" ", "_");
+                var subDir2 = name.ToFileName();
                 var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                var fileName = name.ToLower().Replace(" ", "_") + _typeSuffix[type] + Program.ImageFileExtension;
+                var fileName = name.ToFileName() + _typeSuffix[type] + Program.ImageFileExtension;
 
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
 
-                if (!Directory.Exists(dirPath))
+                string templateSubDir = objectType.ToFileName();
+
+                string templateFileName = null;
+                if (string.IsNullOrEmpty(subTypeName))
                 {
-                    Console.WriteLine("Artifact directory '{0}' not found. Creating Missing Artifact icon.", dirPath);
-                    isTileMissing = true;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Artifact icon.");
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + Program.ImageFileExtension;
                 }
                 else
                 {
-                    if (file.Exists)
-                    {
-                        Console.WriteLine("Compiled Artifact '{0}' successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
-                    }
-                    else
-                    {
-                        Console.WriteLine("File '{0}' not found. Creating Missing Artifact icon.", file.FullName);
-                        isTileMissing = true;
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Artifact icon.");
-                    }
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
                 }
 
-                if (!isTileMissing)
+                string templateDirPath = Path.Combine(BaseDirectory.FullName, templateSubDir);
+                string templateRelativePath = Path.Combine(_subDirName, templateSubDir, templateFileName);
+                string templateFilePath = Path.Combine(templateDirPath, templateFileName);
+                FileInfo templateFile = new FileInfo(templateFilePath);
+
+                string template2SubDir = objectType.ToFileName();
+
+                string template2FileName = null;
+                if (string.IsNullOrEmpty(subTypeName))
+                {
+                    template2FileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + Program.ImageFileExtension;
+                }
+                else
+                {
+                    template2FileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
+                }
+
+                string template2DirPath = Path.Combine(ObjectBaseDirectory.FullName, template2SubDir);
+                string template2RelativePath = Path.Combine(_objectSubDirName, template2SubDir, template2FileName);
+                string template2FilePath = Path.Combine(template2DirPath, template2FileName);
+                FileInfo template2File = new FileInfo(template2FilePath);
+
+                if (file.Exists)
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
                         StoreTileFile(file);
                     }
+
+                    Console.WriteLine("Compiled Artifact '{0}' successfully.", relativePath);
+                    WriteTileNameSuccess(relativePath);
+                }
+                else if (templateFile.Exists)
+                {
+                    using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                    {
+                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
+                        StoreTileFile(file, false, true);
+                    }
+
+                    Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
+                    WriteTileNameTemplateGenerationSuccess(relativePath, templateRelativePath);
+                }
+                else if (template2File.Exists)
+                {
+                    using (var image = CreateItemFromTemplate(template2File, templateColor, subTypeCode, subTypeName))
+                    {
+                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
+                        StoreTileFile(file, false, true);
+                    }
+
+                    Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, template2RelativePath);
+                    WriteTileNameTemplateGenerationSuccess(relativePath, template2RelativePath);
                 }
                 else
                 {
+                    Console.WriteLine("File '{0}' not found. Creating Missing Artifact icon.", file.FullName);
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Artifact icon.");
+
                     var subType = "";
-                    if(type != _typeNormal)
+                    if (type != _typeNormal)
                     {
                         subType = type;
                     }
@@ -171,6 +223,7 @@ namespace TileSetCompiler
                         DrawImageToTileSet(image);
                     }
                 }
+                
                 IncreaseCurXY();
             }            
         }
