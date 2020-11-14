@@ -14,10 +14,33 @@ namespace TileSetCompiler
 {
     abstract class BitmapCompiler
     {
+        protected const string _templateSuffix = "_template";
+
         private List<string> _sEndingSingularWords = new List<string>()
         {
             "status"
         };
+
+        private Dictionary<int, Color> _colorCodeMapping = new Dictionary<int, Color>()
+        {
+            { 0, Color.Black },
+            { 1, Color.Red },
+            { 2, Color.Green },
+            { 3, Color.Brown },
+            { 4, Color.Blue },
+            { 5, Color.Magenta },
+            { 6, Color.Cyan },
+            { 7, Color.Gray },
+            { 8, Color.Empty },
+            { 9, Color.Orange },
+            { 10, Color.LightGreen }, /* Bright Green*/
+            { 11, Color.Yellow },
+            { 12, Color.LightBlue }, /* Bright Blue*/
+            { 13, Color.FromArgb(255, 128, 255) }, /* Bright Magenta -> Light Magenta */
+            { 14, Color.LightCyan }, /* Bright Cyan */
+            { 15, Color.White }
+        };
+
 
         protected DirectoryInfo BaseDirectory { get; set; }
         protected StreamWriter TileNameWriter { get; private set; }
@@ -202,12 +225,12 @@ namespace TileSetCompiler
             }
         }
 
-        protected void StoreTileFile(FileInfo file, bool isStatue = false)
+        protected void StoreTileFile(FileInfo file, bool isStatue = false, bool isFromTemplate = false)
         {
-            StoreTileFile(file, null, null, isStatue);
+            StoreTileFile(file, null, null, isStatue, isFromTemplate);
         }
 
-        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false)
+        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false)
         {
             if (file == null)
             {
@@ -334,6 +357,12 @@ namespace TileSetCompiler
             Program.MissingTileNumber++;
         }
 
+        protected void WriteTileNameTemplateGenerationSuccess(string relativePath, string templateRelativePath)
+        {
+            WriteTileNameLine(relativePath, "GENERATED FROM TEMPLATE SUCCESSFULLY", "Template Path: " + templateRelativePath);
+            Program.TileNumberFromTemplate++;
+        }
+
         protected void DrawSubTile(Bitmap tileBitmap, Size subTileSize, int index, Bitmap subTileBitmap)
         {
             int x = (subTileSize.Width * index) % tileBitmap.Width;
@@ -390,6 +419,61 @@ namespace TileSetCompiler
                 throw new Exception(string.Format("MainTileAlignment '{0}' is invalid. Should be 0 or 1.", mainTileAlignmentInt));
             }
             return (MainTileAlignment)mainTileAlignmentInt;
+        }
+
+        protected Color GetColorFromColorCode(int colorCode)
+        {
+            if(_colorCodeMapping.ContainsKey(colorCode))
+            {
+                return _colorCodeMapping[colorCode];
+            }
+            else
+            {
+                throw new IndexOutOfRangeException(string.Format("Invalid Color Code. _colorCodeMapping does not contain value {0}.", colorCode));
+            }
+        }
+
+        protected void DrawBitmapFromTemplateToTileSet(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode, string subTypeName)
+        {
+           
+        }
+
+        protected Bitmap CreateBitmapFromTemplate(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode, string subTypeName)
+        {
+            using (var templateImage = new Bitmap(Image.FromFile(templateFile.FullName)))
+            {
+                if (templateImage.Size != bitmapSize)
+                {
+                    throw new WrongSizeException(templateImage.Size, Program.MaxTileSize,
+                        string.Format("File '{0}' is of wrong size. It should be {0}x{1} but it is {2}x{3}.",
+                        templateFile.FullName, bitmapSize.Width, bitmapSize.Height, templateImage.Width, templateImage.Height));
+                }
+
+                Bitmap bmp = new Bitmap(bitmapSize.Width, bitmapSize.Height);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    using (Brush b = new SolidBrush(templateColor))
+                    {
+                        g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
+                    }
+
+                    g.DrawImage(templateImage, new Point(0, 0));
+                }
+
+                //Remove Transparency color
+                for(int x = 0; x < bmp.Width; x++)
+                {
+                    for(int y = 0; y < bmp.Height; y++)
+                    {
+                        if(bmp.GetPixel(x, y) == TransparencyColor)
+                        {
+                            bmp.SetPixel(x, y, Color.Transparent);
+                        }
+                    }
+                }
+
+                return bmp;
+            }
         }
     }
 }

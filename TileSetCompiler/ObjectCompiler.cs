@@ -12,7 +12,7 @@ namespace TileSetCompiler
     class ObjectCompiler : ItemCompiler
     {
         const string _subDirName = "Objects";
-        const int _lineLength = 9;
+        const int _lineLength = 12;
         const string _noDescription = "no description";
         const string _missingTileType = "Object";
         const string _missingMissileType = "Missile";
@@ -80,13 +80,19 @@ namespace TileSetCompiler
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
+            int colorCode = int.Parse(splitLine[9]);
+            Color templateColor = GetColorFromColorCode(colorCode);
+
+            int subTypeCode = int.Parse(splitLine[10]);
+            string subTypeName = splitLine[11];
+
             if (type == _typeMissile)
             {
                 //Autogenerate missile icon
-                subDir2 = Path.Combine(objectType.ToLower().Replace(" ", "_"), nameOrDesc.ToLower().Replace(" ", "_"));
+                subDir2 = Path.Combine(objectType.ToFileName(), nameOrDesc.ToFileName());
                     
-                fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
-                    nameOrDesc.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                fileName = objectTypeSingular.ToFileName() + "_" +
+                    nameOrDesc.ToFileName() + Program.ImageFileExtension;
 
                 if(!_missileData.ContainsKey(direction))
                 {
@@ -100,9 +106,9 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
-                var targetSubDir2 = Path.Combine(objectType.ToLower().Replace(" ", "_"), nameOrDesc.ToLower().Replace(" ", "_"));
-                var targetFileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
-                    nameOrDesc.ToLower().Replace(" ", "_") +
+                var targetSubDir2 = Path.Combine(objectType.ToFileName(), nameOrDesc.ToFileName());
+                var targetFileName = objectTypeSingular.ToFileName() + "_" +
+                    nameOrDesc.ToFileName() +
                     _typeSuffix[type] +
                     _missileData[direction].FileSuffix + Program.ImageFileExtension;
                 var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
@@ -128,50 +134,62 @@ namespace TileSetCompiler
             }
             else
             {
-                subDir2 = Path.Combine(objectType.ToLower().Replace(" ", "_"), nameOrDesc.ToLower().Replace(" ", "_"));
-                fileName = objectTypeSingular.ToLower().Replace(" ", "_") + "_" +
-                    nameOrDesc.ToLower().Replace(" ", "_") +
+                subDir2 = Path.Combine(objectType.ToFileName(), nameOrDesc.ToFileName());
+                fileName = objectTypeSingular.ToFileName() + "_" +
+                    nameOrDesc.ToFileName() +
                     _typeSuffix[type] + Program.ImageFileExtension;
 
                 string dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 var relativePath = Path.Combine(_subDirName, subDir2, fileName);
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
 
-                if (!Directory.Exists(dirPath))
+                string templateSubDir = objectType.ToFileName();
+
+                string templateFileName = null;
+                if(string.IsNullOrEmpty(subTypeName))
                 {
-                    Console.WriteLine("Object directory '{0}' not found. Creating Missing Object Tile.", dirPath);
-                    isTileMissing = true;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing Object Tile.");
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + Program.ImageFileExtension;
                 }
                 else
                 {
-                    if (file.Exists)
-                    {
-                        Console.WriteLine("Compiled Object {0} successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
-                    }
-                    else
-                    {
-                        Console.WriteLine("File '{0}' not found. Creating Missing Object Tile.", file.FullName);
-                        isTileMissing = true;
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Tile.");
-                    }
+                    templateFileName = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + subTypeName.Replace(" ", "-") + Program.ImageFileExtension;
                 }
 
-                if (!isTileMissing)
+                string templateDirPath = Path.Combine(BaseDirectory.FullName, templateSubDir);
+                string templateRelativePath = Path.Combine(_subDirName, templateSubDir, templateFileName);
+                string templateFilePath = Path.Combine(templateDirPath, templateFileName);
+                FileInfo templateFile = new FileInfo(templateFilePath);
+
+                if (file.Exists)
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
                         StoreTileFile(file);
                     }
+
+                    Console.WriteLine("Compiled Object {0} successfully.", relativePath);
+                    WriteTileNameSuccess(relativePath);
+                }
+                else if(templateFile.Exists)
+                {
+                    using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                    {
+                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
+                        StoreTileFile(file, false, true);
+                    }
+
+                    Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
+                    WriteTileNameTemplateGenerationSuccess(relativePath, templateRelativePath);
                 }
                 else
                 {
+                    Console.WriteLine("File '{0}' not found. Creating Missing Object Tile.", file.FullName);
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Tile.");
+
                     var subType = objectTypeSingular;
-                    if(type != _typeNormal)
+                    if (type != _typeNormal)
                     {
                         subType += " " + type;
                     }
@@ -181,10 +199,9 @@ namespace TileSetCompiler
                         DrawImageToTileSet(image);
                     }
                 }
-                IncreaseCurXY();
-            }
 
-            
+                IncreaseCurXY();
+            }           
         }
     }
 }

@@ -10,6 +10,7 @@ namespace TileSetCompiler.Data
     {
         public FileInfo File { get; set; }
         public bool IsStatue { get; set; }
+        public bool IsFromTemplate { get; set; }
         public Point? PointInTiles { get; set; }
         public Size? BitmapSizeInTiles { get; set; }
 
