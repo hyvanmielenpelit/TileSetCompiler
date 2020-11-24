@@ -13,6 +13,7 @@ namespace TileSetCompiler
         const string _subDirName = "Player";
         const int _lineLength = 7;
         const string _missingTileType = "Player";
+        const string _typeNormal = "normal";
 
         private Dictionary<string, CategoryData> _typeData = new Dictionary<string, CategoryData>()
         {
@@ -76,26 +77,44 @@ namespace TileSetCompiler
 
             var level = splitLine[6]; //Not used for now
 
-            var subDir2 = Path.Combine(race.ToLower().Replace(" ", "_"), role.ToLower().Replace(" ", "_"));
+            var subDir2 = Path.Combine(race.ToFileName(), role.ToFileName());
 
             var dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
 
-            string fileName = race.ToLower().Replace(" ", "_") + "_" + role.ToLower().Replace(" ", "_") + "_" + gender.ToLower().Replace(" ", "_") + 
+            string fileName = race.ToFileName() + "_" + role.ToFileName() + "_" + gender.ToFileName() + 
                 _alignmentData[alignment].Suffix + _typeData[type].Suffix + Program.ImageFileExtension;
             var relativePath = Path.Combine(_subDirName, subDir2, fileName);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
 
-            if(file.Exists)
-            {
-                Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
-                WriteTileNameSuccess(relativePath);
+            string fileName2 = race.ToFileName() + "_" + role.ToFileName() + "_" + gender.ToFileName() +
+                _alignmentData[alignment].Suffix + _typeData[_typeNormal].Suffix + Program.ImageFileExtension;
+            var relativePath2 = Path.Combine(_subDirName, subDir2, fileName2);
+            var filePath2 = Path.Combine(dirPath, fileName2);
+            FileInfo file2 = new FileInfo(filePath2);
 
+            if (file.Exists)
+            {
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     CropAndDrawImageToTileSet(image);
                     StoreTileFile(file);
                 }
+
+                Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
+                WriteTileNameSuccess(relativePath);
+            }
+            else if (file2.Exists)
+            {
+                using (var image = new Bitmap(Image.FromFile(file2.FullName)))
+                {
+                    CropAndDrawImageToTileSet(image);
+                    StoreTileFile(file2);
+                }
+
+                Console.WriteLine("Replaced Player Tile {0} with a corresponding normal tile {1}.", relativePath, relativePath2);
+                WriteTileNameSuccess(relativePath);
+
             }
             else
             {

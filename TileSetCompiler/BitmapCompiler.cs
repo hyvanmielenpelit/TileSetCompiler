@@ -365,6 +365,12 @@ namespace TileSetCompiler
             Program.TileNumberFromTemplate++;
         }
 
+        protected void WriteTileReplacementSuccess(string relativePathTileWhichWasReplaced, string relativePathTileReplacedWith)
+        {
+            WriteTileNameLine(relativePathTileWhichWasReplaced, "REPLACED WITH ANOTHER TILE", "Another Tile Path: " + relativePathTileReplacedWith);
+            Program.TilesReplacedWithAnother++;
+        }
+
         protected void DrawSubTile(Bitmap tileBitmap, Size subTileSize, int index, Bitmap subTileBitmap)
         {
             int x = (subTileSize.Width * index) % tileBitmap.Width;
