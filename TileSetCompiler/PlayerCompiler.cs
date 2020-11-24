@@ -113,8 +113,7 @@ namespace TileSetCompiler
                 }
 
                 Console.WriteLine("Replaced Player Tile {0} with a corresponding normal tile {1}.", relativePath, relativePath2);
-                WriteTileNameSuccess(relativePath);
-
+                WriteTileReplacementSuccess(relativePath, relativePath2);
             }
             else
             {
