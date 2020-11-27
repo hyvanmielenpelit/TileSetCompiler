@@ -8,7 +8,7 @@ using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
 {
-    class BrokenCmapCompiler : DungeonTileCompiler
+    class BrokenCmapCompiler : BitmapCompiler
     {
         const string _subDirName = "Cmap";
         const int _lineLength = 7;

@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using TileSetCompiler.Creators.Data;
 using TileSetCompiler.Exceptions;
+using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler.Creators
 {
@@ -153,7 +154,7 @@ namespace TileSetCompiler.Creators
         public Bitmap CreateMissileFromFile(FileInfo file, string name, MissileDirection direction, out bool isMissing)
         {
             isMissing = false;
-            var nameReplaced = name.ToLower().Replace(" ", "_");
+            var nameReplaced = name.ToFileName();
             if (!file.Exists)
             {
                 isMissing = true;
