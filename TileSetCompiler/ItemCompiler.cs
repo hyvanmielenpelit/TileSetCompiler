@@ -14,6 +14,7 @@ namespace TileSetCompiler
         protected const string _typeLit = "lit";
         protected const string _typeMissile = "missile";
         protected const string _missileAutogenerateType = "Missile";
+        protected const string _missileSuffix = "_missile";
 
         protected Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
         {

@@ -92,7 +92,8 @@ namespace TileSetCompiler
             {
                 //Autogenerate missile icon
                 var subDir2 = name.ToFileName();
-                var fileName = name.ToFileName() + Program.ImageFileExtension;
+                var fileNameBase = name.ToFileName() + Program.ImageFileExtension;
+                var fileNameMissile = name.ToFileName() + _missileSuffix + Program.ImageFileExtension;
 
                 if (!_missileData.ContainsKey(direction))
                 {
@@ -103,9 +104,13 @@ namespace TileSetCompiler
 
 
                 string dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
-                var relativePath = Path.Combine(_subDirName, subDir2, fileName);
-                var filePath = Path.Combine(dirPath, fileName);
-                FileInfo file = new FileInfo(filePath);
+                var relativePathBase = Path.Combine(_subDirName, subDir2, fileNameBase);
+                var filePathBase = Path.Combine(dirPath, fileNameBase);
+                FileInfo fileBase = new FileInfo(filePathBase);
+
+                var relativePathMissile = Path.Combine(_subDirName, subDir2, fileNameMissile);
+                var filePathMissile = Path.Combine(dirPath, fileNameMissile);
+                FileInfo fileMissile = new FileInfo(filePathMissile);
 
                 var targetSubDir2 = name.ToFileName();
                 var targetFileName = name.ToFileName() +
@@ -114,6 +119,8 @@ namespace TileSetCompiler
                 var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
 
                 bool isTileMissing = false;
+                FileInfo file = fileMissile.Exists ? fileMissile : fileBase;
+                string relativePath = fileMissile.Exists ? relativePathMissile : relativePathBase;
 
                 using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
                 {
