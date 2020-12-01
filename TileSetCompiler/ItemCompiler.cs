@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
 using TileSetCompiler.Creators.Data;
+using TileSetCompiler.Exceptions;
 
 namespace TileSetCompiler
 {
@@ -15,6 +16,7 @@ namespace TileSetCompiler
         protected const string _typeMissile = "missile";
         protected const string _missileAutogenerateType = "Missile";
         protected const string _missileSuffix = "_missile";
+        protected const string _floorSuffix = "_floor";
 
         protected Dictionary<string, string> _typeSuffix = new Dictionary<string, string>()
         {
@@ -45,7 +47,7 @@ namespace TileSetCompiler
             ItemMissileCreator = new MissileCreator();
         }
 
-        protected void DrawItemToTileSet(Bitmap image, bool isFullSize, MainTileAlignment mainTileAlignment)
+        protected void DrawItemToTileSet(Bitmap image, bool isFullSize, MainTileAlignment mainTileAlignment, Bitmap floorImage = null)
         {
             if(isFullSize)
             {
@@ -85,6 +87,16 @@ namespace TileSetCompiler
                         int x = targetBitmap.Width - image.Width;
                         int y = targetBitmap.Height - image.Height;
                         gTargetBitmap.DrawImage(image, x, y);
+                        if(floorImage != null)
+                        { 
+                            if (floorImage.Size != Program.ItemSize)
+                            {
+                                throw new WrongSizeException(floorImage.Size, Program.ItemSize,
+                                    string.Format("floorImage is of wrong size. It should be {0}x{1} but it is {2}x{3}",
+                                    Program.ItemSize.Width, Program.ItemSize.Height, floorImage.Width, floorImage.Height));
+                            }
+                            gTargetBitmap.DrawImage(floorImage, 0, 0);
+                        }
                         DrawImageToTileSet(targetBitmap);
                     }
                 }
@@ -95,5 +107,6 @@ namespace TileSetCompiler
         {
             return CreateBitmapFromTemplate(templateFile, templateColor, Program.ItemSize, subTypeCode, subTypeName);
         }
+
     }
 }
