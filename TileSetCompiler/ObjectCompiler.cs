@@ -188,11 +188,11 @@ namespace TileSetCompiler
                 string templateFileNameFloor = null;
                 if (string.IsNullOrEmpty(subTypeName))
                 {
-                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + _floorSuffix + Program.ImageFileExtension;
+                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
                 }
                 else
                 {
-                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateSuffix + "_" + subTypeName.ToDashed() + _floorSuffix + Program.ImageFileExtension;
+                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
                 }
                 string templateRelativePathFloor = Path.Combine(_subDirName, templateSubDir, templateFileNameFloor);
                 string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);

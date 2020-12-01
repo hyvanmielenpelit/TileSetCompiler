@@ -16,6 +16,7 @@ namespace TileSetCompiler
     abstract class BitmapCompiler
     {
         protected const string _templateSuffix = "_template";
+        protected const string _templateFloorSuffix = "_template-floor";
 
         private List<string> _sEndingSingularWords = new List<string>()
         {
