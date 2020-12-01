@@ -185,24 +185,6 @@ namespace TileSetCompiler
                 string templateFilePath = Path.Combine(templateDirPath, templateFileName);
                 FileInfo templateFile = new FileInfo(templateFilePath);
 
-                string templateFileNameFloor = null;
-                if (string.IsNullOrEmpty(subTypeName))
-                {
-                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
-                }
-                else
-                {
-                    templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
-                }
-                string templateRelativePathFloor = Path.Combine(_subDirName, templateSubDir, templateFileNameFloor);
-                string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
-                FileInfo templateFileFloor = hasFloorTile ? new FileInfo(templateFilePathFloor) : null;
-
-                if(!file.Exists && templateFile.Exists)
-                {
-                    fileFloor = templateFileFloor;
-                }
-
                 var subType = objectTypeSingular;
                 if (type != _typeNormal)
                 {
@@ -225,10 +207,27 @@ namespace TileSetCompiler
                     }
                     else if (templateFile.Exists)
                     {
-                        using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                        string templateFileNameFloor = null;
+                        if (string.IsNullOrEmpty(subTypeName))
                         {
-                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
-                            StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                            templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
+                        }
+                        else
+                        {
+                            templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
+                        }
+                        string templateRelativePathFloor = Path.Combine(_subDirName, templateSubDir, templateFileNameFloor);
+                        string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
+                        FileInfo templateFileFloor = hasFloorTile ? new FileInfo(templateFilePathFloor) : null;
+
+                        using (var floorTemplateImage = templateFileFloor != null && templateFileFloor.Exists ? CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName) :
+                           (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null))
+                        {
+                            using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                            {
+                                DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
+                                StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                            }
                         }
 
                         Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
