@@ -105,6 +105,10 @@ namespace TileSetCompiler
                 string fileNameMissile = objectTypeSingular.ToFileName() + "_" +
                     nameOrDesc.ToFileName() + _missileSuffix + Program.ImageFileExtension;
 
+                string fileNameFloor = objectTypeSingular.ToFileName() + "_" +
+                    nameOrDesc.ToFileName() +
+                    _typeSuffix[type] + _floorSuffix + Program.ImageFileExtension;
+
                 if (!_missileData.ContainsKey(direction))
                 {
                     throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction));
@@ -116,6 +120,10 @@ namespace TileSetCompiler
                 var relativePathBase = Path.Combine(_subDirName, subDir2, fileNameBase);
                 var filePathBase = Path.Combine(dirPath, fileNameBase);
                 FileInfo fileBase = new FileInfo(filePathBase);
+
+                var relativePathFloor = Path.Combine(_subDirName, subDir2, fileNameFloor);
+                var filePathFloor = Path.Combine(dirPath, fileNameFloor);
+                FileInfo fileFloor = new FileInfo(filePathFloor);
 
                 var relativePathMissile = Path.Combine(_subDirName, subDir2, fileNameMissile);
                 var filePathMissile = Path.Combine(dirPath, fileNameMissile);
@@ -129,8 +137,25 @@ namespace TileSetCompiler
                 var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
 
                 bool isTileMissing = false;
-                FileInfo file = fileMissile.Exists ? fileMissile : fileBase;
-                string relativePath = fileMissile.Exists ? relativePathMissile : relativePathBase;
+
+                FileInfo file = null;
+                string relativePath = null;
+                if(fileMissile.Exists)
+                {
+                    file = fileMissile;
+                    relativePath = relativePathMissile;
+                }
+                else if (fileFloor.Exists)
+                {
+                    file = fileFloor;
+                    relativePath = relativePathFloor;
+                }
+                else
+                {
+                    file = fileBase;
+                    relativePath = relativePathBase;
+
+                }
 
                 using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
                 {
@@ -190,64 +215,72 @@ namespace TileSetCompiler
                 {
                     subType += " " + type;
                 }
-
-                using (var floorImage = fileFloor != null && fileFloor.Exists ? new Bitmap(Image.FromFile(fileFloor.FullName)) :
-                           (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null))
+                
+                if (file.Exists)
                 {
-                    if (file.Exists)
+                    using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
                             StoreTileFile(file);
                         }
-
-                        Console.WriteLine("Compiled Object {0} successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
                     }
-                    else if (templateFile.Exists)
+
+                    Console.WriteLine("Compiled Object {0} successfully.", relativePath);
+                    WriteTileNameSuccess(relativePath);
+                }
+                else if (templateFile.Exists)
+                {
+                    string templateFileNameFloor = null;
+                    if (string.IsNullOrEmpty(subTypeName))
                     {
-                        string templateFileNameFloor = null;
-                        if (string.IsNullOrEmpty(subTypeName))
-                        {
-                            templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
-                        }
-                        else
-                        {
-                            templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
-                        }
-                        string templateRelativePathFloor = Path.Combine(_subDirName, templateSubDir, templateFileNameFloor);
-                        string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
-                        FileInfo templateFileFloor = hasFloorTile ? new FileInfo(templateFilePathFloor) : null;
-
-                        using (var floorTemplateImage = templateFileFloor != null && templateFileFloor.Exists ? CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName) :
-                           (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null))
-                        {
-                            using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
-                            {
-                                DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
-                                StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
-                            }
-                        }
-
-                        Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
-                        WriteTileNameTemplateGenerationSuccess(relativePath, templateRelativePath);
+                        templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
                     }
                     else
                     {
-                        var missingTileCreator = isFullSizeBitmap ? MissingObjectTileCreator : MissingObjectFloorTileCreator;
-                        using (var image = missingTileCreator.CreateTile(_missingTileType, subType, nameOrDesc.ToProperCaseFirst()))
+                        templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
+                    }
+                    string templateRelativePathFloor = Path.Combine(_subDirName, templateSubDir, templateFileNameFloor);
+                    string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
+                    FileInfo templateFileFloor = hasFloorTile ? new FileInfo(templateFilePathFloor) : null;
+
+                    using (var floorTemplateImage = templateFileFloor != null && templateFileFloor.Exists ? CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName) :
+                        (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null))
+                    {
+                        using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                        {
+                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
+                            StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                        }
+                    }
+
+                    Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
+                    WriteTileNameTemplateGenerationSuccess(relativePath, templateRelativePath);
+                }
+                else
+                {
+                    var missingTileCreator = isFullSizeBitmap ? MissingObjectTileCreator : MissingObjectFloorTileCreator;
+                    using (var image = missingTileCreator.CreateTile(_missingTileType, subType, nameOrDesc.ToProperCaseFirst()))
+                    {
+                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
                         }
-
-                        Console.WriteLine("File '{0}' not found. Creating Missing Object Tile.", file.FullName);
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Tile.");
                     }
 
-                    IncreaseCurXY();
+                    Console.WriteLine("File '{0}' not found. Creating Missing Object Tile.", file.FullName);
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Object Tile.");
                 }
-            }           
+
+                IncreaseCurXY();
+            }
+        }
+    
+        private Bitmap GetFloorTile(FileInfo fileFloor, bool hasFloorTile, string subType, string nameOrDesc)
+        {
+            return fileFloor != null && fileFloor.Exists ? new Bitmap(Image.FromFile(fileFloor.FullName)) :
+                           (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null);
         }
     }
 }
