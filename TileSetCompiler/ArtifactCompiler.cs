@@ -13,12 +13,16 @@ namespace TileSetCompiler
     {
         const string _subDirName = "Artifacts";
         const string _objectSubDirName = "Objects";
-        const int _lineLength = 14;
+        const int _lineLength = 15;
         const string _artifactMissingTileType = "Artifact";
         const string _artifactNoDescription = "no base item description";
+        const string _missingFloorTileType = "FloorArti";
+
 
         protected DirectoryInfo ObjectBaseDirectory { get; set; }
         public MissingTileCreator MissingArtifactTileCreator { get; set; }
+        public MissingTileCreator MissingArtifactFloorTileCreator { get; set; }
+
 
         public ArtifactCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
@@ -27,6 +31,10 @@ namespace TileSetCompiler
             MissingArtifactTileCreator = new MissingTileCreator();
             MissingArtifactTileCreator.TextColor = Color.Purple;
             MissingArtifactTileCreator.TileSize = MissingTileSize.Item;
+
+            MissingArtifactFloorTileCreator = new MissingTileCreator();
+            MissingArtifactFloorTileCreator.TextColor = Color.Purple;
+            MissingArtifactFloorTileCreator.BitmapSize = Program.ItemSize;
         }
 
         public override void CompileOne(string[] splitLine)
@@ -87,6 +95,9 @@ namespace TileSetCompiler
             string subTypeName = splitLine[12];
             string objectType = splitLine[13];
             var objectTypeSingular = GetSingular(objectType);
+
+            int hasFloorTileInt = int.Parse(splitLine[14]);
+            bool hasFloorTile = hasFloorTileInt > 0;
 
             if (type == _typeMissile)
             {
@@ -149,6 +160,11 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
+                string fileNameFloor = name.ToFileName() + _typeSuffix[type] + _floorSuffix + Program.ImageFileExtension;
+                string relativePathFloor = Path.Combine(_subDirName, subDir2, fileNameFloor);
+                string filePathFloor = Path.Combine(dirPath, fileNameFloor);
+                FileInfo fileFloor = hasFloorTile ? new FileInfo(filePathFloor) : null;
+
                 //-----------------------------------------------
                 // Template 1 is found under Artifacts directory
                 //-----------------------------------------------
@@ -187,12 +203,21 @@ namespace TileSetCompiler
                 string template2FilePath = Path.Combine(template2DirPath, template2FileName);
                 FileInfo template2File = new FileInfo(template2FilePath);
 
+                var subType = "";
+                if (type != _typeNormal)
+                {
+                    subType = type;
+                }
+
                 if (file.Exists)
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
-                        StoreTileFile(file);
+                        using(var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
+                        {
+                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
+                            StoreTileFile(file);
+                        }
                     }
 
                     Console.WriteLine("Compiled Artifact '{0}' successfully.", relativePath);
@@ -200,10 +225,25 @@ namespace TileSetCompiler
                 }
                 else if (templateFile.Exists)
                 {
+                    string templateFileNameFloor = null;
+                    if (string.IsNullOrEmpty(subTypeName))
+                    {
+                        templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
+                    }
+                    else
+                    {
+                        templateFileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
+                    }
+                    string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
+                    FileInfo templateFileFloor = new FileInfo(templateFilePathFloor);
+
                     using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
                     {
-                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
-                        StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                        using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
+                        {
+                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
+                            StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                        }
                     }
 
                     Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, templateRelativePath);
@@ -211,10 +251,25 @@ namespace TileSetCompiler
                 }
                 else if (template2File.Exists)
                 {
+                    string template2FileNameFloor = null;
+                    if (string.IsNullOrEmpty(subTypeName))
+                    {
+                        template2FileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + Program.ImageFileExtension;
+                    }
+                    else
+                    {
+                        template2FileNameFloor = objectTypeSingular.ToFileName() + _typeSuffix[type] + _templateFloorSuffix + "_" + subTypeName.ToDashed() + Program.ImageFileExtension;
+                    }
+                    string template2FilePathFloor = Path.Combine(template2DirPath, template2FileNameFloor);
+                    FileInfo template2FileFloor = new FileInfo(template2FilePathFloor);
+
                     using (var image = CreateItemFromTemplate(template2File, templateColor, subTypeCode, subTypeName))
                     {
-                        DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment);
-                        StoreTileFile(template2File, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                        using (var floorTemplateImage = GetFloorTileFromTemplate(template2FileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
+                        {
+                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
+                            StoreTileFile(template2File, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                        }
                     }
 
                     Console.WriteLine("Created Object {0} from Template {1} successfully.", relativePath, template2RelativePath);
@@ -225,19 +280,50 @@ namespace TileSetCompiler
                     Console.WriteLine("File '{0}' not found. Creating Missing Artifact icon.", file.FullName);
                     WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Artifact icon.");
 
-                    var subType = "";
-                    if (type != _typeNormal)
+                    var missingTileCreator = isFullSizeBitmap ? MissingArtifactTileCreator : MissingArtifactFloorTileCreator;
+                    using (var image = missingTileCreator.CreateTile(_artifactMissingTileType, subType, nameOrDesc))
                     {
-                        subType = type;
-                    }
-                    using (var image = MissingArtifactTileCreator.CreateTile(_artifactMissingTileType, subType, nameOrDesc))
-                    {
-                        DrawImageToTileSet(image);
+                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
+                        {
+                            DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
+                        }
                     }
                 }
                 
                 IncreaseCurXY();
             }            
+        }
+
+        private Bitmap GetFloorTile(FileInfo fileFloor, bool hasFloorTile, string subType, string nameOrDesc)
+        {
+            if (fileFloor != null && fileFloor.Exists)
+            {
+                return new Bitmap(Image.FromFile(fileFloor.FullName));
+            }
+            else if (hasFloorTile)
+            {
+                return MissingArtifactFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private Bitmap GetFloorTileFromTemplate(FileInfo templateFileFloor, Color templateColor, int subTypeCode, string subTypeName, bool hasFloorTile, string subType, string nameOrDesc)
+        {
+            if (templateFileFloor != null && templateFileFloor.Exists)
+            {
+                return CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName);
+            }
+            else if (hasFloorTile)
+            {
+                return MissingArtifactFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

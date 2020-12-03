@@ -244,10 +244,10 @@ namespace TileSetCompiler
                     string templateFilePathFloor = Path.Combine(templateDirPath, templateFileNameFloor);
                     FileInfo templateFileFloor = hasFloorTile ? new FileInfo(templateFilePathFloor) : null;
 
-                    using (var floorTemplateImage = templateFileFloor != null && templateFileFloor.Exists ? CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName) :
-                        (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null))
+                    
+                    using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
                     {
-                        using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
+                        using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
                             StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
@@ -281,6 +281,22 @@ namespace TileSetCompiler
             if (fileFloor != null && fileFloor.Exists)
             {
                 return new Bitmap(Image.FromFile(fileFloor.FullName));
+            }
+            else if (hasFloorTile)
+            {
+                return MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private Bitmap GetFloorTileFromTemplate(FileInfo templateFileFloor, Color templateColor, int subTypeCode, string subTypeName, bool hasFloorTile, string subType, string nameOrDesc)
+        {
+            if(templateFileFloor != null && templateFileFloor.Exists)
+            {
+                return CreateItemFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName);
             }
             else if (hasFloorTile)
             {
