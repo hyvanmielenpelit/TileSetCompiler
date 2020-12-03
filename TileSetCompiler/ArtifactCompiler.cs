@@ -105,6 +105,7 @@ namespace TileSetCompiler
                 var subDir2 = name.ToFileName();
                 var fileNameBase = name.ToFileName() + Program.ImageFileExtension;
                 var fileNameMissile = name.ToFileName() + _missileSuffix + Program.ImageFileExtension;
+                var fileNameFloor = name.ToFileName() + _floorSuffix + Program.ImageFileExtension;
 
                 if (!_missileData.ContainsKey(direction))
                 {
@@ -113,11 +114,14 @@ namespace TileSetCompiler
 
                 MissileDirection missileDirection = _missileData[direction].Direction;
 
-
                 string dirPath = Path.Combine(BaseDirectory.FullName, subDir2);
                 var relativePathBase = Path.Combine(_subDirName, subDir2, fileNameBase);
                 var filePathBase = Path.Combine(dirPath, fileNameBase);
                 FileInfo fileBase = new FileInfo(filePathBase);
+
+                var relativePathFloor = Path.Combine(_subDirName, subDir2, fileNameFloor);
+                var filePathFloor = Path.Combine(dirPath, fileNameFloor);
+                FileInfo fileFloor = new FileInfo(filePathFloor);
 
                 var relativePathMissile = Path.Combine(_subDirName, subDir2, fileNameMissile);
                 var filePathMissile = Path.Combine(dirPath, fileNameMissile);
@@ -130,8 +134,24 @@ namespace TileSetCompiler
                 var targetRelativePath = Path.Combine(_subDirName, targetSubDir2, targetFileName);
 
                 bool isTileMissing = false;
-                FileInfo file = fileMissile.Exists ? fileMissile : fileBase;
-                string relativePath = fileMissile.Exists ? relativePathMissile : relativePathBase;
+
+                FileInfo file = null;
+                string relativePath = null;
+                if (fileMissile.Exists)
+                {
+                    file = fileMissile;
+                    relativePath = relativePathMissile;
+                }
+                else if (fileFloor.Exists)
+                {
+                    file = fileFloor;
+                    relativePath = relativePathFloor;
+                }
+                else
+                {
+                    file = fileBase;
+                    relativePath = relativePathBase;
+                }
 
                 using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
                 {

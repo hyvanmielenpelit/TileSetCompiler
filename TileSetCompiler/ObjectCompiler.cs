@@ -153,7 +153,6 @@ namespace TileSetCompiler
                 {
                     file = fileBase;
                     relativePath = relativePathBase;
-
                 }
 
                 using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file, nameOrDesc.ToProperCaseFirst(), missileDirection, out isTileMissing))
