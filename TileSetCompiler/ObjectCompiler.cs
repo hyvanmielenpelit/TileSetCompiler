@@ -106,8 +106,7 @@ namespace TileSetCompiler
                     nameOrDesc.ToFileName() + _missileSuffix + Program.ImageFileExtension;
 
                 string fileNameFloor = objectTypeSingular.ToFileName() + "_" +
-                    nameOrDesc.ToFileName() +
-                    _typeSuffix[type] + _floorSuffix + Program.ImageFileExtension;
+                    nameOrDesc.ToFileName() + _floorSuffix + Program.ImageFileExtension;
 
                 if (!_missileData.ContainsKey(direction))
                 {
