@@ -236,7 +236,7 @@ namespace TileSetCompiler
                         using(var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
-                            StoreTileFile(file);
+                            StoreTileFileWithFloorTileFile(file, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
                         }
                     }
 
@@ -262,7 +262,9 @@ namespace TileSetCompiler
                         using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
-                            StoreTileFile(templateFile, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                            StoreTileFile(templateFile, false, true, 
+                                new TemplateData(templateColor, subTypeCode, subTypeName),
+                                new FloorTileData(templateFileFloor, hasFloorTile, subType, nameOrDesc));
                         }
                     }
 
@@ -288,7 +290,9 @@ namespace TileSetCompiler
                         using (var floorTemplateImage = GetFloorTileFromTemplate(template2FileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
-                            StoreTileFile(template2File, false, true, new TemplateData(templateColor, subTypeCode, subTypeName));
+                            StoreTileFile(template2File, false, true,
+                                new TemplateData(templateColor, subTypeCode, subTypeName),
+                                new FloorTileData(template2FileFloor, hasFloorTile, subType, nameOrDesc));
                         }
                     }
 

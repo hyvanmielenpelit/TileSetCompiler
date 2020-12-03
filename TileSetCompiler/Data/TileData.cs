@@ -14,6 +14,7 @@ namespace TileSetCompiler.Data
         public Point? PointInTiles { get; set; }
         public Size? BitmapSizeInTiles { get; set; }
         public TemplateData TemplateData { get; set; }
+        public FloorTileData FloorTileData { get; set; }
 
         public TileData()
         {
