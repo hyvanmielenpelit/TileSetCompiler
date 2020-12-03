@@ -278,8 +278,18 @@ namespace TileSetCompiler
     
         private Bitmap GetFloorTile(FileInfo fileFloor, bool hasFloorTile, string subType, string nameOrDesc)
         {
-            return fileFloor != null && fileFloor.Exists ? new Bitmap(Image.FromFile(fileFloor.FullName)) :
-                           (hasFloorTile ? MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst()) : null);
+            if (fileFloor != null && fileFloor.Exists)
+            {
+                return new Bitmap(Image.FromFile(fileFloor.FullName));
+            }
+            else if (hasFloorTile)
+            {
+                return MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
