@@ -65,7 +65,7 @@ namespace TileSetCompiler
                         var baseTileData = GetTileFile(baseTileNumber);
                         var floorTileData = baseTileData.FloorTileData;
 
-                        FloorTileData floorTileDataReplacement = floorTileData != null ? new Data.FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
+                        FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
 
                         using (var floorImage = GetFloorTile(fileFloor, floorTileData, replacementName, tileName))
                         {

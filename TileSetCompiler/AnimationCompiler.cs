@@ -64,7 +64,6 @@ namespace TileSetCompiler
             var filePathFloor2 = Path.Combine(dirPath, fileNameFloor2);
             FileInfo fileFloor2 = new FileInfo(filePathFloor2);
 
-
             if (file.Exists || file2.Exists)
             {
                 if(!file.Exists && file2.Exists)
@@ -96,7 +95,7 @@ namespace TileSetCompiler
                         {
                             var baseTileData = GetTileFile(originalTileNumber);
                             var floorTileData = baseTileData.FloorTileData;
-                            FloorTileData floorTileDataReplacement = floorTileData != null ? new Data.FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
+                            FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
 
                             using (var floorImage = GetFloorTile(fileFloor, floorTileData, animation, frame))
                             {
