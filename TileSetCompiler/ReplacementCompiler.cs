@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using TileSetCompiler.Creators;
+using TileSetCompiler.Data;
 using TileSetCompiler.Extensions;
 
 namespace TileSetCompiler
@@ -13,6 +14,7 @@ namespace TileSetCompiler
         const string _subDirName = "Replacement";
         const int _lineLength = 7;
         const string _missingReplacementType = "Replacement";
+        const string _missingFloorTileType = "FloorRepl";
 
         public MissingTileCreator MissingReplacementCreator { get; set; }
 
@@ -47,7 +49,7 @@ namespace TileSetCompiler
             FileInfo file = new FileInfo(filePath);
             var relativePath = Path.GetRelativePath(Program.InputDirectory.FullName, file.FullName);
 
-            if(file.Exists)
+            if (file.Exists)
             {
                 Console.WriteLine("Compiled Replacement '{0}' successfully.", relativePath);
                 WriteTileNameSuccess(relativePath);
@@ -56,17 +58,31 @@ namespace TileSetCompiler
                 {
                     if (image.Size == Program.ItemSize)
                     {
-                        DrawItemToTileSet(image, false, mainTileAlignment);
+                        var fileNameFloor = replacementName.ToFileName() + "_" + tileName.ToFileName() + _floorSuffix + Program.ImageFileExtension;
+                        var filePathFloor = Path.Combine(dirPath, fileNameFloor);
+                        FileInfo fileFloor = new FileInfo(filePathFloor);
+
+                        var baseTileData = GetTileFile(baseTileNumber);
+                        var floorTileData = baseTileData.FloorTileData;
+
+                        FloorTileData floorTileDataReplacement = floorTileData != null ? new Data.FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
+
+                        using (var floorImage = GetFloorTile(fileFloor, floorTileData, replacementName, tileName))
+                        {
+                            DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
+                            StoreTileFile(file, false, false, null, floorTileDataReplacement);
+                        }
                     }
                     else if (image.Size == Program.MaxTileSize)
                     {
                         DrawImageToTileSet(image);
+                        StoreTileFile(file);
                     }
                     else
                     {
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
+                        StoreTileFile(file);
                     }
-                    StoreTileFile(file);
                 }
             }
             else
@@ -80,6 +96,25 @@ namespace TileSetCompiler
                 }
             }
             IncreaseCurXY();
+        }
+
+        private Bitmap GetFloorTile(FileInfo fileFloor, FloorTileData floorTileData, string replacementName, string tileName)
+        {
+            if (floorTileData != null && floorTileData.HasTileFile)
+            {
+                if (fileFloor.Exists)
+                {
+                    return new Bitmap(Image.FromFile(fileFloor.FullName));
+                }
+                else
+                {
+                    return MissingReplacementCreator.CreateTileWithTextLines(_missingFloorTileType, replacementName, tileName);
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
