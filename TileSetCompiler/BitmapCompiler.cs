@@ -62,7 +62,7 @@ namespace TileSetCompiler
             CropAndDrawImageToTileSet(image, point, size, image.Tag as FileInfo);
         }
 
-        protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size, FileInfo file)
+        protected void CropAndDrawImageToTileSet(Bitmap image, Point point, Size size, FileInfo file, bool flipHorizontal = false, bool flipVertical = false)
         {
             if (point.X + size.Width > image.Width || point.Y + size.Height > image.Height)
             {
@@ -71,6 +71,14 @@ namespace TileSetCompiler
 
             using (var croppedBitmap = image.Clone(new Rectangle(point, size), image.PixelFormat))
             {
+                if(flipHorizontal)
+                {
+                    croppedBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                }
+                if(flipVertical)
+                {
+                    croppedBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                }
                 DrawImageToTileSet(croppedBitmap);
             }
         }

@@ -73,6 +73,9 @@ namespace TileSetCompiler
             Color templatecolor = Color.Empty;
             Size templateSize = Size.Empty;
 
+            bool flipHorizontal = false;
+            bool flipVertical = false;
+
             if (type == _miscInvisible)
             {
                 var type2 = splitLine[2];
@@ -128,9 +131,9 @@ namespace TileSetCompiler
                 int targetBitmapHeightInTiles = int.Parse(splitLine[9]); //Not used
                 MainTileAlignment targetBitmapMainTileAlignment = GetMainTileAlignment(splitLine[10]); //Not used
                 int flipHorizontalInt = int.Parse(splitLine[11]);
-                bool flipHorizontal = flipHorizontalInt > 0;
+                flipHorizontal = flipHorizontalInt > 0;
                 int flipVerticalInt = int.Parse(splitLine[12]);
-                bool flipVertical = flipVerticalInt > 0;
+                flipVertical = flipVerticalInt > 0;
                 int colorCode = int.Parse(splitLine[13]);
                 templatecolor = GetColorFromColorCode(colorCode);
 
@@ -246,7 +249,7 @@ namespace TileSetCompiler
                                 file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
                         }
                         Point pointInPixels = new Point(pointInTiles.Value.X * Program.MaxTileSize.Width, pointInTiles.Value.Y * Program.MaxTileSize.Height);
-                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file, flipHorizontal, flipVertical);
                     }
                     else
                     {
@@ -271,7 +274,7 @@ namespace TileSetCompiler
                                 file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
                         }
                         Point pointInPixels = new Point(pointInTiles.Value.X * Program.MaxTileSize.Width, pointInTiles.Value.Y * Program.MaxTileSize.Height);
-                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file, flipHorizontal, flipVertical);
                     }
                     else
                     {
