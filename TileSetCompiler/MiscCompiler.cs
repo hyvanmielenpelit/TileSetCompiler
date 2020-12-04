@@ -228,7 +228,7 @@ namespace TileSetCompiler
             FileInfo templateFile = null;
             if (templateSubDir != null && templateFileName != null)
             {
-                templateFilePath = Path.Combine(templateSubDir, templateFileName);
+                templateFilePath = Path.Combine(BaseDirectory.FullName, templateSubDir, templateFileName);
                 templateRelativePath = Path.Combine(_subDirName, templateSubDir, templateFileName);
                 templateFile = new FileInfo(templateFilePath);
             }
