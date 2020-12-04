@@ -232,7 +232,7 @@ namespace TileSetCompiler
             StoreTileFile(file, null, null, isStatue, isFromTemplate, templateData);
         }
 
-        protected void StoreTileFileWithFloorTileFile(FileInfo file, FloorTileData floorTileData)
+        protected void StoreTileFile(FileInfo file, FloorTileData floorTileData)
         {
             StoreTileFile(file, null, null, false, false, null, floorTileData);
         }

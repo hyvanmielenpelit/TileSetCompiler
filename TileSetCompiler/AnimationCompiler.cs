@@ -100,7 +100,7 @@ namespace TileSetCompiler
                             using (var floorImage = GetFloorTile(fileFloor, floorTileData, animation, frame))
                             {
                                 DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
-                                StoreTileFile(file, false, false, null, floorTileDataReplacement);
+                                StoreTileFile(file, floorTileDataReplacement);
                             }
                         }
                         else if (image.Size == Program.MaxTileSize)

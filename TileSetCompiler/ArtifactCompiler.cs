@@ -236,7 +236,7 @@ namespace TileSetCompiler
                         using(var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
-                            StoreTileFileWithFloorTileFile(file, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
+                            StoreTileFile(file, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
                         }
                     }
 
