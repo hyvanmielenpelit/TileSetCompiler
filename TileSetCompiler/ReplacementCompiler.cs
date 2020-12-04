@@ -17,11 +17,17 @@ namespace TileSetCompiler
         const string _missingFloorTileType = "FloorRepl";
 
         public MissingTileCreator MissingReplacementCreator { get; set; }
+        public MissingTileCreator MissingReplacementFloorCreator { get; set; }
 
         public ReplacementCompiler(StreamWriter tileNameWriter) : base(_subDirName, tileNameWriter)
         {
             MissingReplacementCreator = new MissingTileCreator();
             MissingReplacementCreator.TextColor = Color.Black;
+
+            MissingReplacementFloorCreator = new MissingTileCreator();
+            MissingReplacementFloorCreator.TextColor = Color.Black;
+            MissingReplacementFloorCreator.BitmapSize = Program.ItemSize;
+
         }
 
         public override void CompileOne(string[] splitLine)
@@ -108,7 +114,7 @@ namespace TileSetCompiler
                 }
                 else
                 {
-                    return MissingReplacementCreator.CreateTileWithTextLines(_missingFloorTileType, replacementName, tileName);
+                    return MissingReplacementFloorCreator.CreateTileWithTextLines(_missingFloorTileType, replacementName, tileName);
                 }
             }
             else
