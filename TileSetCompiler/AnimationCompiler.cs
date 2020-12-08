@@ -53,6 +53,8 @@ namespace TileSetCompiler
             TileData originalTileData = GetTileFile(originalTileNumber);
             Point? originalFilePointInTiles = originalTileData != null ? originalTileData.PointInTiles : null;
             Size? originalFileBitmapSizeInTiles = originalTileData != null ? originalTileData.BitmapSizeInTiles : null;
+            bool flipHorizontal = originalTileData != null ? originalTileData.FlipHorizontal : false;
+            bool flipVertical = originalTileData != null ? originalTileData.FlipVertical : false;
 
             var dirPath = Path.Combine(BaseDirectory.FullName, animation.ToFileName());
             var fileName = animation.ToFileName() + "_" + frame.ToFileName() + Program.ImageFileExtension;
@@ -92,7 +94,7 @@ namespace TileSetCompiler
                                 file.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
                         }
                         Point pointInPixels = new Point(originalFilePointInTiles.Value.X * Program.MaxTileSize.Width, originalFilePointInTiles.Value.Y * Program.MaxTileSize.Height);
-                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file, flipHorizontal, flipVertical);
                         StoreTileFile(file);
                     }
                     else

@@ -245,7 +245,12 @@ namespace TileSetCompiler
             StoreTileFile(file, null, null, false, false, null, floorTileData);
         }
 
-        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null)
+        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool flipHorizontal, bool flipVertical)
+        {
+            StoreTileFile(file, pointInTiles, bitmapSizeInTiles, false, false, null, null, flipHorizontal, flipVertical);
+        }
+
+        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null, bool flipHorizontal = false, bool flipVertical = false)
         {
             if (file == null)
             {
@@ -259,6 +264,8 @@ namespace TileSetCompiler
             tileFileData.IsFromTemplate = isFromTemplate;
             tileFileData.TemplateData = templateData;
             tileFileData.FloorTileData = floorTileData;
+            tileFileData.FlipHorizontal = flipHorizontal;
+            tileFileData.FlipVertical = flipVertical;
 
             Program.TileFileData.Add(Program.CurrentCount, tileFileData);
         }
