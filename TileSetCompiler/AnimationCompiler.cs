@@ -193,7 +193,7 @@ namespace TileSetCompiler
                                 }
                             }
 
-                            FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
+                            FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(templateFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
 
                             using (var floorImage = GetFloorTileFromTemplate(templateFloor, templateData, floorTileData))
                             {
