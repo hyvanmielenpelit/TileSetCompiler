@@ -77,8 +77,6 @@ namespace TileSetCompiler
             var templateDir = Path.Combine(BaseDirectory.FullName, originalFileNameWithoutExtension);
             var templateName = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
             var templateName2 = frame.ToFileName() + Program.ImageFileExtension;
-            var templateNameFloor = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
-            var templateNameFloor2 = frame.ToFileName() + Program.ImageFileExtension;
 
             var templateRelativePath = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName);
             var templateRelativePath2 = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName2);
@@ -86,10 +84,6 @@ namespace TileSetCompiler
             FileInfo template = new FileInfo(templatePath);
             var templatePath2 = Path.Combine(templateDir, templateName2);
             FileInfo template2 = new FileInfo(templatePath2);
-            var templatePathFloor = Path.Combine(templateDir, templateNameFloor);
-            FileInfo templateFloor = new FileInfo(templatePathFloor);
-            var templatePathFloor2 = Path.Combine(templateDir, templateNameFloor2);
-            FileInfo templateFloor2 = new FileInfo(templatePathFloor2);
 
             if (file.Exists || file2.Exists)
             {
@@ -146,10 +140,9 @@ namespace TileSetCompiler
             }
             else if(template.Exists || template2.Exists)
             {
-                if (!file.Exists && file2.Exists)
+                if (!template.Exists && template2.Exists)
                 {
                     template = template2;
-                    templateFloor = templateFloor2;
                     templateRelativePath = templateRelativePath2;
                 }
 
@@ -179,6 +172,27 @@ namespace TileSetCompiler
                         if (image.Size == Program.ItemSize)
                         {
                             var floorTileData = originalTileData.FloorTileData;
+
+                            FileInfo templateFloor = null;
+                            FileInfo templateFloor2 = null;
+                            if (floorTileData != null && floorTileData.FloorFile != null)
+                            {
+                                var floorFileWithoutExtension = Path.GetFileNameWithoutExtension(floorTileData.FloorFile.Name).ToFileName();
+                                var templateDirFloor = Path.Combine(BaseDirectory.FullName, floorFileWithoutExtension);
+                                var templateNameFloor = floorFileWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
+                                var templateNameFloor2 = frame.ToFileName() + Program.ImageFileExtension;
+                                var templatePathFloor = Path.Combine(templateDir, templateNameFloor);
+                                templateFloor = new FileInfo(templatePathFloor);
+                                var templatePathFloor2 = Path.Combine(templateDir, templateNameFloor2);
+                                templateFloor2 = new FileInfo(templatePathFloor2);
+
+                                if (!templateFloor.Exists && templateFloor2.Exists)
+                                {
+                                    templateFloor = templateFloor2;
+                                    templateRelativePath = templateRelativePath2;
+                                }
+                            }
+
                             FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
 
                             using (var floorImage = GetFloorTileFromTemplate(templateFloor, templateData, floorTileData))
