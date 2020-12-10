@@ -73,20 +73,22 @@ namespace TileSetCompiler
             var filePathFloor2 = Path.Combine(dirPath, fileNameFloor2);
             FileInfo fileFloor2 = new FileInfo(filePathFloor2);
 
-            var templateName = animation.ToFileName() + "_" + frame.ToFileName() + _templateSuffix + Program.ImageFileExtension;
-            var templateName2 = frame.ToFileName() + _templateSuffix + Program.ImageFileExtension;
-            var templateNameFloor = animation.ToFileName() + "_" + frame.ToFileName() + _templateFloorSuffix + Program.ImageFileExtension;
-            var templateNameFloor2 = frame.ToFileName() + _templateFloorSuffix + Program.ImageFileExtension;
+            var originalFileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalTileData.File.Name).ToFileName();
+            var templateDir = Path.Combine(BaseDirectory.FullName, originalFileNameWithoutExtension);
+            var templateName = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
+            var templateName2 = frame.ToFileName() + Program.ImageFileExtension;
+            var templateNameFloor = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
+            var templateNameFloor2 = frame.ToFileName() + Program.ImageFileExtension;
 
-            var templateRelativePath = Path.Combine(_subDirName, animation.ToFileName(), templateName);
-            var templateRelativePath2 = Path.Combine(_subDirName, animation.ToFileName(), templateName2);
-            var templatePath = Path.Combine(dirPath, templateName);
+            var templateRelativePath = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName);
+            var templateRelativePath2 = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName2);
+            var templatePath = Path.Combine(templateDir, templateName);
             FileInfo template = new FileInfo(templatePath);
-            var templatePath2 = Path.Combine(dirPath, templateName2);
+            var templatePath2 = Path.Combine(templateDir, templateName2);
             FileInfo template2 = new FileInfo(templatePath2);
-            var templatePathFloor = Path.Combine(dirPath, templateNameFloor);
+            var templatePathFloor = Path.Combine(templateDir, templateNameFloor);
             FileInfo templateFloor = new FileInfo(templatePathFloor);
-            var templatePathFloor2 = Path.Combine(dirPath, templateNameFloor2);
+            var templatePathFloor2 = Path.Combine(templateDir, templateNameFloor2);
             FileInfo templateFloor2 = new FileInfo(templatePathFloor2);
 
             if (file.Exists || file2.Exists)
