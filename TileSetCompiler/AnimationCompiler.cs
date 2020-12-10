@@ -179,7 +179,7 @@ namespace TileSetCompiler
                             var floorTileData = originalTileData.FloorTileData;
                             FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
 
-                            using (var floorImage = GetFloorTileFromTemplate(fileFloor, templateData, floorTileData))
+                            using (var floorImage = GetFloorTileFromTemplate(templateFloor, templateData, floorTileData))
                             {
                                 DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
                                 StoreTileFile(file, image.Size, floorTileDataReplacement);
