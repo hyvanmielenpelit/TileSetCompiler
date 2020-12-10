@@ -166,7 +166,7 @@ namespace TileSetCompiler
                         WriteTileNameAutogenerationError(relativePath, targetRelativePath, _missileAutogenerateType);
                     }
                     DrawImageToTileSet(missileBitmap);
-                    StoreTileFile(file);
+                    StoreTileFile(file, missileBitmap.Size);
                     IncreaseCurXY();
                 }
             }
@@ -236,7 +236,7 @@ namespace TileSetCompiler
                         using(var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
-                            StoreTileFile(file, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
+                            StoreTileFile(file, image.Size, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
                         }
                     }
 
@@ -262,7 +262,7 @@ namespace TileSetCompiler
                         using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
-                            StoreTileFile(templateFile, false, true, 
+                            StoreTileFile(templateFile, image.Size, false, true, 
                                 new TemplateData(templateColor, subTypeCode, subTypeName),
                                 new FloorTileData(templateFileFloor, hasFloorTile, subType, nameOrDesc));
                         }
@@ -290,7 +290,7 @@ namespace TileSetCompiler
                         using (var floorTemplateImage = GetFloorTileFromTemplate(template2FileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
-                            StoreTileFile(template2File, false, true,
+                            StoreTileFile(template2File, image.Size, false, true,
                                 new TemplateData(templateColor, subTypeCode, subTypeName),
                                 new FloorTileData(template2FileFloor, hasFloorTile, subType, nameOrDesc));
                         }

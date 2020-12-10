@@ -255,7 +255,7 @@ namespace TileSetCompiler
                     {
                         DrawImageToTileSet(image);
                     }
-                    StoreTileFile(file, pointInTiles, bitmapSizeInTiles, flipHorizontal, flipVertical);
+                    StoreTileFile(file, image.Size, pointInTiles, bitmapSizeInTiles, flipHorizontal, flipVertical);
                 }
 
                 Console.WriteLine("Compiled Misc Tile {0} successfully.", relativePath);
@@ -280,7 +280,7 @@ namespace TileSetCompiler
                     {
                         DrawImageToTileSet(image);
                     }
-                    StoreTileFile(file, pointInTiles, bitmapSizeInTiles, false, true, new TemplateData(templatecolor, 0, null), null, flipHorizontal, flipVertical);
+                    StoreTileFile(file, image.Size, pointInTiles, bitmapSizeInTiles, false, true, new TemplateData(templatecolor, 0, null), null, flipHorizontal, flipVertical);
                 }
 
                 Console.WriteLine("Created Misc Tile {0} from Template {1} successfully.", relativePath, templateRelativePath);

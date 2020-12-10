@@ -63,7 +63,7 @@ namespace TileSetCompiler
                     {
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
                     }
-                    StoreTileFile(file);
+                    StoreTileFile(file, image.Size);
                 }
             }
             else

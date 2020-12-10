@@ -235,22 +235,22 @@ namespace TileSetCompiler
             }
         }
 
-        protected void StoreTileFile(FileInfo file, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null)
+        protected void StoreTileFile(FileInfo file, Size bitmapSize, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null)
         {
-            StoreTileFile(file, null, null, isStatue, isFromTemplate, templateData);
+            StoreTileFile(file, bitmapSize, null, null, isStatue, isFromTemplate, templateData);
         }
 
-        protected void StoreTileFile(FileInfo file, FloorTileData floorTileData)
+        protected void StoreTileFile(FileInfo file, Size bitmapSize, FloorTileData floorTileData)
         {
-            StoreTileFile(file, null, null, false, false, null, floorTileData);
+            StoreTileFile(file, bitmapSize, null, null, false, false, null, floorTileData);
         }
 
-        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool flipHorizontal, bool flipVertical)
+        protected void StoreTileFile(FileInfo file, Size bitmapSize, Point? pointInTiles, Size? bitmapSizeInTiles, bool flipHorizontal, bool flipVertical)
         {
-            StoreTileFile(file, pointInTiles, bitmapSizeInTiles, false, false, null, null, flipHorizontal, flipVertical);
+            StoreTileFile(file, bitmapSize, pointInTiles, bitmapSizeInTiles, false, false, null, null, flipHorizontal, flipVertical);
         }
 
-        protected void StoreTileFile(FileInfo file, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null, bool flipHorizontal = false, bool flipVertical = false)
+        protected void StoreTileFile(FileInfo file, Size bitmapSize, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null, bool flipHorizontal = false, bool flipVertical = false)
         {
             if (file == null)
             {
@@ -465,7 +465,7 @@ namespace TileSetCompiler
             }
         }
 
-        protected Bitmap CreateBitmapFromTemplate(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode, string subTypeName)
+        protected Bitmap CreateBitmapFromTemplate(FileInfo templateFile, Color templateColor, Size bitmapSize, int subTypeCode = 0, string subTypeName = null)
         {
             using (var templateImage = new Bitmap(Image.FromFile(templateFile.FullName)))
             {

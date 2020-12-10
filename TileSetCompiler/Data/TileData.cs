@@ -9,6 +9,7 @@ namespace TileSetCompiler.Data
     class TileData
     {
         public FileInfo File { get; set; }
+        public Size BitmapSize { get; set; }
         public bool IsStatue { get; set; }
         public bool IsFromTemplate { get; set; }
         public Point? PointInTiles { get; set; }

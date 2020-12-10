@@ -103,7 +103,7 @@ namespace TileSetCompiler
             }
         }
 
-        protected Bitmap CreateItemFromTemplate(FileInfo templateFile, Color templateColor, int subTypeCode, string subTypeName)
+        protected Bitmap CreateItemFromTemplate(FileInfo templateFile, Color templateColor, int subTypeCode = 0, string subTypeName = null)
         {
             return CreateBitmapFromTemplate(templateFile, templateColor, Program.ItemSize, subTypeCode, subTypeName);
         }

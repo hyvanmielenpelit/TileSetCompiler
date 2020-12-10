@@ -63,6 +63,7 @@ namespace TileSetCompiler
             var fileNameFloor2 = frame.ToFileName() + _floorSuffix + Program.ImageFileExtension;
 
             var relativePath = Path.Combine(_subDirName, animation.ToFileName(), fileName);
+            var relativePath2 = Path.Combine(_subDirName, animation.ToFileName(), fileName2);
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
             var filePath2 = Path.Combine(dirPath, fileName2);
@@ -72,16 +73,30 @@ namespace TileSetCompiler
             var filePathFloor2 = Path.Combine(dirPath, fileNameFloor2);
             FileInfo fileFloor2 = new FileInfo(filePathFloor2);
 
+            var templateName = animation.ToFileName() + "_" + frame.ToFileName() + _templateSuffix + Program.ImageFileExtension;
+            var templateName2 = frame.ToFileName() + _templateSuffix + Program.ImageFileExtension;
+            var templateNameFloor = animation.ToFileName() + "_" + frame.ToFileName() + _templateFloorSuffix + Program.ImageFileExtension;
+            var templateNameFloor2 = frame.ToFileName() + _templateFloorSuffix + Program.ImageFileExtension;
+
+            var templateRelativePath = Path.Combine(_subDirName, animation.ToFileName(), templateName);
+            var templateRelativePath2 = Path.Combine(_subDirName, animation.ToFileName(), templateName2);
+            var templatePath = Path.Combine(dirPath, templateName);
+            FileInfo template = new FileInfo(templatePath);
+            var templatePath2 = Path.Combine(dirPath, templateName2);
+            FileInfo template2 = new FileInfo(templatePath2);
+            var templatePathFloor = Path.Combine(dirPath, templateNameFloor);
+            FileInfo templateFloor = new FileInfo(templatePathFloor);
+            var templatePathFloor2 = Path.Combine(dirPath, templateNameFloor2);
+            FileInfo templateFloor2 = new FileInfo(templatePathFloor2);
+
             if (file.Exists || file2.Exists)
             {
                 if(!file.Exists && file2.Exists)
                 {
                     file = file2;
                     fileFloor = fileFloor2;
+                    relativePath = relativePath2;
                 }
-
-                Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
-                WriteTileNameSuccess(relativePath);
 
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
@@ -95,7 +110,7 @@ namespace TileSetCompiler
                         }
                         Point pointInPixels = new Point(originalFilePointInTiles.Value.X * Program.MaxTileSize.Width, originalFilePointInTiles.Value.Y * Program.MaxTileSize.Height);
                         CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file, flipHorizontal, flipVertical);
-                        StoreTileFile(file);
+                        StoreTileFile(file, image.Size);
                     }
                     else
                     {
@@ -108,21 +123,83 @@ namespace TileSetCompiler
                             using (var floorImage = GetFloorTile(fileFloor, floorTileData, animation, frame))
                             {
                                 DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
-                                StoreTileFile(file, floorTileDataReplacement);
+                                StoreTileFile(file, image.Size, floorTileDataReplacement);
                             }
                         }
                         else if (image.Size == Program.MaxTileSize)
                         {
                             DrawImageToTileSet(image);
-                            StoreTileFile(file);
+                            StoreTileFile(file, image.Size);
                         }
                         else
                         {
                             DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
-                            StoreTileFile(file);
+                            StoreTileFile(file, image.Size);
                         }
                     }                    
                 }
+
+                Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
+                WriteTileNameSuccess(relativePath);
+            }
+            else if(template.Exists || template2.Exists)
+            {
+                if (!file.Exists && file2.Exists)
+                {
+                    template = template2;
+                    templateFloor = templateFloor2;
+                    templateRelativePath = templateRelativePath2;
+                }
+
+                var templateData = originalTileData.TemplateData;
+
+                if(templateData == null)
+                {
+                    throw new Exception(string.Format("TemplateData for Tile {0} is null.", originalTileNumber));
+                }
+
+                using (var image = CreateBitmapFromTemplate(template, templateData.TemplateColor, originalTileData.BitmapSize))
+                {
+                    if (originalFileBitmapSizeInTiles.HasValue && (originalFileBitmapSizeInTiles.Value.Width > 1 || originalFileBitmapSizeInTiles.Value.Height > 1))
+                    {
+                        Size rightSize = new Size(originalFileBitmapSizeInTiles.Value.Width * Program.MaxTileSize.Width, originalFileBitmapSizeInTiles.Value.Height * Program.MaxTileSize.Height);
+                        if (image.Size != rightSize)
+                        {
+                            throw new WrongSizeException(image.Size, rightSize, string.Format("Image '{0}' should be {1}x{2} but is in reality {3}x{4}",
+                                template.FullName, rightSize.Width, rightSize.Height, image.Width, image.Height));
+                        }
+                        Point pointInPixels = new Point(originalFilePointInTiles.Value.X * Program.MaxTileSize.Width, originalFilePointInTiles.Value.Y * Program.MaxTileSize.Height);
+                        CropAndDrawImageToTileSet(image, pointInPixels, Program.MaxTileSize, file, flipHorizontal, flipVertical);
+                        StoreTileFile(template, image.Size);
+                    }
+                    else
+                    {
+                        if (image.Size == Program.ItemSize)
+                        {
+                            var floorTileData = originalTileData.FloorTileData;
+                            FloorTileData floorTileDataReplacement = floorTileData != null ? new FloorTileData(fileFloor, floorTileData.HasTileFile, floorTileData.SubType, floorTileData.NameOrDesc) : null;
+
+                            using (var floorImage = GetFloorTileFromTemplate(fileFloor, templateData, floorTileData))
+                            {
+                                DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
+                                StoreTileFile(file, image.Size, floorTileDataReplacement);
+                            }
+                        }
+                        else if (image.Size == Program.MaxTileSize)
+                        {
+                            DrawImageToTileSet(image);
+                            StoreTileFile(file, image.Size);
+                        }
+                        else
+                        {
+                            DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
+                            StoreTileFile(file, image.Size);
+                        }
+                    }
+                }
+
+                Console.WriteLine("Created Animation {0} from Template {1} successfully.", relativePath, templateRelativePath);
+                WriteTileNameTemplateGenerationSuccess(relativePath, templateRelativePath);
             }
             else
             {
@@ -156,5 +233,22 @@ namespace TileSetCompiler
                 return null;
             }
         }
+
+        private Bitmap GetFloorTileFromTemplate(FileInfo templateFileFloor, TemplateData templateData, FloorTileData floorTileData)
+        {
+            if (templateFileFloor != null && templateFileFloor.Exists)
+            {
+                return CreateItemFromTemplate(templateFileFloor, templateData.TemplateColor, templateData.SubTypeCode, templateData.SubTypeName);
+            }
+            else if (floorTileData.HasTileFile)
+            {
+                return MissingAnimationFloorCreator.CreateTileWithTextLines(_missingFloorTileType, floorTileData.SubType, floorTileData.NameOrDesc.ToProperCaseFirst());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

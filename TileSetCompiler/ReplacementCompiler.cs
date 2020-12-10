@@ -76,18 +76,18 @@ namespace TileSetCompiler
                         using (var floorImage = GetFloorTile(fileFloor, floorTileData, replacementName, tileName))
                         {
                             DrawItemToTileSet(image, false, mainTileAlignment, floorImage);
-                            StoreTileFile(file, floorTileDataReplacement);
+                            StoreTileFile(file, image.Size, floorTileDataReplacement);
                         }
                     }
                     else if (image.Size == Program.MaxTileSize)
                     {
                         DrawImageToTileSet(image);
-                        StoreTileFile(file);
+                        StoreTileFile(file, image.Size);
                     }
                     else
                     {
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
-                        StoreTileFile(file);
+                        StoreTileFile(file, image.Size);
                     }
                 }
             }

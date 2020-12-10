@@ -98,7 +98,7 @@ namespace TileSetCompiler
                 using (var image = new Bitmap(Image.FromFile(file.FullName)))
                 {
                     CropAndDrawImageToTileSet(image);
-                    StoreTileFile(file);
+                    StoreTileFile(file, image.Size);
                 }
 
                 Console.WriteLine("Compiled Player Tile {0} successfully.", relativePath);
@@ -109,7 +109,7 @@ namespace TileSetCompiler
                 using (var image = new Bitmap(Image.FromFile(file2.FullName)))
                 {
                     CropAndDrawImageToTileSet(image);
-                    StoreTileFile(file2);
+                    StoreTileFile(file2, image.Size);
                 }
 
                 Console.WriteLine("Replaced Player Tile {0} with a corresponding normal tile {1}.", relativePath, relativePath2);

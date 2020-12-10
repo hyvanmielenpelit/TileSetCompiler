@@ -119,7 +119,7 @@ namespace TileSetCompiler
                         WriteTileNameAutogenerationError(sourceRelativePath, destFileRelativePath, type);
                     }
                     DrawImageToTileSet(image);
-                    StoreTileFile(sourceFile, true);
+                    StoreTileFile(sourceFile, image.Size, true);
                     IncreaseCurXY();
                 }
             }
@@ -161,7 +161,7 @@ namespace TileSetCompiler
                                 image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
                         }
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
-                        StoreTileFile(file);
+                        StoreTileFile(file, image.Size);
                     }
                 }
                 else
