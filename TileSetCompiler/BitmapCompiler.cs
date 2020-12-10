@@ -240,6 +240,11 @@ namespace TileSetCompiler
             StoreTileFile(file, bitmapSize, null, null, isStatue, isFromTemplate, templateData);
         }
 
+        protected void StoreTileFile(int subIndex, FileInfo file, Size bitmapSize, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null)
+        {
+            StoreTileFile(subIndex, file, bitmapSize, null, null, isStatue, isFromTemplate, templateData);
+        }
+
         protected void StoreTileFile(FileInfo file, Size bitmapSize, FloorTileData floorTileData)
         {
             StoreTileFile(file, bitmapSize, null, null, false, false, null, floorTileData);
@@ -251,6 +256,11 @@ namespace TileSetCompiler
         }
 
         protected void StoreTileFile(FileInfo file, Size bitmapSize, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null, bool flipHorizontal = false, bool flipVertical = false)
+        {
+            StoreTileFile(0, file, bitmapSize, pointInTiles, bitmapSizeInTiles, isStatue, isFromTemplate, templateData, floorTileData, flipHorizontal, flipVertical);
+        }
+
+        protected void StoreTileFile(int subIndex, FileInfo file, Size bitmapSize, Point? pointInTiles, Size? bitmapSizeInTiles, bool isStatue = false, bool isFromTemplate = false, TemplateData templateData = null, FloorTileData floorTileData = null, bool flipHorizontal = false, bool flipVertical = false)
         {
             if (file == null)
             {
@@ -267,17 +277,18 @@ namespace TileSetCompiler
             tileFileData.FlipHorizontal = flipHorizontal;
             tileFileData.FlipVertical = flipVertical;
 
-            Program.TileFileData.Add(Program.CurrentCount, tileFileData);
+            Program.TileFileData.Add(new Point(Program.CurrentCount, subIndex), tileFileData);
         }
 
-        protected TileData GetTileFile(int tileNumber)
+        protected TileData GetTileFile(int tileNumber, int subIndex = 0)
         {
-            if(!Program.TileFileData.ContainsKey(tileNumber))
+            var point = new Point(tileNumber, subIndex);
+            if (!Program.TileFileData.ContainsKey(point))
             {
                 return null;
                 //throw new Exception(string.Format("Tile {0} has not been stored.", tileNumber));
             }
-            return Program.TileFileData[tileNumber];
+            return Program.TileFileData[point];
         }
 
         /// <summary>

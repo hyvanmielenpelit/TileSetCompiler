@@ -51,6 +51,7 @@ namespace TileSetCompiler
             var enlargementName = splitLine[1];
             var tilePositionName = splitLine[2];
             var originalTileIndex = int.Parse(splitLine[3]);
+            int subIndex = 0;
 
             var enlargementWidthInTiles = int.Parse(splitLine[4]);
             if(enlargementWidthInTiles < 1 || enlargementWidthInTiles > 3)
@@ -87,10 +88,12 @@ namespace TileSetCompiler
 
             var targetPathRelative = Path.Combine(_subDirName, enlargementName, tilePositionName + Program.ImageFileExtension);
 
-            if (Program.TileFileData.ContainsKey(originalTileIndex))
+            var originalTilePoint = new Point(originalTileIndex, subIndex);
+
+            if (Program.TileFileData.ContainsKey(originalTilePoint))
             {
                 //The original tile exists
-                var originalTileData = Program.TileFileData[originalTileIndex];
+                var originalTileData = Program.TileFileData[originalTilePoint];
                 using (var originalImage = new Bitmap(Image.FromFile(originalTileData.File.FullName)))
                 {
                     Size originalImageTileSize = new Size(originalImage.Width / Program.MaxTileSize.Width, originalImage.Height / Program.MaxTileSize.Height);

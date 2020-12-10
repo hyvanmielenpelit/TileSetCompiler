@@ -47,41 +47,23 @@ namespace TileSetCompiler
             if(type == _typeCursor || type == _typeSpecialEffect || type == _typeHitTile)
             {
                 var name = splitLine[2];
-                var dirPath = Path.Combine(BaseDirectory.FullName, type.ToLower().Replace(" ", "_"));
-                var fileName = type.ToLower().Replace(" ", "_") + "_" + name.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
+                var dirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName());
+                var fileName = type.ToFileName() + "_" + name.ToFileName() + Program.ImageFileExtension;
 
-                var relativePath = Path.Combine(_subDirName, type.ToLower().Replace(" ", "_"), fileName);
+                var relativePath = Path.Combine(_subDirName, type.ToFileName(), fileName);
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
-                bool isTileMissing = false;
 
-                if (!Directory.Exists(dirPath))
-                {
-                    Console.WriteLine("User Interface directory '{0}' not found. Creating Missing UI icon.", dirPath);
-                    isTileMissing = true;
-                    WriteTileNameErrorDirectoryNotFound(relativePath, "Creating Missing UI icon.");
-                }
-                else
-                {
-                    if (file.Exists)
-                    {
-                        Console.WriteLine("Compiled UI Tile '{0}' successfully.", relativePath);
-                        WriteTileNameSuccess(relativePath);
-                    }
-                    else
-                    {
-                        Console.WriteLine("File '{0}' not found. Creating Missing UI Tile.", file.FullName);
-                        isTileMissing = true;
-                        WriteTileNameErrorFileNotFound(relativePath, "Creating Missing UI Tile.");
-                    }
-                }
-
-                if (!isTileMissing)
+                if (file.Exists)
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
                         DrawImageToTileSet(image);
+                        StoreTileFile(file, image.Size);
                     }
+
+                    Console.WriteLine("Compiled UI Tile '{0}' successfully.", relativePath);
+                    WriteTileNameSuccess(relativePath);
                 }
                 else
                 {
@@ -89,7 +71,11 @@ namespace TileSetCompiler
                     {
                         DrawImageToTileSet(image);
                     }
+
+                    Console.WriteLine("File '{0}' not found. Creating Missing UI Tile.", file.FullName);
+                    WriteTileNameErrorFileNotFound(relativePath, "Creating Missing UI Tile.");
                 }
+                
                 IncreaseCurXY();
             }
             else if (type == _typeUITile || type == _typeBuff)
@@ -113,7 +99,7 @@ namespace TileSetCompiler
                 int subTileHeight = int.Parse(splitLine[5]);
                 Size subTileSize = new Size(subTileWidth, subTileHeight);
 
-                var dirPath = Path.Combine(BaseDirectory.FullName, type.ToLower().Replace(" ", "_"), tileName.ToLower().Replace(" ", "_"));
+                var dirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName(), tileName.ToFileName());
 
                 using (Bitmap tileBitmap = new Bitmap(Program.MaxTileSize.Width, Program.MaxTileSize.Height))
                 {
@@ -121,37 +107,13 @@ namespace TileSetCompiler
                     {
                         int i2 = i + _uiTileSplitItemsBeforeNames;
                         var subTileName = splitLine[i2];
-                        var fileName = tileNameSingular.ToLower().Replace(" ", "_") + "_" + subTileName.ToLower().Replace(" ", "_") + Program.ImageFileExtension;
-                        var relativePath = Path.Combine(_subDirName, type.ToLower().Replace(" ", "_"), tileName.ToLower().Replace(" ", "_"), fileName);
+                        var fileName = tileNameSingular.ToFileName() + "_" + subTileName.ToFileName() + Program.ImageFileExtension;
+                        var relativePath = Path.Combine(_subDirName, type.ToFileName(), tileName.ToFileName(), fileName);
                         var filePath = Path.Combine(dirPath, fileName);
                         FileInfo file = new FileInfo(filePath);
-                        bool isSubTileMissing = false;
                         string tileCalled = numSubTiles > 1 ? "Sub-Tile" : "Tile";
 
-                        if (!Directory.Exists(dirPath))
-                        {
-                            Console.WriteLine("User Interface directory '{0}' not found. Creating Missing UI {1}.", dirPath, tileCalled);
-                            isSubTileMissing = true;
-                            WriteSubTileNameErrorDirectoryNotFound(i, numSubTiles, relativePath, 
-                                string.Format("Creating Missing UI {0}.", tileCalled));
-                        }
-                        else
-                        {
-                            if (file.Exists)
-                            {
-                                Console.WriteLine("Compiled UI {0} '{1}' successfully.", tileCalled, relativePath);
-                                WriteSubTileNameSuccess(i, numSubTiles, relativePath);
-                            }
-                            else
-                            {
-                                Console.WriteLine("File '{0}' not found. Creating Missing UI {1}.", file.FullName, tileCalled);
-                                isSubTileMissing = true;
-                                WriteSubTileNameErrorFileNotFound(i, numSubTiles, relativePath, 
-                                    string.Format("Creating Missing UI {0}.", tileCalled));
-                            }
-                        }
-
-                        if (!isSubTileMissing)
+                        if (file.Exists)
                         {
                             using (var subTileBitmap = new Bitmap(Image.FromFile(file.FullName)))
                             {
@@ -162,10 +124,18 @@ namespace TileSetCompiler
                                 }
 
                                 DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
-                            }                                                     
+                                StoreTileFile(i, file, subTileBitmap.Size);
+                            }
+
+                            Console.WriteLine("Compiled UI {0} '{1}' successfully.", tileCalled, relativePath);
+                            WriteSubTileNameSuccess(i, numSubTiles, relativePath);
                         }
                         else
                         {
+                            Console.WriteLine("File '{0}' not found. Creating Missing UI {1}.", file.FullName, tileCalled);
+                            WriteSubTileNameErrorFileNotFound(i, numSubTiles, relativePath, 
+                                string.Format("Creating Missing UI {0}.", tileCalled));
+
                             if (subTileSize == Program.MaxTileSize)
                             {
                                 using (var subTileBitmap = MissingUITileCreator.CreateTile(_missingUIType, type.ToProperCase() + Environment.NewLine + tileName.ToProperCase(), subTileName))
@@ -180,13 +150,12 @@ namespace TileSetCompiler
                                     DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
                                 }
                             }
-                        }
+                        }                        
                     }
 
                     DrawImageToTileSet(tileBitmap);
                     IncreaseCurXY();
                 }
-
             }
             else
             {

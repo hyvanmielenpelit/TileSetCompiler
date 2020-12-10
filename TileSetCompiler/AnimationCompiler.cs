@@ -41,6 +41,7 @@ namespace TileSetCompiler
             var animation = splitLine[1];
             var frame = splitLine[2];
             var originalTileNumber = int.Parse(splitLine[3]);
+            int subIndex = 0;
             int widthInTiles = int.Parse(splitLine[4]);
             int heightInTiles = int.Parse(splitLine[5]);
             int mainTileAlignmentInt = int.Parse(splitLine[6]);
@@ -50,7 +51,7 @@ namespace TileSetCompiler
             }
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAlignmentInt;
 
-            TileData originalTileData = GetTileFile(originalTileNumber);
+            TileData originalTileData = GetTileFile(originalTileNumber, subIndex);
             Point? originalFilePointInTiles = originalTileData != null ? originalTileData.PointInTiles : null;
             Size? originalFileBitmapSizeInTiles = originalTileData != null ? originalTileData.BitmapSizeInTiles : null;
             bool flipHorizontal = originalTileData != null ? originalTileData.FlipHorizontal : false;
@@ -73,17 +74,24 @@ namespace TileSetCompiler
             var filePathFloor2 = Path.Combine(dirPath, fileNameFloor2);
             FileInfo fileFloor2 = new FileInfo(filePathFloor2);
 
-            var originalFileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalTileData.File.Name).ToFileName();
-            var templateDir = Path.Combine(BaseDirectory.FullName, originalFileNameWithoutExtension);
-            var templateName = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
-            var templateName2 = frame.ToFileName() + Program.ImageFileExtension;
+            FileInfo template = null;
+            FileInfo template2 = null;
+            string templateRelativePath = null;
+            string templateRelativePath2 = null;
+            if (originalTileData != null)
+            {
+                var originalFileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalTileData.File.Name).ToFileName();
+                var templateDir = Path.Combine(BaseDirectory.FullName, originalFileNameWithoutExtension);
+                var templateName = originalFileNameWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
+                var templateName2 = frame.ToFileName() + Program.ImageFileExtension;
 
-            var templateRelativePath = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName);
-            var templateRelativePath2 = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName2);
-            var templatePath = Path.Combine(templateDir, templateName);
-            FileInfo template = new FileInfo(templatePath);
-            var templatePath2 = Path.Combine(templateDir, templateName2);
-            FileInfo template2 = new FileInfo(templatePath2);
+                templateRelativePath = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName);
+                templateRelativePath2 = Path.Combine(_subDirName, originalFileNameWithoutExtension, templateName2);
+                var templatePath = Path.Combine(templateDir, templateName);
+                template = new FileInfo(templatePath);
+                var templatePath2 = Path.Combine(templateDir, templateName2);
+                template2 = new FileInfo(templatePath2);
+            }
 
             if (file.Exists || file2.Exists)
             {
@@ -138,7 +146,7 @@ namespace TileSetCompiler
                 Console.WriteLine("Compiled Animation '{0}' successfully.", relativePath);
                 WriteTileNameSuccess(relativePath);
             }
-            else if(template.Exists || template2.Exists)
+            else if(template != null && template2 != null && (template.Exists || template2.Exists))
             {
                 if (!template.Exists && template2.Exists)
                 {
@@ -181,9 +189,9 @@ namespace TileSetCompiler
                                 var templateDirFloor = Path.Combine(BaseDirectory.FullName, floorFileWithoutExtension);
                                 var templateNameFloor = floorFileWithoutExtension + "_" + frame.ToFileName() + Program.ImageFileExtension;
                                 var templateNameFloor2 = frame.ToFileName() + Program.ImageFileExtension;
-                                var templatePathFloor = Path.Combine(templateDir, templateNameFloor);
+                                var templatePathFloor = Path.Combine(templateDirFloor, templateNameFloor);
                                 templateFloor = new FileInfo(templatePathFloor);
-                                var templatePathFloor2 = Path.Combine(templateDir, templateNameFloor2);
+                                var templatePathFloor2 = Path.Combine(templateDirFloor, templateNameFloor2);
                                 templateFloor2 = new FileInfo(templatePathFloor2);
 
                                 if (!templateFloor.Exists && templateFloor2.Exists)

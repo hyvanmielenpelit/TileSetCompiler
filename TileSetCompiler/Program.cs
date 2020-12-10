@@ -70,7 +70,7 @@ namespace TileSetCompiler
         public static int MaxX { get; set; }
         public static int MaxY { get; set; }
         public static int CurrentCount { get; set; }
-        public static Dictionary<int, TileData> TileFileData { get; set; }
+        public static Dictionary<Point, TileData> TileFileData { get; set; }
 
         protected static TileCompiler TileCompiler { get; set; }
 
@@ -199,7 +199,7 @@ namespace TileSetCompiler
 
             InitializeOutputFiles();
 
-            TileFileData = new Dictionary<int, TileData>();
+            TileFileData = new Dictionary<Point, TileData>();
 
             using (TileCompiler = new TileCompiler())
             {
