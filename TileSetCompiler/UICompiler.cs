@@ -17,6 +17,7 @@ namespace TileSetCompiler
         const string _typeCursor = "cursor";
         const string _typeSpecialEffect = "special-effect";
         const string _typeHitTile = "hit-tile";
+        const string _typeGeneralTile = "general-tile";
         const string _typeUITile = "ui-tile";
         const string _typeBuff = "buff";
         const int _uiTileSplitItemsBeforeNames = 6;
@@ -44,7 +45,7 @@ namespace TileSetCompiler
 
             var type = splitLine[1];
 
-            if(type == _typeCursor || type == _typeSpecialEffect || type == _typeHitTile)
+            if(type == _typeCursor || type == _typeSpecialEffect || type == _typeHitTile || type == _typeGeneralTile)
             {
                 var name = splitLine[2];
                 var dirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName());
