@@ -25,17 +25,12 @@ namespace TileSetCompiler
 
         const int _zapLength = 14;
         const int _wormLength = 8;
+        const int _explodeLength = 8;
+        const int _invisibleLength = 3;
+        const int _swallowLength = 8;
+        const int _warningLength = 3;
 
         const string _breathSuffix = "-breath";
-
-        private Dictionary<string, int> _lineLengths = new Dictionary<string, int>()
-        {
-            { _miscInvisible, 3 },
-            { _miscExplode, 4 },
-            { _miscZap, 4 },
-            { _miscSwallow, 4 },
-            { _miscWarning, 3 }
-        };
 
         public MissingTileCreator MissingMiscTileCreator { get; set; }
 
@@ -54,15 +49,6 @@ namespace TileSetCompiler
             }
 
             var type = splitLine[1];
-            if(!_lineLengths.ContainsKey(type))
-            {
-                throw new Exception(string.Format("Misc type '{0}' not valid.", type));
-            }
-            int lineLength = _lineLengths[type];
-            if (splitLine.Length < lineLength)
-            {
-                throw new Exception(string.Format("Misc line '{0}' has too few elements.", string.Join(',', splitLine)));
-            }
 
             string subDir2 = null;
             string fileName = null;
@@ -80,6 +66,11 @@ namespace TileSetCompiler
 
             if (type == _miscInvisible)
             {
+                if (splitLine.Length < _invisibleLength)
+                {
+                    throw new Exception(string.Format("Misc Invisible line '{0}' has less than {1} elements.", string.Join(',', splitLine), _invisibleLength));
+                }
+
                 var type2 = splitLine[2];
                 subDir2 = type.ToFileName();
                 fileName = type.ToFileName() + "_" + type2.ToFileName() + Program.ImageFileExtension;
@@ -87,9 +78,9 @@ namespace TileSetCompiler
             }
             else if (type == _miscExplode)
             {
-                if (splitLine.Length < 8)
+                if (splitLine.Length < _explodeLength)
                 {
-                    throw new Exception(string.Format("Misc Explode line '{0}' has less than 8 elements.", string.Join(',', splitLine)));
+                    throw new Exception(string.Format("Misc Explode line '{0}' has less than {1} elements.", string.Join(',', splitLine), _explodeLength));
                 }
 
                 var type2 = splitLine[2];
@@ -166,9 +157,9 @@ namespace TileSetCompiler
             }
             else if (type == _miscSwallow)
             {
-                if (splitLine.Length < 8)
+                if (splitLine.Length < _swallowLength)
                 {
-                    throw new Exception(string.Format("Misc Swallow line '{0}' has less than 8 elements.", string.Join(',', splitLine)));
+                    throw new Exception(string.Format("Misc Swallow line '{0}' has less than {1} elements.", string.Join(',', splitLine), _swallowLength));
                 }
 
                 var monster = splitLine[2];
@@ -195,6 +186,11 @@ namespace TileSetCompiler
             }
             else if (type == _miscWarning)
             {
+                if (splitLine.Length < _warningLength)
+                {
+                    throw new Exception(string.Format("Misc Warning line '{0}' has less than {1} elements.", string.Join(',', splitLine), _warningLength));
+                }
+
                 var level = splitLine[2];
                 subDir2 = type.ToFileName();
                 fileName = level.ToFileName() + Program.ImageFileExtension;
