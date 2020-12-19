@@ -20,9 +20,11 @@ namespace TileSetCompiler
         const string _miscZap = "zap";
         const string _miscSwallow = "swallow";
         const string _miscWarning = "warning";
+        const string _miscWorm = "worm";
         const string _missingTileType = "Misc";
 
         const int _zapLength = 14;
+        const int _wormLength = 8;
 
         const string _breathSuffix = "-breath";
 
@@ -197,6 +199,35 @@ namespace TileSetCompiler
                 subDir2 = type.ToFileName();
                 fileName = level.ToFileName() + Program.ImageFileExtension;
                 name = level;
+            }
+            else if (type == _miscWorm)
+            {
+                if (splitLine.Length < _wormLength)
+                {
+                    throw new Exception(string.Format("Misc Worm line '{0}' has less than {1} elements.", string.Join(',', splitLine), _wormLength));
+                }
+
+                var type2 = splitLine[2];
+                var direction = splitLine[3];
+                int xInTiles = int.Parse(splitLine[4]);
+                int yInTiles = int.Parse(splitLine[5]);
+                pointInTiles = new Point(xInTiles, yInTiles);
+                int widthInTiles = int.Parse(splitLine[6]);
+                int heightInTiles = int.Parse(splitLine[7]);
+                bitmapSizeInTiles = new Size(widthInTiles, heightInTiles);
+
+                if (widthInTiles > 1 || heightInTiles > 1)
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
+                else
+                {
+                    subDir2 = Path.Combine(type.ToFileName(), type2.ToFileName());
+                    fileName = type.ToFileName() + "_" + type2.ToFileName() + "_" + direction.ToFileName() + Program.ImageFileExtension;
+                    name = type2 + " " + direction;
+                }
             }
             else
             {
