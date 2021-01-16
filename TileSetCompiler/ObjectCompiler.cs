@@ -218,7 +218,7 @@ namespace TileSetCompiler
                 {
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
+                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc, file))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
                             StoreTileFile(file, image.Size, new FloorTileData(fileFloor, hasFloorTile, subType, nameOrDesc));
@@ -263,7 +263,7 @@ namespace TileSetCompiler
                     var missingTileCreator = isFullSizeBitmap ? MissingObjectTileCreator : MissingObjectFloorTileCreator;
                     using (var image = missingTileCreator.CreateTile(_missingTileType, subType, nameOrDesc.ToProperCaseFirst()))
                     {
-                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc))
+                        using (var floorImage = GetFloorTile(fileFloor, hasFloorTile, subType, nameOrDesc, file))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorImage);
                         }
@@ -277,7 +277,7 @@ namespace TileSetCompiler
             }
         }
     
-        private Bitmap GetFloorTile(FileInfo fileFloor, bool hasFloorTile, string subType, string nameOrDesc)
+        private Bitmap GetFloorTile(FileInfo fileFloor, bool hasFloorTile, string subType, string nameOrDesc, FileInfo file)
         {
             if (fileFloor != null && fileFloor.Exists)
             {
@@ -285,7 +285,14 @@ namespace TileSetCompiler
             }
             else if (hasFloorTile)
             {
-                return MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+                if(file != null && file.Exists)
+                {
+                    return new Bitmap(Image.FromFile(file.FullName));
+                }
+                else
+                {
+                    return MissingObjectFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+                }
             }
             else
             {
