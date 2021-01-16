@@ -259,7 +259,7 @@ namespace TileSetCompiler
 
                     using (var image = CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName))
                     {
-                        using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
+                        using (var floorTemplateImage = GetFloorTileFromTemplate(templateFileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc, templateFile))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
                             StoreTileFile(templateFile, image.Size, false, true, 
@@ -287,7 +287,7 @@ namespace TileSetCompiler
 
                     using (var image = CreateItemFromTemplate(template2File, templateColor, subTypeCode, subTypeName))
                     {
-                        using (var floorTemplateImage = GetFloorTileFromTemplate(template2FileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc))
+                        using (var floorTemplateImage = GetFloorTileFromTemplate(template2FileFloor, templateColor, subTypeCode, subTypeName, hasFloorTile, subType, nameOrDesc, template2File))
                         {
                             DrawItemToTileSet(image, isFullSizeBitmap, mainTileAlignment, floorTemplateImage);
                             StoreTileFile(template2File, image.Size, false, true,
@@ -341,7 +341,7 @@ namespace TileSetCompiler
             }
         }
 
-        private Bitmap GetFloorTileFromTemplate(FileInfo templateFileFloor, Color templateColor, int subTypeCode, string subTypeName, bool hasFloorTile, string subType, string nameOrDesc)
+        private Bitmap GetFloorTileFromTemplate(FileInfo templateFileFloor, Color templateColor, int subTypeCode, string subTypeName, bool hasFloorTile, string subType, string nameOrDesc, FileInfo templateFile)
         {
             if (templateFileFloor != null && templateFileFloor.Exists)
             {
@@ -349,7 +349,14 @@ namespace TileSetCompiler
             }
             else if (hasFloorTile)
             {
-                return MissingArtifactFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+                if (templateFile != null && templateFile.Exists)
+                {
+                    return CreateItemFromTemplate(templateFile, templateColor, subTypeCode, subTypeName);
+                }
+                else
+                {
+                    return MissingArtifactFloorTileCreator.CreateTileWithTextLines(_missingFloorTileType, subType, nameOrDesc.ToProperCaseFirst());
+                }
             }
             else
             {
