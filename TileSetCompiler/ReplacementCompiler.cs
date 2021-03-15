@@ -53,10 +53,24 @@ namespace TileSetCompiler
             var fileName = replacementName.ToFileName() + "_" + tileName.ToFileName() + Program.ImageFileExtension;
             var filePath = Path.Combine(dirPath, fileName);
             FileInfo file = new FileInfo(filePath);
-            var relativePath = Path.GetRelativePath(Program.InputDirectory.FullName, file.FullName);
 
-            if (file.Exists)
+            var fileName2 = tileName.ToFileName() + Program.ImageFileExtension;
+            var filePath2 = Path.Combine(dirPath, fileName2);
+            FileInfo file2 = new FileInfo(filePath2);
+
+            var relativePath = Path.GetRelativePath(Program.InputDirectory.FullName, file.FullName);
+            var relativePath2 = Path.GetRelativePath(Program.InputDirectory.FullName, file2.FullName);
+
+            if (file.Exists || file2.Exists)
             {
+                if(!file.Exists && file2.Exists)
+                {
+                    fileName = fileName2;
+                    filePath = filePath2;
+                    file = file2;
+                    relativePath = relativePath2;
+                }
+
                 Console.WriteLine("Compiled Replacement '{0}' successfully.", relativePath);
                 WriteTileNameSuccess(relativePath);
 
@@ -93,8 +107,8 @@ namespace TileSetCompiler
             }
             else
             {
-                Console.WriteLine("File '{0}' not found. Creating Missing Replacement Tile.", file.FullName);
-                WriteTileNameErrorFileNotFound(relativePath, "Creating Missing Replacement Tile.");
+                Console.WriteLine("File '{0}' and file '{1}' not found. Creating Missing Replacement Tile.", file.FullName, file2.FullName);
+                WriteTileNameErrorFileNotFound(relativePath + " OR " + relativePath2, "Creating Missing Replacement Tile.");
 
                 using (var image = MissingReplacementCreator.CreateTileWithTextLines(_missingReplacementType, replacementName, tileName))
                 {
