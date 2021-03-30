@@ -193,7 +193,7 @@ namespace TileSetCompiler
             }
         }        
 
-        private void DrawImage(Bitmap image, Size tileSize, Dictionary<OutputFileFormatData, Bitmap> tileSetDic)
+        private void DrawImage(Bitmap image, Size tileSize, Dictionary<OutputFileFormatData, Dictionary<int, Bitmap>> tileSetDic)
         {
             for (int x = 0; x < image.Width; x++)
             {
@@ -205,7 +205,8 @@ namespace TileSetCompiler
                     foreach(var kvp in tileSetDic)
                     {
                         var tpMode = kvp.Key;
-                        var tileSet = kvp.Value;
+                        var dicSheets = kvp.Value;
+                        var tileSet = dicSheets[Program.CurrentSheet];
                         if (kvp.Key.TransparencyMode == TransparencyMode.Color && c.A == 0)
                         {
                             tileSet.SetPixel(tileSetX, tileSetY, TransparencyColor);
@@ -222,15 +223,17 @@ namespace TileSetCompiler
         protected void IncreaseCurXY()
         {
             Program.CurX++;
-            if (Program.CurX > Program.MaxX)
+            if (Program.CurX > Program.TileSetSizes[Program.CurrentSheet].Width - 1)
             {
                 Program.CurX = 0;
                 Program.CurY++;
             }
             Program.CurrentCount++;
-            if (Program.CurY > Program.MaxY && Program.CurrentCount != Program.TileNumber)
+            Program.CurrentSheet = Program.CurrentCount / Program.MaxTilesPerSheet;
+
+            if (Program.CurY > Program.TileSetSizes[Program.CurrentSheet].Height - 1 && Program.CurrentCount != Program.SheetTileNumber[Program.CurrentSheet])
             {
-                Console.WriteLine("Program.CurY '{0}' is greater than Program.MaxY '{1}'.", Program.CurY, Program.MaxY);
+                Console.WriteLine("Program.CurY '{0}' is greater than Sheet Max Height '{1}'.", Program.CurY, Program.TileSetSizes[Program.CurrentSheet].Height - 1);
                 throw new Exception("Aborting.");
             }
         }
