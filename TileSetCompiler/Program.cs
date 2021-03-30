@@ -202,8 +202,6 @@ namespace TileSetCompiler
             //This is the name of the file, where the program writes the names of all tiles in the tileset
             TileNameOutputFileName = OutputFileName + _tileNameSuffix + _tileNameExtension;
 
-            InitializeOutputFiles();
-
             TileFileData = new Dictionary<Point, TileData>();
 
             using (TileCompiler = new TileCompiler())
@@ -211,6 +209,7 @@ namespace TileSetCompiler
                 try
                 {
                     InitializeTileSets();
+                    InitializeOutputFiles();
 
                     TileCompiler.Compile();
                     TileCompiler.Close();
@@ -283,19 +282,19 @@ namespace TileSetCompiler
                     {
                         var sheetIndex = kvp3.Key;
                         var outputFile = kvp3.Value;
-                        try
-                        {
+                        //try
+                        //{
                             if (outputFile.Exists)
                             {
                                 outputFile.Delete();
                             }
 
-                            tileSet[kvp2.Key][kvp3.Key].Save(outputFile.FullName);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("Saving output file '" + outputFile.FullName + "' failed.", ex);
-                        }
+                            tileSet[outputFormat][sheetIndex].Save(outputFile.FullName);
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    throw new Exception("Saving output file '" + outputFile.FullName + "' failed.", ex);
+                        //}
                     }
                 }
             }            
