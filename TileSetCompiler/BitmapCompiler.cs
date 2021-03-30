@@ -229,7 +229,15 @@ namespace TileSetCompiler
                 Program.CurY++;
             }
             Program.CurrentCount++;
-            Program.CurrentSheet = Program.CurrentCount / Program.MaxTilesPerSheet;
+
+            //Check next sheet
+            int sheet = Program.CurrentCount / Program.MaxTilesPerSheet;
+            if(sheet > Program.CurrentSheet)
+            {
+                Program.CurrentSheet = sheet;
+                Program.CurX = 0;
+                Program.CurY = 0;
+            }
 
             if (Program.CurY > Program.TileSetSizes[Program.CurrentSheet].Height - 1 && Program.CurrentCount != Program.SheetTileNumber[Program.CurrentSheet])
             {
