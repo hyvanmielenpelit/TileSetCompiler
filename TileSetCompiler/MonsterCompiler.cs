@@ -45,8 +45,8 @@ namespace TileSetCompiler
             { "kick", new CategoryData("_kick", "Kick") },
             { "death", new CategoryData("_death", "Death") },
             { "passive-defense", new CategoryData("_passive-defense", "Passive Defense") },
-            { "defend", new CategoryData("_defend", "Defend") },
-            { "receive-damage", new CategoryData("_receive-damage", "Receive Damage") }
+            { "special-attack-2", new CategoryData("_special-attack-2", "Special Attack 2") },
+            { "special-attack-3", new CategoryData("_special-attack-3", "Special Attack 3") }
         };
 
         public StatueCreator StatueCreator { get; private set; }
