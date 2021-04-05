@@ -19,6 +19,7 @@ namespace TileSetCompiler
         const int _monsterLineLength = 7;
         const string _type_statue = "statue";
         const string _type_corpse = "body";
+        const string _typeNormal = "normal";
         const string _missingCorpseTileType = "Corpse";
         const string _missingMonsterTileType = "Monster";
 
@@ -142,6 +143,15 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(monsterDirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
+                var fileName2 = name.ToLower().Replace(" ", "_") +
+                     _genderData[gender].Suffix +
+                    _typeData[_typeNormal].Suffix +
+                    Program.ImageFileExtension;
+
+                var relativePath2 = Path.Combine(_subDirName, subDir2, fileName2);
+                var filePath2 = Path.Combine(monsterDirPath, fileName2);
+                FileInfo file2 = new FileInfo(filePath2);
+
                 if (file.Exists)
                 {
                     string typeDesc = _typeData[type].Description;
@@ -162,6 +172,28 @@ namespace TileSetCompiler
                         }
                         DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
                         StoreTileFile(file, image.Size);
+                    }
+                }
+                else if (file2.Exists)
+                {
+                    string typeDesc = _typeData[_typeNormal].Description;
+                    if (string.IsNullOrEmpty(typeDesc))
+                    {
+                        typeDesc = "Normal";
+                    }
+                    Console.WriteLine("Replaced Monster {0} Tile {1} with a corresponding normal tile {2}.", typeDesc, relativePath, relativePath2);
+                    WriteTileNameSuccess(relativePath2);
+
+                    using (var image = new Bitmap(Image.FromFile(file2.FullName)))
+                    {
+                        if (image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
+                        {
+                            throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
+                                string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file2.FullName,
+                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
+                        }
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file2);
+                        StoreTileFile(file2, image.Size);
                     }
                 }
                 else
