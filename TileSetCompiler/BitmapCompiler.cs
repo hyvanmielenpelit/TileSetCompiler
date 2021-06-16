@@ -244,7 +244,7 @@ namespace TileSetCompiler
             var currentMaxY = Program.TileSetSizes[Program.CurrentTileSet].Height - 1;
             var currentTileSetTileCount = Program.TileSetTileCount[Program.CurrentTileSet];
 
-            if (Program.CurY > currentMaxY && Program.CurrentCount != currentTileSetTileCount)
+            if (Program.CurY > currentMaxY && Program.CurrentCount != currentTileSetTileCount + ((Program.TileSetCount - 1) * Program.MaxTilesPerTileSet))
             {
                 Console.WriteLine("Program.CurY '{0}' is greater than Sheet Max Height '{1}'.", Program.CurY, currentMaxY);
                 throw new Exception("Aborting.");
