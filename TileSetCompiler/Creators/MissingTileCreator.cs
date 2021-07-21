@@ -24,6 +24,9 @@ namespace TileSetCompiler.Creators
         public bool Capitalize { get; set; }
         public MissingTileSize TileSize { get; set; }
         public Size BitmapSize { get; set; }
+        public Font BackgroundLetterFont { get; set; }
+        public StringAlignment BackgroundLetterHorizontalAlignment { get; set; }
+        public StringAlignment BackgroundLetterVerticalAlignment { get; set; }
 
         public MissingTileCreator()
         {
@@ -35,6 +38,9 @@ namespace TileSetCompiler.Creators
             Capitalize = true;
             TileSize = MissingTileSize.Full;
             BitmapSize = Program.MaxTileSize;
+            BackgroundLetterFont = new Font(FontFamily.GenericMonospace, 72.0f);
+            BackgroundLetterHorizontalAlignment = StringAlignment.Center;
+            BackgroundLetterVerticalAlignment = StringAlignment.Center;
         }
 
         public void SetTextFont(FontFamily family, float size)
@@ -62,7 +68,7 @@ namespace TileSetCompiler.Creators
             return CreateTileWithText(label);
         }
 
-        public Bitmap CreateTileWithText(string label)
+        public Bitmap CreateTileWithText(string label, char? backgroundLetter = null, Color? letterColor = null)
         {
             Bitmap bmp = new Bitmap(BitmapSize.Width, BitmapSize.Height);
             using (Graphics g = Graphics.FromImage(bmp))
@@ -72,9 +78,18 @@ namespace TileSetCompiler.Creators
                 Brush textBrush = new SolidBrush(TextColor);
                 SizeF tileSizeF = SizeF.Empty;
                 PointF point = PointF.Empty;
+                
                 if (TileSize == MissingTileSize.Full)
                 {
                     tileSizeF = new SizeF((float)BitmapSize.Width, (float)BitmapSize.Height);
+                    if(backgroundLetter.HasValue && letterColor.HasValue)
+                    {
+                        StringFormat sBackgroundLetterFormat = new StringFormat();
+                        sBackgroundLetterFormat.Alignment = BackgroundLetterHorizontalAlignment;
+                        sBackgroundLetterFormat.LineAlignment = BackgroundLetterVerticalAlignment;
+                        Brush textBrushBackgroundLetter = new SolidBrush(letterColor.Value);
+                        g.DrawString(backgroundLetter.Value.ToString(), BackgroundLetterFont, textBrushBackgroundLetter, new RectangleF(point, tileSizeF), sBackgroundLetterFormat);
+                    }
                 }
                 else if (TileSize == MissingTileSize.Item)
                 {
@@ -110,6 +125,24 @@ namespace TileSetCompiler.Creators
                 }
             }
             return CreateTileWithText(sb.ToString());
+        }
+
+        public Bitmap CreateTileWithTextLinesAndBackgroundLetter(char monsterLetter, Color letterColor, params string[] lines)
+        {
+            return CreateTileWithTextLinesAndBackgroundLetter(monsterLetter, letterColor, Capitalize, lines);
+        }
+
+        public Bitmap CreateTileWithTextLinesAndBackgroundLetter(char monsterLetter, Color letterColor, bool capitalize, params string[] lines)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    sb.AppendLine(capitalize ? line.ToProperCase() : line);
+                }
+            }
+            return CreateTileWithText(sb.ToString(), monsterLetter, letterColor);
         }
     }
 }

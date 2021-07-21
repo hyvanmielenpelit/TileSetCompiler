@@ -91,6 +91,9 @@ namespace TileSetCompiler
             var heightInTiles = int.Parse(splitLine[5]);
             var mainTileAligntmentInt = int.Parse(splitLine[6]);
             MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAligntmentInt;
+            char monsterLetter = splitLine[7][0];
+            var letterColorCode = int.Parse(splitLine[8]);
+            var letterColor = GetColorFromColorCode(letterColorCode);
 
             if (type == _type_statue)
             {
@@ -107,7 +110,7 @@ namespace TileSetCompiler
 
                 bool isUnknown;
                 using (var image = StatueCreator.CreateStatueMainTileFromFile(sourceFile,
-                    widthInTiles, heightInTiles, mainTileAlignment, name, _genderData[gender].Description, out isUnknown))
+                    widthInTiles, heightInTiles, mainTileAlignment, name, _genderData[gender].Description, monsterLetter, out isUnknown))
                 {
                     if(!isUnknown)
                     {
@@ -213,7 +216,7 @@ namespace TileSetCompiler
                         Console.WriteLine("Monster file '{0}' not found. Creating a Missing Monster Tile.", file.FullName);
                         WriteTileNameErrorFileNotFound(relativePath, "Creating a Missing Monster Tile.");
 
-                        using (var image = MissingMonsterTileCreator.CreateTileWithTextLines(_missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
+                        using (var image = MissingMonsterTileCreator.CreateTileWithTextLinesAndBackgroundLetter(monsterLetter, letterColor, _missingMonsterTileType, _typeData[type].Description, name, _genderData[gender].Description))
                         {
                             DrawImageToTileSet(image);
                         }

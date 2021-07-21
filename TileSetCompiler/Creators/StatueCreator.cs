@@ -87,7 +87,7 @@ namespace TileSetCompiler.Creators
             }
         }
 
-        public Bitmap CreateStatueMainTileFromFile(FileInfo sourceFile, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, string name, string genderDesc, out bool isUnknown)
+        public Bitmap CreateStatueMainTileFromFile(FileInfo sourceFile, int widthInTiles, int heightInTiles, MainTileAlignment mainTileAlignment, string name, string genderDesc, char monsterLetter, out bool isUnknown)
         {
             isUnknown = false;
             if (!sourceFile.Exists)
@@ -122,7 +122,7 @@ namespace TileSetCompiler.Creators
             }
             else
             {
-                return MissingStatueTileCreator.CreateTileWithTextLines(_missingTileType, _missingTileSubType, name, genderDesc);
+                return MissingStatueTileCreator.CreateTileWithTextLinesAndBackgroundLetter(monsterLetter, Color.LightGray,_missingTileType, _missingTileSubType, name, genderDesc);
             }
         }
 
