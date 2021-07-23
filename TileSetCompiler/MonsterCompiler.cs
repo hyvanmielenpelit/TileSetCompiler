@@ -95,7 +95,6 @@ namespace TileSetCompiler
             var letterColorCode = int.Parse(splitLine[8]);
             var letterColor = GetColorFromColorCode(letterColorCode);
 
-
             if (type == _type_statue)
             {
                 var sourceSubDir2 =name.ToLower().Replace(" ", "_");
