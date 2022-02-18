@@ -47,7 +47,7 @@ namespace TileSetCompiler
 
             var type = splitLine[1];
 
-            if(type == _typeCursor || type == _typeSpecialEffect || type == _typeHitTile || type == _typeGeneralTile || type == _typeSpellTile || type == _typeSkillTile)
+            if(type == _typeCursor || type == _typeSpecialEffect || type == _typeHitTile || type == _typeGeneralTile)
             {
                 var name = splitLine[2];
                 var dirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName());
@@ -81,7 +81,7 @@ namespace TileSetCompiler
                 
                 IncreaseCurXY();
             }
-            else if (type == _typeUITile || type == _typeBuff)
+            else if (type == _typeUITile || type == _typeBuff || type == _typeSpellTile || type == _typeSkillTile)
             {
                 if(splitLine.Length < 4)
                 {
