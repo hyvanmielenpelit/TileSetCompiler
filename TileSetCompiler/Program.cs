@@ -208,6 +208,7 @@ namespace TileSetCompiler
             {
                 try
                 {
+                    DateTime startTime = DateTime.Now;
                     InitializeTileSets();
                     InitializeOutputFiles();
 
@@ -215,6 +216,8 @@ namespace TileSetCompiler
                     TileCompiler.Close();
 
                     SaveFiles();
+
+                    DateTime endTime = DateTime.Now;
 
                     Console.WriteLine();
                     Console.WriteLine("Source Directory: {0}", InputDirectory.FullName);
@@ -238,7 +241,11 @@ namespace TileSetCompiler
                             index + 1, tileSetSize.Width, tileSetSize.Height,
                             tileSetSize.Width * _tileSize.Width, tileSetSize.Height * _tileSize.Height);
                     }
-                    Console.WriteLine("Finished.");
+                    var time = endTime- startTime;
+                    int minutes = (int)time.TotalMinutes;
+                    int seconds = time.Seconds;
+
+                    Console.WriteLine("Finished in {0} minute{1} and {2} second{3}.", minutes, minutes != 1 ? "s" : "", seconds, seconds != 1 ? "s" : "");
                 }
                 //catch(Exception ex)
                 //{
