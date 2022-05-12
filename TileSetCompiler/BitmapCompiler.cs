@@ -20,7 +20,7 @@ namespace TileSetCompiler
 
         private List<string> _sEndingSingularWords = new List<string>()
         {
-            "status"
+            "status",
         };
 
         private Dictionary<int, Color> _colorCodeMapping = new Dictionary<int, Color>()
@@ -462,7 +462,13 @@ namespace TileSetCompiler
                 return word;
             }
 
-            if(wordLower.EndsWith("ses"))
+            if (wordLower.EndsWith("ness"))
+            {
+                //Is singular
+                return word;
+            }
+
+            if (wordLower.EndsWith("ses"))
             {
                 return word.Substring(0, word.Length - 2);
             }
