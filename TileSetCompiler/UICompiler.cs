@@ -92,7 +92,7 @@ namespace TileSetCompiler
                 }
                 
                 var tileName = splitLine[2];
-                var tileNameSingular = GetSingular(tileName);
+                var tileNameSingular = type == _typeSpellTile ? tileName : GetSingular(tileName);
 
                 int numSubTiles = int.Parse(splitLine[3]);
 
