@@ -106,6 +106,7 @@ namespace TileSetCompiler
                 Size subTileSize = new Size(subTileWidth, subTileHeight);
 
                 var dirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName(), tileName.ToFileName());
+                var missingDirPath = Path.Combine(BaseDirectory.FullName, type.ToFileName());
 
                 using (Bitmap tileBitmap = new Bitmap(Program.MaxTileSize.Width, Program.MaxTileSize.Height))
                 {
@@ -119,22 +120,30 @@ namespace TileSetCompiler
                         FileInfo file = new FileInfo(filePath);
                         string tileCalled = numSubTiles > 1 ? "Sub-Tile" : "Tile";
 
-                        if (file.Exists)
+                        var missingFileName = "missing-tile".ToFileName() + "_" + subTileName.ToFileName() + Program.ImageFileExtension;
+                        var missingRelativePath = Path.Combine(_subDirName, type.ToFileName(), missingFileName);
+                        var missingFilePath = Path.Combine(missingDirPath, missingFileName);
+                        FileInfo missingFile = new FileInfo(missingFilePath);
+
+                        if (file.Exists || missingFile.Exists)
                         {
-                            using (var subTileBitmap = new Bitmap(Image.FromFile(file.FullName)))
+                            FileInfo usedFile = file.Exists ? file : missingFile;
+                            string usedRelativePath = file.Exists ? relativePath : missingRelativePath;
+                            string fullName = usedFile.FullName;
+                            using (var subTileBitmap = new Bitmap(Image.FromFile(fullName)))
                             {
                                 if (subTileBitmap.Size != subTileSize)
                                 {
                                     throw new WrongSizeException(subTileBitmap.Size, subTileSize, string.Format("Image File '{0}' is of wrong size ({1}x{2}, when the right is {3}x{4}).",
-                                        file.FullName, subTileBitmap.Width, subTileBitmap.Height, subTileSize.Width, subTileSize.Height));
+                                        fullName, subTileBitmap.Width, subTileBitmap.Height, subTileSize.Width, subTileSize.Height));
                                 }
 
                                 DrawSubTile(tileBitmap, subTileSize, i, subTileBitmap);
-                                StoreTileFile(i, file, relativePath, subTileBitmap.Size);
+                                StoreTileFile(i, usedFile, usedRelativePath, subTileBitmap.Size);
                             }
 
-                            Console.WriteLine("Compiled UI {0} '{1}' successfully.", tileCalled, relativePath);
-                            WriteSubTileNameSuccess(i, numSubTiles, relativePath);
+                            Console.WriteLine("Compiled UI {0} '{1}' successfully.", tileCalled, usedRelativePath);
+                            WriteSubTileNameSuccess(i, numSubTiles, usedRelativePath);
                         }
                         else
                         {
