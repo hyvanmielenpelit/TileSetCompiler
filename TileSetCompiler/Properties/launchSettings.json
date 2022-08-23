@@ -3,6 +3,10 @@
     "TileSetCompiler": {
       "commandName": "Project",
       "commandLineArgs": "C:\\Repositories\\hyvanmielenpelit\\GnollHackTileSet C:\\Repositories\\hyvanmielenpelit\\GnollHackTileSet gnollhack"
+    },
+    "TileSetCompilerHMP": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\hmp\\GnollHackTileSet C:\\hmp\\GnollHackTileSet gnollhack"
     }
   }
 }
