@@ -62,11 +62,27 @@ namespace TileSetCompiler
                 var filePath = Path.Combine(dirPath, fileName);
                 FileInfo file = new FileInfo(filePath);
 
+                var widthInTiles = int.Parse(splitLine[3]);
+                var heightInTiles = int.Parse(splitLine[4]);
+                var mainTileAligntmentInt = int.Parse(splitLine[5]);
+                MainTileAlignment mainTileAlignment = (MainTileAlignment)mainTileAligntmentInt;
+
                 if (file.Exists)
                 {
+                    //using (var image = new Bitmap(Image.FromFile(file.FullName)))
+                    //{
+                    //    DrawImageToTileSet(image);
+                    //    StoreTileFile(file, image.Size);
+                    //}
                     using (var image = new Bitmap(Image.FromFile(file.FullName)))
                     {
-                        DrawImageToTileSet(image);
+                        if (image.Width != widthInTiles * Program.MaxTileSize.Width || image.Height != heightInTiles * Program.MaxTileSize.Height)
+                        {
+                            throw new WrongSizeException(image.Size, new Size(widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height),
+                                string.Format("Monster Tile '{0}' is wrong size ({1}x{2}). It should be {3}x{4}.", file.FullName,
+                                image.Width, image.Height, widthInTiles * Program.MaxTileSize.Width, heightInTiles * Program.MaxTileSize.Height));
+                        }
+                        DrawMainTileToTileSet(image, widthInTiles, heightInTiles, mainTileAlignment, file);
                         StoreTileFile(file, image.Size);
                     }
 
