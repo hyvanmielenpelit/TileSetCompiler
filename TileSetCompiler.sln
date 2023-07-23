@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileSetCompiler", "TileSetCompiler\TileSetCompiler.csproj", "{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TileSetCompiler", "TileSetCompiler\TileSetCompiler.csproj", "{127949AC-7694-4AA6-A1A7-9C59C5D1C1DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository Info", "Repository Info", "{7CB81216-4910-4CB1-AAF2-14F46FBCCC28}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
