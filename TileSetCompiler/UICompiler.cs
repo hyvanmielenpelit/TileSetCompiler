@@ -22,6 +22,7 @@ namespace TileSetCompiler
         const string _typeGeneralTile = "general-tile";
         const string _typeSpellTile = "spell-tile";
         const string _typeSkillTile = "skill-tile";
+        const string _typeCommandTile = "command-tile";
         const string _typeUITile = "ui-tile";
         const string _typeBuff = "buff";
         const int _uiTileSplitItemsBeforeNames = 6;
@@ -102,7 +103,7 @@ namespace TileSetCompiler
                 
                 IncreaseCurXY();
             }
-            else if (type == _typeUITile || type == _typeBuff || type == _typeSpellTile || type == _typeSkillTile)
+            else if (type == _typeUITile || type == _typeBuff || type == _typeSpellTile || type == _typeSkillTile || type == _typeCommandTile)
             {
                 if(splitLine.Length < 4)
                 {
@@ -110,7 +111,7 @@ namespace TileSetCompiler
                 }
                 
                 var tileName = splitLine[2];
-                var tileNameSingular = type == _typeSpellTile ? tileName : GetSingular(tileName);
+                var tileNameSingular = type == _typeSpellTile || type == _typeCommandTile ? tileName : GetSingular(tileName);
 
                 int numSubTiles = int.Parse(splitLine[3]);
 
@@ -166,7 +167,7 @@ namespace TileSetCompiler
                         else
                         {
                             Data.TileData activeTileData = null;
-                            if((type == _typeSpellTile || type == _typeSkillTile) && i > 0 && subTileName == "inactive" 
+                            if((type == _typeSpellTile || type == _typeSkillTile || type == _typeCommandTile) && i > 0 && subTileName == "inactive" 
                                 && (activeTileData = GetTileFile(Program.CurrentCount, 0)) != null)
                             {
                                 using (var subTileBitmap = new Bitmap(Image.FromFile(activeTileData.File.FullName)))
