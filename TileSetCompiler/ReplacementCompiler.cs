@@ -83,6 +83,17 @@ namespace TileSetCompiler
                         var filePathFloor = Path.Combine(dirPath, fileNameFloor);
                         FileInfo fileFloor = new FileInfo(filePathFloor);
 
+                        var fileNameFloor2 = tileName.ToFileName() + _floorSuffix + Program.ImageFileExtension;
+                        var filePathFloor2 = Path.Combine(dirPath, fileNameFloor2);
+                        FileInfo fileFloor2 = new FileInfo(filePathFloor2);
+
+                        if (!fileFloor.Exists && fileFloor2.Exists)
+                        {
+                            fileNameFloor = fileNameFloor2;
+                            filePathFloor = filePathFloor2;
+                            fileFloor = fileFloor2;
+                        }
+
                         var baseTileData = GetTileFile(baseTileNumber);
                         var floorTileData = baseTileData.FloorTileData;
 
@@ -121,6 +132,14 @@ namespace TileSetCompiler
                     var filePath2_dir = Path.Combine(dirPath_dir, fileName2_dir);
                     FileInfo file2_dir = new FileInfo(filePath2_dir);
 
+                    var fileName3_dir = baseReplacementName.ToFileName() + "_" + tileName.ToFileName() + _floorSuffix + Program.ImageFileExtension;
+                    var filePath3_dir = Path.Combine(dirPath_dir, fileName3_dir);
+                    FileInfo file3_dir = new FileInfo(filePath3_dir);
+
+                    var fileName4_dir = tileName.ToFileName() + _floorSuffix + Program.ImageFileExtension;
+                    var filePath4_dir = Path.Combine(dirPath_dir, fileName4_dir);
+                    FileInfo file4_dir = new FileInfo(filePath4_dir);
+
                     if (!_missileData.ContainsKey(direction))
                     {
                         throw new Exception(string.Format("_missileData does not contain direction '{0}'.", direction));
@@ -130,12 +149,15 @@ namespace TileSetCompiler
                     var targetRelativePath = relativePath;
                     bool isTileMissing = false;
 
-                    if (file_dir.Exists || file2_dir.Exists)
+                    if (file_dir.Exists || file2_dir.Exists || file3_dir.Exists || file4_dir.Exists)
                     {
-                        if (!file_dir.Exists && file2_dir.Exists)
-                        {
+                        if (file3_dir.Exists)
+                            file_dir = file3_dir;
+                        else if (file4_dir.Exists)
+                            file_dir = file4_dir;
+                        else if (file2_dir.Exists && !file_dir.Exists)
                             file_dir = file2_dir;
-                        }
+
                         var relativePath_dir = Path.GetRelativePath(Program.InputDirectory.FullName, file_dir.FullName);
                         using (var missileBitmap = ItemMissileCreator.CreateMissileFromFile(file_dir, replacementName.ToProperCaseFirst(), missileDirection, out isTileMissing))
                         {
