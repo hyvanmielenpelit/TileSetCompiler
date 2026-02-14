@@ -16,8 +16,8 @@ namespace TileSetCompiler
         private static Size _tileSize = new Size(64, 96);
         private static Size _itemSize = new Size(64, 48);
         private static List<int> _tileHeights = new List<int>(new int[] { 96 }); //, 72, 48, 36, 24, 18
-        private static int _maxTilesPerTileSet = 16224;
-        private static Size _maxTileSetSize = new Size(156, 104);
+        private static int _maxTilesPerTileSet = 8192;
+        private static Size _maxTileSetSize = new Size(128, 64);
         private static string _tileNameSuffix = "_tilenames";
         private static string _tileNameExtension = ".txt";
         private static Dictionary<TransparencyMode, string> _transparencyModeSuffix = new Dictionary<TransparencyMode, string>()
@@ -324,13 +324,15 @@ namespace TileSetCompiler
                 else
                 {
                     int tileSetTileCount = TileCount - (TileSetCount - 1) * MaxTilesPerTileSet;
-                    int widthInTiles = (int)Math.Ceiling(Math.Sqrt(tileSetTileCount * 1.5d));
-                    // Make divisible by 3
-                    if (widthInTiles % 3 > 0)
-                    {
-                        widthInTiles += 3 - widthInTiles % 3;
-                    }
-                    int heightInTiles = widthInTiles / 3 * 2;
+                    //int widthInTiles = (int)Math.Ceiling(Math.Sqrt(tileSetTileCount * 1.5d));
+                    //// Make divisible by 3
+                    //if (widthInTiles % 3 > 0)
+                    //{
+                    //    widthInTiles += 3 - widthInTiles % 3;
+                    //}
+                    //int heightInTiles = widthInTiles / 3 * 2;
+                    int widthInTiles = Math.Max(1, MaxTileSetSize.Width); // Math.Min(MaxTileSetSize.Width, tileSetTileCount));
+                    int heightInTiles = (tileSetTileCount - 1) / widthInTiles + 1;
 
                     TileSetSizes.Add(i, new Size(widthInTiles, heightInTiles));
                     TileSetTileCount.Add(i, tileSetTileCount);
